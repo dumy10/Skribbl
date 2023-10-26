@@ -3,5 +3,5 @@
 #include"Player.h"
 
 void getLeaderboardAfterRound();
-int getPlayerScore(Player p1);
+int getPlayerScore(const Player& p1);
 void getDrawRules(); 
