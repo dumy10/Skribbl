@@ -1,7 +1,7 @@
 #pragma once
 #include<string>
-#include<map>
 #include "Player.h"
+#include"Leaderboard.h"
 class Round
 {
 public:
@@ -9,11 +9,11 @@ public:
 	void endRound();
 	void cleanBoard();
 	std::string generateCharacters(const std::string& currentWord);
-	//Leaderboard updateLeaderboard(const Leaderboard& currentLeaderboard);
+	Leaderboard updateLeaderboard(const Leaderboard& currentLeaderboard);
 	void draw(); //to be implemented, needs GUI
 	bool guessWord(std::string word);
 private:
-	//Leaderboard currentLeaderboard;
+	Leaderboard currentLeaderboard;
 	std::string currentWord;
 
 };
