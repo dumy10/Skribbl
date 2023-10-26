@@ -4,7 +4,7 @@
 class WordGenerator {
 public:
 	std::string generateWords();
-	std::vector<std::string> lexicalFamily(std::string word);
+	std::vector<std::string> lexicalFamily(const std::string& word);
 
 private:
 	std::vector<std::string> usedWords;

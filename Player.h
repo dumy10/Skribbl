@@ -6,14 +6,12 @@ public:
 	Player getPlayerDetails();
 	void editPlayerPoints(int points);
 	Player();
-	Player(std::string nume);
-	Player(const Player& p1);
-	~Player();
-	bool operator<(const Player& p1);
+	Player(const std::string& name);
+	Player(const Player& player);
+	bool operator<(const Player& player);
 
 private:
-	std::string name;
-	int points;
-
+	std::string m_name;
+	int m_points;
 };
 
