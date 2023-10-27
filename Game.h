@@ -1,7 +1,7 @@
 #pragma once
 #include "Player.h"
 #include "Leaderboard.h"
-class Game : public Leaderboard
+class Game
 {
 public:
 	void startGame();
@@ -10,6 +10,6 @@ public:
 	void login(const Player& player);
 private:
 	std::list<Player> m_players;
-	const static uint8_t m_noOfRounds = 4;
+	static const size_t kNoOfRounds{ 4 };
 };
 

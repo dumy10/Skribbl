@@ -6,6 +6,6 @@ class Rules
 public:
 
 	void getLeaderboardAfterRound();
-	int getPlayerScore(const Player& p1);
+	int getPlayerScore(const Player& player) const;
 	void getDrawRules();
 };
