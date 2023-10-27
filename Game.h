@@ -1,16 +1,15 @@
 #pragma once
 #include "Player.h"
 #include "Leaderboard.h"
-#include<list>
-class Game
+class Game : public Leaderboard
 {
 public:
 	void startGame();
 	void endGame();
-	Player getWinner(const Leaderboard leaderboard);
-	void login(Player player);
+	Player getWinner(const Leaderboard& leaderboard) const;
+	void login(const Player& player);
 private:
 	std::list<Player> m_players;
-	const static int noOfRounds = 4;
+	const static uint8_t m_noOfRounds = 4;
 };
 

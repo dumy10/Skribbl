@@ -127,18 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Test\Game.h" />
-    <ClInclude Include="..\Test\Leaderboard.h" />
-    <ClInclude Include="..\Test\Round.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Leaderboard.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Round.h" />
     <ClInclude Include="Rules.h" />
     <ClInclude Include="WordGenerator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Test\Game.cpp" />
-    <ClCompile Include="..\Test\Leaderboard.cpp" />
-    <ClCompile Include="..\Test\Round.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Leaderboard.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Round.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

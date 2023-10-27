@@ -7,5 +7,5 @@ public:
 	std::vector<std::string> lexicalFamily(const std::string& word);
 
 private:
-	std::vector<std::string> usedWords;
+	std::vector<std::string> m_usedWords;
 };

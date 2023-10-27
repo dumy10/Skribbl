@@ -1,13 +1,18 @@
 #include "Player.h"
 
-Player Player::getPlayerDetails()
-{
-	return *this;
-}
-
-void Player::editPlayerPoints(int points)
+void Player::setPlayerPoints(int points)
 {
 	this->m_points = points;
+}
+
+int Player::getPlayerPoints() const
+{
+	return this->m_points;
+}
+
+std::string Player::getPlayerName() const
+{
+	return this->m_name;
 }
 
 Player::Player()
