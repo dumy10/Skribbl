@@ -47,5 +47,8 @@
     <ClCompile Include="WordGenerator.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

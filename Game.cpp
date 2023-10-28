@@ -1,3 +1,2 @@
-#include "Game.h"
-
-
+import game; 
+using modern::Game;  

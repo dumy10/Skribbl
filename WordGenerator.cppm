@@ -2,7 +2,7 @@ export module wordgenerator;
 
 import <string>;
 import <vector>;
-namespace moderm {
+namespace modern {
 	export class WordGenerator {
 	public:
 		std::string generateWords()
