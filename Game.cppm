@@ -4,6 +4,7 @@ import "Leaderboard.h";
 
 namespace modern {
 	export class Game {
+    public:
         void startGame();
         void endGame();
         Player getWinner(const Leaderboard& leaderboard) const;
