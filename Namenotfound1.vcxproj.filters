@@ -21,9 +21,6 @@
     <ClInclude Include="Rules.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WordGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -46,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="Round.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WordGenerator.cppm">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
