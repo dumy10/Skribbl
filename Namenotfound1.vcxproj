@@ -143,15 +143,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Leaderboard.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Round.h" />
     <ClInclude Include="Rules.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Game.cppm" />
     <ClCompile Include="Leaderboard.cpp" />
+    <ClCompile Include="leaderboard.cppm" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Round.cpp" />
     <ClCompile Include="Round.cppm" />

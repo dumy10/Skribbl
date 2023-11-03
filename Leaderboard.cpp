@@ -1,5 +1,5 @@
-#include "Leaderboard.h"
-
+import leaderboard;
+using modern::Leaderboard;
 Leaderboard::Leaderboard(const std::list<Player>& players)
 {
 	for (Player player : players) 
