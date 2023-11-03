@@ -143,9 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Rules.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Game.cppm" />
     <ClCompile Include="Leaderboard.cpp" />
@@ -154,6 +151,7 @@
     <ClCompile Include="player.cppm" />
     <ClCompile Include="Round.cpp" />
     <ClCompile Include="Round.cppm" />
+    <ClCompile Include="rules.cppm" />
     <ClCompile Include="WordGenerator.cppm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
