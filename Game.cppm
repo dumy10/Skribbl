@@ -1,8 +1,10 @@
 export module game;
-import "Player.h";
-import <list>;
-import leaderboard;
+import Leaderboard;
 using modern::Leaderboard;
+import Player;
+using modern::Player;
+import <list>;
+
 
 namespace modern {
 	export class Game {

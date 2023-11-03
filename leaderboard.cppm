@@ -1,6 +1,7 @@
-export module leaderboard;
+export module Leaderboard;
 
-import "Player.h";
+import Player;
+using modern::Player;
 import <list>;
 import <set>;
 

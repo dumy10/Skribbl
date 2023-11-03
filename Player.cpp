@@ -1,4 +1,5 @@
-#include "Player.h"
+import Player;
+using modern::Player;
 
 void Player::setPlayerPoints(int points)
 {

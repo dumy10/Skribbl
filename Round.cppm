@@ -1,7 +1,8 @@
 export module round;
 import <string>;
-import "Player.h";
-import leaderboard;
+import Player;
+using modern::Player;
+import Leaderboard;
 using modern::Leaderboard;
 namespace modern {
     export class Round {
