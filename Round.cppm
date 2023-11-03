@@ -12,9 +12,12 @@ namespace modern {
         Leaderboard updateLeaderboard(const Leaderboard& currentLeaderboard);
         void draw(); //to be implemented, needs GUI
         bool guessWord(std::string word);
-
+        int getRound();
+        void modifyRound();
     private:
         Leaderboard currentLeaderboard;
         std::string currentWord;
+        uint8_t roundNumber=1;
     };
+    
 }
