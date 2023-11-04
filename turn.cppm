@@ -1,6 +1,6 @@
 export module turn;
 
-import Player;
+import player;
 
 
 namespace skribbl

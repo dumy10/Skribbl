@@ -1,13 +1,33 @@
 import round;
-using modern::Round;
+import leaderboard;
+import player;
+import turn;
 
-#include <cstdlib> 
-#include <thread>
-#include <chrono>
-#include<iostream>
+using namespace skribbl;
+
+import <cstdlib>;
+import <thread>;
+import <chrono>;
+import <iostream>;
+
+Round::Round(const Leaderboard& leaderboard, const Turn& turn, const std::string& currentWord, uint8_t roundNumber, const std::vector<Player>& players):
+	m_leaderboard{leaderboard},
+	m_turn{turn},
+	m_word{currentWord},
+	m_roundNumber{roundNumber},
+	m_players{players}
+{
+	// Empty
+}
 
 void Round::endRound()
 {
+	/*
+	End round:
+		- Display leaderboard
+		- Display word
+		- Display next round start in 5 seconds
+	*/
 	std::cout << "Next round start in :";
 	for (int i = 5; i > 0; i--)
 	{
@@ -15,26 +35,71 @@ void Round::endRound()
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 }
-int modern::Round::getRound()
+
+const int skribbl::Round::getRound() const noexcept
 {
-	return roundNumber;
+	return m_roundNumber;
 }
 
-void modern::Round::modifyRound()
+void skribbl::Round::modifyRound()
 {
-	roundNumber++;
+	/*
+	Next round:
+		- Clear board
+		- Set new word
+		- Set new turn
+		- Set new leaderboard
+	*/
+
+
+	m_roundNumber++;
 }
 
-void clearScreen() {
+void clearScreen() 
+{
 	system("clear");
 }
 
-void Round::startRound() {
-	
+void Round::startRound() 
+{
+	/*
+	Start round:
+		- Display welcome message
+		- Display word to guess censored
+		- Display leaderboard
+		- Display who's turn is
+		- Display timer
+	*/
+
 	if (getRound() == 1)
 		std::cout << "Welcome to skribbl \n Your round will begin shortly\n";
-	else clearScreen();
-	draw();
-	modifyRound();
-	endRound();
+	else 
+	{
+		clearScreen();
+		draw();
+		modifyRound();
+		endRound();
+	}
+}
+
+void Round::setLeaderboard(const std::vector<Player>& players)
+{
+	if(this->m_leaderboard.getLeaderboard().size() == 0)
+		this->m_leaderboard = Leaderboard(players);
+	else
+	{
+		this->m_leaderboard.getLeaderboard().clear();
+		this->m_leaderboard = Leaderboard(players);
+	}
+}
+
+void Round::setWord(const std::string& word)
+{
+	this->m_word = word;
+}
+
+
+const bool Round::guessWord(const std::string& word) const
+{
+	return word == m_word;
 }
