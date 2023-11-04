@@ -15,6 +15,7 @@ Game::Game(const std::vector<Player>& players):
 	uint8_t roundNumber{ 1 };
 	/*
 	Needs to generate a word for each round
+	Need to end the turn and move to the next player
 	*/
 	for(Round& round : this->m_rounds)
 		round = Round(Leaderboard(this->m_players), Turn(this->m_players[0]), WordGenerator::generateWords(), roundNumber++, players);
