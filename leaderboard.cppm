@@ -1,15 +1,18 @@
-export module Leaderboard;
+export module leaderboard;
 
-import Player;
-using modern::Player;
-import <list>;
+import player;
+
+import <vector>;
 import <set>;
 
-namespace modern{
+
+namespace skribbl
+{
     export class Leaderboard {
     public:
-        Leaderboard(const std::list<Player>& players);
-        std::set<Player> getLeaderboard() const;
+        Leaderboard(const std::vector<Player>& players);
+        const std::set<Player> getLeaderboard() const noexcept;
+        void setLeaderboard(const std::vector<Player>& players);
     private:
         std::set<Player> m_scoreboard;
 };

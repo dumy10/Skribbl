@@ -1,5 +1,6 @@
-import Player;
-using modern::Player;
+import player;
+
+using namespace skribbl;
 
 void Player::setPlayerPoints(int points)
 {
@@ -11,26 +12,31 @@ int Player::getPlayerPoints() const
 	return this->m_points;
 }
 
-std::string Player::getPlayerName() const
+const std::string_view Player::getPlayerName() const noexcept
 {
 	return this->m_name;
 }
 
-Player::Player()
+const std::string_view Player::getPlayerPassword() const noexcept
 {
-	this->m_name = "noname";
-	this->m_points = 0;
+	return this->m_password;
 }
 
-Player::Player(const std::string& name)
-	: m_name (name),
-	m_points(0)
+
+Player::Player(const std::string& name, const std::string& password, const std::string& email) :
+	m_name{ name },
+	m_password{ password },
+	m_email{ email },
+	m_points{ 0 }
 {
+	// Empty
 }
 
 Player::Player(const Player& player)
 {
 	this->m_name = player.m_name;
+	this->m_password = player.m_password;
+	this->m_email = player.m_email;
 	this->m_points = player.m_points;
 }
 

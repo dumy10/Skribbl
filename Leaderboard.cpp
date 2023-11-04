@@ -1,14 +1,22 @@
-import Leaderboard;
-using modern::Leaderboard;
-import Player;
-using modern::Player;
-Leaderboard::Leaderboard(const std::list<Player>& players)
+import leaderboard;
+import player;
+
+using namespace skribbl;
+
+Leaderboard::Leaderboard(const std::vector<Player>& players)
 {
 	for (Player player : players) 
 		this->m_scoreboard.insert(player);
 }
 
-std::set<Player> Leaderboard::getLeaderboard() const
+const std::set<Player> Leaderboard::getLeaderboard() const noexcept
 {
 	return this->m_scoreboard;
+}
+
+void Leaderboard::setLeaderboard(const std::vector<Player>& players)
+{
+	this->m_scoreboard.clear();
+	for (Player player : players)
+		this->m_scoreboard.insert(player);
 }

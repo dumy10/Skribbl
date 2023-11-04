@@ -2,10 +2,10 @@ export module wordgenerator;
 
 import <string>;
 import <vector>;
-namespace modern {
+namespace skribbl {
 	export class WordGenerator {
 	public:
-		std::string generateWords()
+		static std::string generateWords()
 		{
 			return "";
 		}
