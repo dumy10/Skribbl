@@ -84,13 +84,7 @@ void Round::startRound()
 
 void Round::setLeaderboard(const std::vector<Player>& players)
 {
-	if(this->m_leaderboard.getLeaderboard().size() == 0)
-		this->m_leaderboard = Leaderboard(players);
-	else
-	{
-		this->m_leaderboard.getLeaderboard().clear();
-		this->m_leaderboard = Leaderboard(players);
-	}
+	this->m_leaderboard.setLeaderboard(players);
 }
 
 void Round::setWord(const std::string& word)

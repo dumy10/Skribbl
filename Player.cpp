@@ -43,5 +43,10 @@ Player::Player(const Player& player)
 
 bool Player::operator<(const Player& player)
 {
-	return this->m_points < player.getPlayerPoints();
+	return this->m_points < player.m_points;
+}
+
+bool Player::operator>(const Player& player)
+{
+	return this->m_points > player.m_points;
 }
