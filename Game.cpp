@@ -4,17 +4,19 @@ import wordgenerator;
 import round;
 import leaderboard;
 import turn;
+import <string>;
+import <fstream>;
 
 using namespace skribbl;
 
 
 Game::Game(const std::vector<Player>& players):
-	m_players {players}
+	m_players{ players }
 {
 	this->m_rounds.resize(kNoOfRounds);
 	uint8_t roundNumber{ 1 };
 	/*
-	Needs to generate a word for each round
+	Needs to generate a word for each round using random_shuffle
 	Need to end the turn and move to the next player
 	*/
 	for(Round& round : this->m_rounds)
