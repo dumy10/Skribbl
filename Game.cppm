@@ -1,9 +1,9 @@
 export module game;
 
-import leaderboard;
-import player;
-import round;
-
+export import leaderboard;
+export import round;
+export import player;
+export import wordgenerator;
 import <vector>;
 
 

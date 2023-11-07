@@ -9,8 +9,6 @@ import <vector>;
 import <string>;
 
 
-
-
 namespace skribbl 
 {
     export class Round {
@@ -20,12 +18,12 @@ namespace skribbl
         void startRound();
         void endRound();
         void setWord(const std::string& word);
-        std::string generateCharacters(const std::string& currentWord);
         void setLeaderboard(const std::vector<Player>& players);
         void draw(); //to be implemented, needs GUI
         const bool guessWord(const std::string& word) const;
         const int getRound() const noexcept;
         void modifyRound();
+        void setTurn(const Player& player); 
 
     private:
         std::vector<Player> m_players;

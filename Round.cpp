@@ -2,6 +2,7 @@ import round;
 import leaderboard;
 import player;
 import turn;
+import wordgenerator;
 
 using namespace skribbl;
 
@@ -76,7 +77,7 @@ void Round::startRound()
 	else 
 	{
 		clearScreen();
-		draw();
+		//draw();  //to be implemented later, leave it comented for now	as it will cause compilation errors
 		modifyRound();
 		endRound();
 	}
@@ -96,4 +97,9 @@ void Round::setWord(const std::string& word)
 const bool Round::guessWord(const std::string& word) const
 {
 	return word == m_word;
+}
+
+void Round::setTurn(const Player& player)
+{
+	this->m_turn.setPlayerTurn(player, WordGenerator::generateWord());
 }

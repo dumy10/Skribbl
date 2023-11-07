@@ -1,9 +1,6 @@
 import game; 
-import player;
-import wordgenerator;
-import round;
-import leaderboard;
 import turn;
+import <iostream>;
 import <string>;
 import <fstream>;
 
@@ -18,15 +15,8 @@ Game::Game(const std::vector<Player>& players):
 	Needs to generate a word for each round using random_shuffle
 	Need to end the turn and move to the next player
 	*/
-	
-	/*
-		Logic on how the rounds are initiallized needs to be reworked
-
-	this->m_rounds.resize(kNoOfRounds);
-	uint8_t roundNumber{ 1 };
-	for(Round& round : this->m_rounds)
-		round = Round(Leaderboard(this->m_players), Turn(this->m_players[0]), WordGenerator::generateWords(), roundNumber++, players);
-	*/
+	for(size_t i = 0; i < kNoOfRounds; i++)
+		this->m_rounds.push_back(Round(Leaderboard(this->m_players), Turn(this->m_players[0], WordGenerator::generateWord()), WordGenerator::generateWord(), i + 1, players));
 }
 
 

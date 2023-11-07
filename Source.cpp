@@ -1,10 +1,6 @@
-import <iostream>;
-import turn;
-import player;
 import game;
-import leaderboard;
-import round;
-import wordgenerator;
+
+import <iostream>;
 import <vector>;
 
 using namespace skribbl;
@@ -20,4 +16,6 @@ int main()
 	playersList.push_back(p3);
 
 	Game game(playersList);
+
+	return 0;
 }
