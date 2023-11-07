@@ -2,18 +2,17 @@ export module wordgenerator;
 
 import <string>;
 import <vector>;
+import <fstream>;
+
+
 namespace skribbl {
 	export class WordGenerator {
 	public:
-		static std::string generateWords()
-		{
-			return "";
-		}
-		std::vector<std::string> lexicalFamily(const std::string& word)
-		{
-			return{};
-		}
+		static std::string generateWord();
+		const std::vector<std::string>& getUsedWords() const noexcept;
+
 	private:
+		std::vector<std::string> m_words;
 		std::vector<std::string> m_usedWords;
 	};
 }

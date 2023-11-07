@@ -27,7 +27,7 @@
     <ClCompile Include="round.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WordGenerator.cppm">
+    <ClCompile Include="wordgenerator.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="game.cppm">
@@ -49,6 +49,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordgenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
