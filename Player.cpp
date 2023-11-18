@@ -1,27 +1,15 @@
-import player;
+module player;
 
 using namespace skribbl;
 
-void Player::setPlayerPoints(int points)
+Player::Player()
 {
-	this->m_points = points;
-}
+	m_name = std::string();
+	m_password = std::string();
+	m_email = std::string();
+	m_points = 0;
 
-int Player::getPlayerPoints() const
-{
-	return this->m_points;
 }
-
-const std::string_view Player::getPlayerName() const noexcept
-{
-	return this->m_name;
-}
-
-const std::string_view Player::getPlayerPassword() const noexcept
-{
-	return this->m_password;
-}
-
 
 Player::Player(const std::string& name, const std::string& password, const std::string& email) :
 	m_name{ name },
@@ -32,14 +20,50 @@ Player::Player(const std::string& name, const std::string& password, const std::
 	// Empty
 }
 
-Player::Player(const Player& player)
+void Player::setName(const std::string& name)
 {
-	this->m_name = player.m_name;
-	this->m_password = player.m_password;
-	this->m_email = player.m_email;
-	this->m_points = player.m_points;
+	this->m_name = name;
 }
 
+void Player::setPassword(const std::string& password)
+{
+	this->m_password = password;
+}
+
+void Player::setEmail(const std::string& email)
+{
+	this->m_email = email;
+}
+
+void Player::setPoints(int points)
+{
+	this->m_points = points;
+}
+
+void Player::addPoints(int points)
+{
+	this->m_points += points;
+}
+
+int Player::getPoints() const
+{
+	return this->m_points;
+}
+
+const std::string_view Player::getName() const noexcept
+{
+	return this->m_name;
+}
+
+const std::string_view Player::getPassword() const noexcept
+{
+	return this->m_password;
+}
+
+const std::string_view Player::getEmail() const noexcept
+{
+	return this->m_email;
+}
 
 bool Player::operator<(const Player& player)
 {
@@ -49,4 +73,9 @@ bool Player::operator<(const Player& player)
 bool Player::operator>(const Player& player)
 {
 	return this->m_points > player.m_points;
+}
+
+bool Player::operator==(const Player& player)
+{
+	return this->m_name == player.m_name && this->m_points == player.m_points;
 }

@@ -6,15 +6,24 @@ namespace skribbl
     export class Player
     {
     public:
-        void setPlayerPoints(int points);
-        int getPlayerPoints() const;
-        const std::string_view getPlayerName() const noexcept;
-        const std::string_view getPlayerPassword() const noexcept;
-        Player() = default;
+        Player();
         Player(const std::string& name, const std::string& password, const std::string& email);
-        Player(const Player& player);
+
+        const std::string_view getName() const noexcept;
+        const std::string_view getPassword() const noexcept;
+        const std::string_view getEmail() const noexcept;
+        int getPoints() const;
+
+        void setName(const std::string& name);
+		void setPassword(const std::string& password);
+        void setEmail(const std::string& email);
+        void setPoints(int points);
+        void addPoints(int points);
+
+
         bool operator<(const Player& player);
         bool operator>(const Player& player);
+        bool operator==(const Player& player);
     private:
         std::string m_name;
         std::string m_password;
