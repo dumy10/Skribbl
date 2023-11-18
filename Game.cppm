@@ -12,6 +12,10 @@ namespace skribbl
 	export class Game {
     public:
         Game(const std::vector<Player>& players);
+
+        void addPlayer(const Player& player);
+        void removePlayer(const Player& player);
+
         void startGame();
         void endGame();
         Player getWinner(const Leaderboard& leaderboard) const;
