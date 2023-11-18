@@ -57,6 +57,18 @@
     <ClCompile Include="wordgenerator.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="database.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="database.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="words.txt">
