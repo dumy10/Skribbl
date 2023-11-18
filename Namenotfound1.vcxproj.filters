@@ -13,20 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Class Files">
+      <UniqueIdentifier>{1057bc8a-8ab5-4540-bfd5-a876cc5fa4c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="leaderboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="round.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="wordgenerator.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
@@ -45,14 +36,26 @@
     <ClCompile Include="turn.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="turn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="leaderboard.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="round.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="turn.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
     <ClCompile Include="wordgenerator.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Class Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

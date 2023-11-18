@@ -1,4 +1,4 @@
-import wordgenerator;
+module wordgenerator;
 import <string>;
 import <vector>;
 import <fstream>;

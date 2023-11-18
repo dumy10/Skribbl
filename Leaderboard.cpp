@@ -1,4 +1,4 @@
-import leaderboard;
+module leaderboard;
 import player;
 import <algorithm>;
 
