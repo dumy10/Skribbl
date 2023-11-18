@@ -19,7 +19,6 @@ namespace skribbl
         void startGame();
         void endGame();
         Player getWinner(const Leaderboard& leaderboard) const;
-        void login(const Player& player);
 
     private:
         std::vector<Player> m_players;
