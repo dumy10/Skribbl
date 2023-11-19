@@ -69,6 +69,12 @@
     <ClCompile Include="database.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="chat.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chat.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="words.txt">
