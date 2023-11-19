@@ -103,3 +103,4 @@ void Round::setTurn(const Player& player)
 {
 	this->m_turn.setPlayerTurn(player, WordGenerator::generateWord());
 }
+

@@ -38,7 +38,24 @@ void Game::removePlayer(const Player& player)
 
 void skribbl::Game::startGame()
 {
-
+	std::string password, username;
+	std::cout << "Welcome to skribbl";
+	std::cout << "Login";//make this a button in the future
+	//the first player in the game should become the admin and be able to make the others admin if he wants to
+	std::cin >> username >> password;
+	//search the username in the database and see if the password is correct
+	while (m_players.size() < 2) //do this every 10 secconds
+	{
+		std::cout << "Waiting for more players";
+		std::cout << "The invite link is:"; //put the link to the game
+	}
+	std::cout << "The game will start shortly";
+	while (Round::getRound() < 5) //the admin will be able to modify it
+	{
+		Round::startRound();
+		Round::modifyRound();
+	}
+	endGame();
 }
 
 void skribbl::Game::endGame()
@@ -52,7 +69,6 @@ void skribbl::Game::endGame()
 	std::cout << "Points:";
 	std::cout << "\n Play again?";
 	std::cout << "Leave";//make them buttons in the future
-
 }
 
 void clearScreen()
