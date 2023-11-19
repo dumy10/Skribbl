@@ -38,10 +38,21 @@ void Game::removePlayer(const Player& player)
 
 void skribbl::Game::startGame()
 {
+
 }
 
 void skribbl::Game::endGame()
 {
+	clearScreen();
+	std::cout << "The winner is : "; //show the first place <<
+	std::cout << "Points : ";//show the points 
+	std::cout << "\n Seccond place : ";
+	std::cout << "Points : ";
+	std::cout << "\n Third place : ";
+	std::cout << "Points:";
+	std::cout << "\n Play again?";
+	std::cout << "Leave";//make them buttons in the future
+
 }
 
 void clearScreen()
