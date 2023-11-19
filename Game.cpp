@@ -36,6 +36,19 @@ void Game::removePlayer(const Player& player)
 	}
 }
 
+void skribbl::Game::startGame()
+{
+}
+
+void skribbl::Game::endGame()
+{
+}
+
+void clearScreen()
+{
+	system("clear");
+}
+
 Player Game::getWinner(const Leaderboard& leaderboard) const
 {
 	if(leaderboard.getLeaderboard().size() == 0)
