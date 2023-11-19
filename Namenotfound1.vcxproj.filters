@@ -75,6 +75,12 @@
     <ClCompile Include="chat.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="lobby.cppm">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lobby.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="words.txt">
