@@ -36,7 +36,9 @@ void Game::removePlayer(const Player& player)
 	}
 }
 
-void skribbl::Game::startGame()
+
+
+void Game::startGame()
 {
 	std::string password, username;
 	std::cout << "Welcome to skribbl";
@@ -50,17 +52,18 @@ void skribbl::Game::startGame()
 		std::cout << "The invite link is:"; //put the link to the game
 	}
 	std::cout << "The game will start shortly";
+	/* Cannot cast a nonstatic member function to a function pointer
 	while (Round::getRound() < 5) //the admin will be able to modify it
 	{
-		Round::startRound();
-		Round::modifyRound();
-	}
+		//Round::startRound();
+		//Round::modifyRound();
+	}*/
 	endGame();
 }
 
-void skribbl::Game::endGame()
+void Game::endGame()
 {
-	clearScreen();
+	//clearScreen(); function not declared
 	std::cout << "The winner is : "; //show the first place <<
 	std::cout << "Points : ";//show the points 
 	std::cout << "\n Seccond place : ";
@@ -71,10 +74,11 @@ void skribbl::Game::endGame()
 	std::cout << "Leave";//make them buttons in the future
 }
 
+/* Function not defined properly
 void clearScreen()
 {
 	system("clear");
-}
+}*/
 
 Player Game::getWinner(const Leaderboard& leaderboard) const
 {
