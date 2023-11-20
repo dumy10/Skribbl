@@ -1,9 +1,13 @@
 import game;
-
+import player;
 import <iostream>;
 import <vector>;
 
+
+
 using namespace skribbl;
+
+
 
 int main()
 {
@@ -16,6 +20,6 @@ int main()
 	playersList.push_back(p3);
 
 	Game game(playersList);
-
+	
 	return 0;
 }

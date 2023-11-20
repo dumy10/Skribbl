@@ -9,11 +9,13 @@ namespace skribbl
         Player();
         Player(const std::string& name, const std::string& password, const std::string& email);
 
-        const std::string_view getName() const noexcept;
-        const std::string_view getPassword() const noexcept;
-        const std::string_view getEmail() const noexcept;
+        const std::string getName() const noexcept;
+        const std::string getPassword() const noexcept;
+        const std::string getEmail() const noexcept;
         int getPoints() const;
+        int getId() const;
 
+        void setId(int id);
         void setName(const std::string& name);
 		void setPassword(const std::string& password);
         void setEmail(const std::string& email);
@@ -25,6 +27,7 @@ namespace skribbl
         bool operator>(const Player& player);
         bool operator==(const Player& player);
     private:
+        int m_id;
         std::string m_name;
         std::string m_password;
         std::string m_email;

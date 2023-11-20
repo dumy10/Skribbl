@@ -63,22 +63,10 @@
     <ClCompile Include="utils.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
-    <ClCompile Include="database.cppm">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="database.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
-    <ClCompile Include="chat.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="chat.cppm">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lobby.cppm">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lobby.cpp">
+    <ClCompile Include="routing.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,5 +74,13 @@
     <Text Include="words.txt">
       <Filter>Resource Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="routing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

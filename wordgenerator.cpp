@@ -1,7 +1,4 @@
 module wordgenerator;
-import <string>;
-import <vector>;
-import <fstream>;
 
 using namespace skribbl;
 

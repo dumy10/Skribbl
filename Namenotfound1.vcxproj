@@ -147,20 +147,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="chat.cpp" />
-    <ClCompile Include="chat.cppm" />
     <ClCompile Include="database.cpp" />
-    <ClCompile Include="database.cppm" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game.cppm" />
     <ClCompile Include="leaderboard.cpp" />
     <ClCompile Include="leaderboard.cppm" />
-    <ClCompile Include="lobby.cpp" />
-    <ClCompile Include="lobby.cppm" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player.cppm" />
     <ClCompile Include="round.cpp" />
     <ClCompile Include="round.cppm" />
+    <ClCompile Include="routing.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="turn.cpp" />
     <ClCompile Include="turn.cppm" />
@@ -171,6 +167,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="words.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="database.h" />
+    <ClInclude Include="routing.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

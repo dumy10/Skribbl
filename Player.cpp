@@ -20,6 +20,13 @@ Player::Player(const std::string& name, const std::string& password, const std::
 	// Empty
 }
 
+
+
+void Player::setId(int id)
+{
+	this->m_id = id;
+}
+
 void Player::setName(const std::string& name)
 {
 	this->m_name = name;
@@ -45,22 +52,28 @@ void Player::addPoints(int points)
 	this->m_points += points;
 }
 
+int Player::getId() const
+{
+	return this->m_id;
+
+}
+
 int Player::getPoints() const
 {
 	return this->m_points;
 }
 
-const std::string_view Player::getName() const noexcept
+const std::string Player::getName() const noexcept
 {
 	return this->m_name;
 }
 
-const std::string_view Player::getPassword() const noexcept
+const std::string Player::getPassword() const noexcept
 {
 	return this->m_password;
 }
 
-const std::string_view Player::getEmail() const noexcept
+const std::string Player::getEmail() const noexcept
 {
 	return this->m_email;
 }

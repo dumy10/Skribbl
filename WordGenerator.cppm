@@ -1,9 +1,9 @@
 export module wordgenerator;
 
 import <string>;
-import <vector>;
 import <fstream>;
-
+import <iostream>;
+import <vector>;
 
 namespace skribbl {
 	export class WordGenerator {
