@@ -1,2 +1,1 @@
-module database;
-
+#include "database.h"
