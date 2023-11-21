@@ -1,25 +1,39 @@
+#include <filesystem>
+#include <iostream>
+#include <memory>
+
+#include <sqlite_orm/sqlite_orm.h>
+#include "database.h"
+#include "routing.h"
+
 import game;
+import word;
 import player;
-import <iostream>;
 import <vector>;
 
 
-
 using namespace skribbl;
-
+namespace sql = sqlite_orm;
 
 
 int main()
 {
-	Player p1("Player1", "pass1", "p1@gmail.com");
-	Player p2("Player2", "pass2", "p2@gmail.com");
-	Player p3("Player3", "pass3", "p3@gmail.com");
-	std::vector<Player> playersList;
-	playersList.push_back(p1);
-	playersList.push_back(p2);
-	playersList.push_back(p3);
+	Database storage;
+	if (!storage.Initialize())
+	{
+		std::cout << "Failed to initialize database" << std::endl;
+		return -1;
 
-	Game game(playersList);
-	
+	}
+	std::vector<Word> words = storage.GetWords();
+	for (auto& word : words)
+	{
+		std::cout << word.getId();
+		std::cout << word.getWord() << std::endl;
+	}
+	std::cout << storage.GetRandomWord();
+
+
+
 	return 0;
 }

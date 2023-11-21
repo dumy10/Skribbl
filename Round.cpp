@@ -2,7 +2,6 @@ module round;
 import leaderboard;
 import player;
 import turn;
-import wordgenerator;
 
 using namespace skribbl;
 
@@ -99,8 +98,12 @@ const bool Round::guessWord(const std::string& word) const
 	return word == m_word;
 }
 
+/*
+Grab a word from the DB
+*/
+
 void Round::setTurn(const Player& player)
 {
-	this->m_turn.setPlayerTurn(player, WordGenerator::generateWord());
+	this->m_turn.setPlayerTurn(player, "word");
 }
 

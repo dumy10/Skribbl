@@ -3,26 +3,25 @@ export module game;
 export import leaderboard;
 export import round;
 export import player;
-export import wordgenerator;
 import <vector>;
 
 
-namespace skribbl 
+namespace skribbl
 {
 	export class Game {
-    public:
-        Game(const std::vector<Player>& players);
+	public:
+		Game() = default;
 
-        void addPlayer(const Player& player);
-        void removePlayer(const Player& player);
+		void addPlayer(const Player& player);
+		void removePlayer(const Player& player);
 
-        void startGame();
-        void endGame();
-        Player getWinner(const Leaderboard& leaderboard) const;
+		void startGame();
+		void endGame();
+		Player getWinner(const Leaderboard& leaderboard) const;
 
-    private:
-        std::vector<Player> m_players;
-        std::vector<Round> m_rounds;
-        static const size_t kNoOfRounds{ 4 };
+	private:
+		std::vector<Player> m_players;
+		std::vector<Round> m_rounds;
+		static const size_t kNoOfRounds{ 4 };
 	};
 }

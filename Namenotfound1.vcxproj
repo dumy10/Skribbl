@@ -162,8 +162,8 @@
     <ClCompile Include="turn.cppm" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="utils.cppm" />
-    <ClCompile Include="wordgenerator.cpp" />
-    <ClCompile Include="wordgenerator.cppm" />
+    <ClCompile Include="word.cpp" />
+    <ClCompile Include="word.cppm" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="words.txt" />
