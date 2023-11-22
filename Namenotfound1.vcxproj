@@ -147,11 +147,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="chat.cpp" />
+    <ClCompile Include="chat.cppm" />
     <ClCompile Include="database.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game.cppm" />
     <ClCompile Include="leaderboard.cpp" />
     <ClCompile Include="leaderboard.cppm" />
+    <ClCompile Include="lobby.cpp" />
+    <ClCompile Include="lobby.cppm" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player.cppm" />
     <ClCompile Include="round.cpp" />
