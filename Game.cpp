@@ -38,6 +38,7 @@ void Game::startGame()
 	//the first player in the game should become the admin and be able to make the others admin if he wants to
 	std::cin >> username >> password;
 	//search the username in the database and see if the password is correct
+	//primul jucator care intra este facut admin
 	while (m_players.size() < 2) //do this every 10 secconds
 	{
 		std::cout << "Waiting for more players";

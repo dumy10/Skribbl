@@ -21,7 +21,7 @@ namespace skribbl
         void setEmail(const std::string& email);
         void setPoints(int points);
         void addPoints(int points);
-
+        void makeAdmin();
 
         bool operator<(const Player& player);
         bool operator>(const Player& player);
@@ -32,6 +32,7 @@ namespace skribbl
         std::string m_password;
         std::string m_email;
         int m_points;
+        bool is_admin;
     };
 }
 

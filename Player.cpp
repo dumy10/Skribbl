@@ -52,6 +52,11 @@ void Player::addPoints(int points)
 	this->m_points += points;
 }
 
+void skribbl::Player::makeAdmin()
+{
+	this->is_admin = true;
+}
+
 int Player::getId() const
 {
 	return this->m_id;
