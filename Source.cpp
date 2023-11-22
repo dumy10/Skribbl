@@ -33,7 +33,8 @@ int main()
 	}
 	std::cout << storage.GetRandomWord();
 
-
+	Routing router;
+	router.run();
 
 	return 0;
 }
