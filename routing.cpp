@@ -1,5 +1,4 @@
 #include "routing.h"
-#include<iostream>
 
 import player;
 
@@ -12,11 +11,10 @@ Routing::Routing()
 	CROW_ROUTE(m_app, "/randomWord")([&]() {
 		return crow::response{ db.GetRandomWord() };
 		});
-
+	//both work fine
 }
 
 void Routing::run()
 {
-	std::cout << "It is running";
 	m_app.port(18080).multithreaded().run();
 }

@@ -38,6 +38,49 @@ std::vector<Word> Database::GetWords()
 	return m_db.get_all<Word>();
 }
 
+bool Database::AddPlayer(const Player& player)
+{
+	try {
+		if (PlayerExists(player)) {
+			std::cerr << "Player with the same name or email already exists.\n";
+			return false;
+		}
+
+		auto playerId = m_db.insert(player);
+
+		if (playerId > 0) {
+			std::cout << "Player added successfully with ID: " << playerId << "\n";
+			return true;
+		}
+		else {
+			std::cerr << "Failed to add player to the database.\n";
+			return false;
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while adding player: " << e.what() << "\n";
+		return false;
+	}
+}
+
+bool Database::PlayerExists(const Player& player) {
+	try {
+		auto existingPlayers1 = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::getName) == player.getName())
+		);
+
+		auto existingPlayers2 = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::getEmail) == player.getEmail())
+		);
+
+		return !existingPlayers1.empty() || !existingPlayers2.empty();
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while checking if player exists: " << e.what() << "\n";
+		return false;
+	}
+}
+
 
 int Database::GenerateRandomNumber(int min, int max)
 {
