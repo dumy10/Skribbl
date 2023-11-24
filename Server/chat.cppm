@@ -1,7 +1,6 @@
-import player;
-
 export module chat;
 
+import player;
 import <vector>;
 import <iostream>;
 export import <string>;

@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="chat.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chat.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="database.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="leaderboard.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="leaderboard.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lobby.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lobby.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="round.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="turn.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="word.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="round.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="turn.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="routing.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="word.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="routing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{de2fb8ca-9869-4407-a908-a89cc0e0279c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files">
+      <UniqueIdentifier>{dbd90de1-c96b-4906-9bc6-82a923681291}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{a53aa933-4ea1-4ee3-8504-47a62027b83e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{6afe67b5-f679-462b-8bef-3b94df4b9216}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="words.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

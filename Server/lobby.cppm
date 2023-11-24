@@ -1,7 +1,7 @@
-#include <cstdint>
-#include <string>
-#include <vector>
 export module lobby;
+
+import <string>;
+import <vector>;
 import chat;
 import player;
 

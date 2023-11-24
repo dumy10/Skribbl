@@ -1,4 +1,4 @@
-import chat;
+module chat;
 import player;
 import <iostream>;
 using namespace skribbl;
