@@ -1,6 +1,7 @@
 #include "database.h"
 
 #include <fstream>
+#include <iostream>
 
 
 bool Database::Initialize()
@@ -17,11 +18,17 @@ void Database::PopulateStorage()
 {
 	std::vector<Word> words;
 	std::string word;
-	for (std::ifstream in{ "words.txt" }; !in.eof(); /*EMPTY*/)
+	std::ifstream input{ "words.txt" };
+	if (input.fail())
 	{
-		in >> word;
+		std::cerr << "Failed to open words.txt\n";
+		return;
+	}
+	while(std::getline(input,word))
+	{
 		words.emplace_back(Word{ -1, std::move(word) });
 	}
+	input.close();
 	m_db.insert_range(words.begin(), words.end());
 }
 
