@@ -4,17 +4,14 @@ import player;
 
 using namespace skribbl;
 
-Routing::Routing()
+
+
+void Routing::run(Database& storage)
 {
 	CROW_ROUTE(m_app, "/")([]() {
 		return "Hello, Skribbl World!"; });
 	CROW_ROUTE(m_app, "/randomWord")([&]() {
-		return crow::response{ db.GetRandomWord() };
+		return crow::response{ storage.GetRandomWord() };
 		});
-	//both work fine
-}
-
-void Routing::run()
-{
 	m_app.port(18080).multithreaded().run();
 }

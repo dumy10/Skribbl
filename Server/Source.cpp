@@ -25,16 +25,9 @@ int main()
 		return -1;
 
 	}
-	std::vector<Word> words = storage.GetWords();
-	for (auto& word : words)
-	{
-		std::cout << word.getId();
-		std::cout << word.getWord() << std::endl;
-	}
-	std::cout << storage.GetRandomWord();
 
 	Routing router;
-	router.run();
+	router.run(storage);
 
 	return 0;
 }

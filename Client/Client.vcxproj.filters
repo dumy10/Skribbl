@@ -10,6 +10,9 @@
     <ClCompile Include="RegisterForm.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Class Files">
@@ -48,5 +51,10 @@
     <QtRcc Include="LoginForm.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,6 +13,9 @@ public:
 
 private:
 	Ui::RegisterFormClass ui;
+
+private:
+	void checkEmailPattern(const std::string& email);
 private slots:
 	void onRegisterButtonClicked();
 };

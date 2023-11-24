@@ -5,9 +5,8 @@
 class Routing
 {
 public:
-	Routing();
-	void run();
+	void run(Database& storage);
 private:
 	crow::SimpleApp m_app;
-	Database db;
+
 	};

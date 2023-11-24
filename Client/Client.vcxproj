@@ -104,6 +104,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="utils.cpp" />
     <QtRcc Include="LoginForm.qrc" />
     <QtUic Include="LoginForm.ui" />
     <QtMoc Include="LoginForm.h" />
@@ -113,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="RegisterForm.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
