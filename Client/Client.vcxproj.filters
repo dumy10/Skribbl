@@ -7,6 +7,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RegisterForm.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Class Files">
@@ -29,9 +32,15 @@
     <QtMoc Include="LoginForm.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="RegisterForm.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="LoginForm.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="RegisterForm.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

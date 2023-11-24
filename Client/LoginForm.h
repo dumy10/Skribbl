@@ -13,4 +13,8 @@ public:
 
 private:
     Ui::LoginFormClass ui;
+
+private slots:
+    void onLoginButtonClicked();
+    void onRegisterButtonClicked();
 };
