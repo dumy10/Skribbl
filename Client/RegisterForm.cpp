@@ -1,5 +1,9 @@
 #include "RegisterForm.h"
 #include <regex>
+#include <QTime>
+#include <QCoreApplication>
+#include "LoginForm.h"
+
 RegisterForm::RegisterForm(QWidget* parent)
 	: QMainWindow(parent)
 {
@@ -37,6 +41,13 @@ void RegisterForm::checkPasswordPattern(const std::string& password)
 		throw std::exception("Invalid password");
 }
 
+void RegisterForm::waitForSeconds(int seconds)
+{
+	QTime delayTime = QTime::currentTime().addSecs(seconds);
+	while (QTime::currentTime() < delayTime)
+		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
 
 void RegisterForm::onRegisterButtonClicked()
 {
@@ -62,4 +73,10 @@ void RegisterForm::onRegisterButtonClicked()
 	}
 	ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 	ui.errorLabel->setText("You have successfully registered.");
+	waitForSeconds(5);
+	this->close();
+	LoginForm* loginForm = new LoginForm();
+	loginForm->show();
+
+
 }
