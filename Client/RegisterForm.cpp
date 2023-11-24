@@ -1,8 +1,11 @@
 #include "RegisterForm.h"
+#include "LoginForm.h"
 #include <regex>
 #include <QTime>
 #include <QCoreApplication>
-#include "LoginForm.h"
+
+#include <cpr/cpr.h>
+#include <crow.h>
 
 RegisterForm::RegisterForm(QWidget* parent)
 	: QMainWindow(parent)
@@ -33,7 +36,7 @@ void RegisterForm::checkPasswordPattern(const std::string& password)
 {
 	if (password == "")
 		throw std::exception("Password cannot be empty");
-	if(password.length()<6)
+	if (password.length() < 6)
 		throw std::exception("Password must be at least 6 characters long");
 
 	const std::regex passwordPattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");

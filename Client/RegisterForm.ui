@@ -16,8 +16,8 @@
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
     <string notr="true">QWidget{
-	background-color: 
-rgb(155, 190, 200)}</string>
+	background-color: rgb(155, 190, 200);
+}</string>
    </property>
    <widget class="QFrame" name="frame">
     <property name="geometry">
@@ -30,8 +30,8 @@ rgb(155, 190, 200)}</string>
     </property>
     <property name="styleSheet">
      <string notr="true">QWidget{
-	background-color: 
-rgb(66, 125, 157)}</string>
+	background-color: rgb(66, 125, 157);
+}</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
@@ -107,7 +107,6 @@ border-radius: 10px;
 border-color: black;
 font: bold 14px;
 color: white;
-min_width: 10em;
 padding: 6px;
 }</string>
      </property>
@@ -132,7 +131,6 @@ border-width: 1px;
 border-radius: 10px;
 border-color: black;
 font: bold 14px;
-min_width: 10em;
 padding: 6px;
 }</string>
      </property>
@@ -157,7 +155,6 @@ border-width: 1px;
 border-radius: 10px;
 border-color: black;
 font: bold 14px;
-min_width: 10em;
 padding: 6px;
 }</string>
      </property>
@@ -188,7 +185,6 @@ border-width: 1px;
 border-radius: 10px;
 border-color: black;
 font: bold 14px;
-min_width: 10em;
 padding: 6px;
 }</string>
      </property>
@@ -221,9 +217,9 @@ padding: 6px;
     <widget class="QLabel" name="errorLabel">
      <property name="geometry">
       <rect>
-       <x>70</x>
+       <x>50</x>
        <y>410</y>
-       <width>341</width>
+       <width>381</width>
        <height>41</height>
       </rect>
      </property>
@@ -243,8 +239,6 @@ color: red;
 font-family:&quot;Times New Roman&quot;;
 font-weight:bold;
 font-size:14pt;
-
-
 
 }</string>
      </property>
