@@ -16,6 +16,7 @@ private:
 
 private:
 	void checkEmailPattern(const std::string& email);
+	void checkPasswordPattern(const std::string& password);
 private slots:
 	void onRegisterButtonClicked();
 };
