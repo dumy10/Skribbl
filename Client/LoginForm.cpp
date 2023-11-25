@@ -8,11 +8,11 @@
 LoginForm::LoginForm(QWidget* parent)
 	: QMainWindow(parent)
 {
-	ui.setupUi(this);
+	m_ui.setupUi(this);
 
 
-	connect(ui.loginButton, SIGNAL(clicked()), this, SLOT(onLoginButtonClicked()));
-	connect(ui.registerButton, SIGNAL(clicked()), this, SLOT(onRegisterButtonClicked()));
+	connect(m_ui.loginButton, SIGNAL(clicked()), this, SLOT(onLoginButtonClicked()));
+	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(onRegisterButtonClicked()));
 }
 
 LoginForm::~LoginForm()
@@ -21,12 +21,12 @@ LoginForm::~LoginForm()
 
 void LoginForm::onLoginButtonClicked()
 {
-	QString username = ui.usernameField->text();
-	QString password = ui.passwordField->text();
+	QString username = m_ui.usernameField->text();
+	QString password = m_ui.passwordField->text();
 
 	if (username.isEmpty() || password.isEmpty())
 	{
-		ui.errorLabel->setText("Please fill in all fields.");
+		m_ui.errorLabel->setText("Please fill in all fields.");
 		return;
 	}
 

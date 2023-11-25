@@ -12,7 +12,7 @@ public:
     ~LoginForm();
 
 private:
-    Ui::LoginFormClass ui;
+    Ui::LoginFormClass m_ui;
 
 private slots:
     void onLoginButtonClicked();

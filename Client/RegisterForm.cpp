@@ -10,9 +10,9 @@
 RegisterForm::RegisterForm(QWidget* parent)
 	: QMainWindow(parent)
 {
-	ui.setupUi(this);
+	m_ui.setupUi(this);
 
-	connect(ui.registerButton, SIGNAL(clicked()), this, SLOT(onRegisterButtonClicked()));
+	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(onRegisterButtonClicked()));
 
 }
 
@@ -55,9 +55,9 @@ void RegisterForm::waitForSeconds(int seconds)
 void RegisterForm::onRegisterButtonClicked()
 {
 
-	QString username = ui.usernameField->text();
-	QString password = ui.passwordField->text();
-	QString email = ui.emailField->text();
+	QString username = m_ui.usernameField->text();
+	QString password = m_ui.passwordField->text();
+	QString email = m_ui.emailField->text();
 	try {
 		//checkUser(username.toStdString()); //tbi with database -> check if user exists
 		checkEmailPattern(email.toStdString());
@@ -65,17 +65,17 @@ void RegisterForm::onRegisterButtonClicked()
 	}
 	catch (std::exception& e)
 	{
-		ui.errorLabel->setText(e.what());
+		m_ui.errorLabel->setText(e.what());
 		return;
 
 	}
 	if (username.isEmpty())
 	{
-		ui.errorLabel->setText("Please fill in all fields.");
+		m_ui.errorLabel->setText("Please fill in all fields.");
 		return;
 	}
-	ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
-	ui.errorLabel->setText("You have successfully registered.");
+	m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
+	m_ui.errorLabel->setText("You have successfully registered.");
 	waitForSeconds(5);
 	this->close();
 	LoginForm* loginForm = new LoginForm();

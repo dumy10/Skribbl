@@ -12,7 +12,7 @@ public:
 	~RegisterForm();
 
 private:
-	Ui::RegisterFormClass ui;
+	Ui::RegisterFormClass m_ui;
 
 private:
 	void checkEmailPattern(const std::string& email);
