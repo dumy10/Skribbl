@@ -10,7 +10,6 @@ class Menu : public QMainWindow
 public:
 	Menu(QWidget *parent = nullptr);
 	~Menu();
-	void paintEvent(QPaintEvent* event);
 private:
 	Ui::MenuClass ui;
 };

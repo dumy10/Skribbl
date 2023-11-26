@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1135</width>
+    <width>1114</width>
     <height>682</height>
    </rect>
   </property>
@@ -22,15 +22,18 @@
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>290</x>
       <y>30</y>
       <width>451</width>
       <height>631</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QWidget{
-	background-color: rgb(66, 125, 157);
+     <string notr="true">QFrame {
+    background-color: rgba(0, 51, 102, 0.8); /* Albastru închis cu transparență */
+    border-radius: 15px; /* Colțuri rotunjite */
+    padding: 20px; /* Spațiu în interiorul containerului */
+    border: 2px solid rgba(255, 255, 255, 0.5); /* Bordură albă subtilă */
 }</string>
     </property>
     <property name="frameShape">
@@ -39,56 +42,6 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>451</width>
-       <height>81</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QLabel{
-background: rgb(22, 72, 99)
-}</string>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:700; color:#ffffff;&quot;&gt;Create your account&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>200</y>
-       <width>121</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background: transparent</string>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>260</y>
-       <width>121</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background: transparent</string>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="registerButton">
      <property name="geometry">
       <rect>
@@ -99,16 +52,26 @@ background: rgb(22, 72, 99)
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QPushButton{
-background-color: rgb(22, 72, 99);
-border-style: outset;
-border-width: 1px;
-border-radius: 10px;
-border-color: black;
-font: bold 14px;
-color: white;
-padding: 6px;
-}</string>
+      <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 150); /* culoare albă cu opacitate pentru a vedea prin */
+    color: rgb(0, 0, 0); /* text negru */
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px; /* colțuri rotunjite */
+    border-color: rgba(0, 0, 0, 150);
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 200); /* mai puțin transparent când treci cu mouse-ul peste */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 100); /* mai transparent când este apăsat */
+}
+</string>
      </property>
      <property name="text">
       <string>Register</string>
@@ -124,14 +87,13 @@ padding: 6px;
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QLineEdit{
-background-color: white;
-border-style: outset;
-border-width: 1px;
-border-radius: 10px;
-border-color: black;
-font: bold 14px;
-padding: 6px;
+      <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.8); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
+    color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
+    border: 1px solid rgb(255, 255, 255); /* Bordură subtilă albă */
+    border-radius: 5px; /* Margini rotunjite */
+    padding: 5px; /* Spațiere internă pentru text */
+    font-size: 16px; /* Mărimea fontului adecvată */
 }</string>
      </property>
      <property name="echoMode">
@@ -142,20 +104,19 @@ padding: 6px;
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>200</y>
+       <y>190</y>
        <width>231</width>
        <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QLineEdit{
-background-color: white;
-border-style: outset;
-border-width: 1px;
-border-radius: 10px;
-border-color: black;
-font: bold 14px;
-padding: 6px;
+      <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.8); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
+    color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
+    border: 1px solid rgb(255, 255, 255); /* Bordură subtilă albă */
+    border-radius: 5px; /* Margini rotunjite */
+    padding: 5px; /* Spațiere internă pentru text */
+    font-size: 16px; /* Mărimea fontului adecvată */
 }</string>
      </property>
      <property name="text">
@@ -172,20 +133,19 @@ padding: 6px;
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>140</y>
+       <y>120</y>
        <width>231</width>
        <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QLineEdit{
-background-color: white;
-border-style: outset;
-border-width: 1px;
-border-radius: 10px;
-border-color: black;
-font: bold 14px;
-padding: 6px;
+      <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.8); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
+    color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
+    border: 1px solid rgb(255, 255, 255); /* Bordură subtilă albă */
+    border-radius: 5px; /* Margini rotunjite */
+    padding: 5px; /* Spațiere internă pentru text */
+    font-size: 16px; /* Mărimea fontului adecvată */
 }</string>
      </property>
      <property name="text">
@@ -198,61 +158,113 @@ padding: 6px;
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>451</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel
+ { /* Presupunând că label-ul are setat objectName ca 'titleLabel' */
+    color: rgb(255, 255, 255); /* Text alb pentru contrast */
+    background-color: rgba(0, 51, 102, 0.8); /* Albastru închis cu transparență */
+    border-radius: 10px; /* Colțuri rotunjite pentru etichetă */
+    padding: 5px; /* Spațiu în interiorul etichetei */
+    font-size: 20px; /* Mărimea fontului mai mare pentru lizibilitate */
+    font-weight: bold; /* Font îngroșat */
+    text-align: center; /* Centrarea textului în etichetă */
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:700; color:#ffffff;&quot;&gt;Create your account&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>140</y>
+       <x>10</x>
+       <y>120</y>
        <width>121</width>
        <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background: transparent</string>
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast */
+    font-size: 18px; /* Mărimea fontului mai mare pentru lizibilitate */
+    font-weight: bold; /* Font îngroșat */
+}</string>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:15pt; font-weight:700; color:#ffffff;&quot;&gt;E-mail&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QLabel" name="errorLabel">
+    <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>410</y>
-       <width>381</width>
+       <x>10</x>
+       <y>190</y>
+       <width>121</width>
        <height>41</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <family>Times New Roman</family>
-       <pointsize>14</pointsize>
-       <bold>true</bold>
-       <underline>false</underline>
-       <strikeout>false</strikeout>
-      </font>
-     </property>
      <property name="styleSheet">
-      <string notr="true">QLabel{
-background:transparent;
-color: red;
-font-family:&quot;Times New Roman&quot;;
-font-weight:bold;
-font-size:14pt;
-
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast */
+    font-size: 18px; /* Mărimea fontului mai mare pentru lizibilitate */
+    font-weight: bold; /* Font îngroșat */
 }</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ff0000;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>260</y>
+       <width>121</width>
+       <height>41</height>
+      </rect>
      </property>
-     <property name="textInteractionFlags">
-      <set>Qt::NoTextInteraction</set>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast */
+    font-size: 18px; /* Mărimea fontului mai mare pentru lizibilitate */
+    font-weight: bold; /* Font îngroșat */
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1111</width>
+      <height>681</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>pattern.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <zorder>label_4</zorder>
+   <zorder>frame</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

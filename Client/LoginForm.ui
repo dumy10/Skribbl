@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1135</width>
+    <width>1051</width>
     <height>682</height>
    </rect>
   </property>
@@ -259,6 +259,27 @@ font-size:14pt;
      </property>
     </widget>
    </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1051</width>
+      <height>681</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>pattern.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <zorder>label_5</zorder>
+   <zorder>frame</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

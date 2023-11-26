@@ -18,7 +18,6 @@ private:
 	void checkEmailPattern(const std::string& email);
 	void checkPasswordPattern(const std::string& password);
 	void waitForSeconds(int seconds);
-	void paintEvent(QPaintEvent* event);
 private slots:
 	void onRegisterButtonClicked();
 };

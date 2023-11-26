@@ -8,10 +8,3 @@ Menu::Menu(QWidget *parent)
 
 Menu::~Menu()
 {}
-
-void Menu::paintEvent(QPaintEvent * event)
-{
-	QPainter painter(this);
-	QPixmap background("D:\Namenotfound1.git\Client\skribbl.png");
-	painter.drawPixmap(0, 0, width(), height(), background);
-}

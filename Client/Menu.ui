@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1083</width>
+    <width>1084</width>
     <height>694</height>
    </rect>
   </property>
@@ -23,6 +23,28 @@
       <height>81</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 150); /* culoare albă cu opacitate pentru a vedea prin */
+    color: rgb(0, 0, 0); /* text negru */
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px; /* colțuri rotunjite */
+    border-color: rgba(0, 0, 0, 150);
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 200); /* mai puțin transparent când treci cu mouse-ul peste */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 100); /* mai transparent când este apăsat */
+}
+</string>
+    </property>
     <property name="text">
      <string>Join Room</string>
     </property>
@@ -36,17 +58,76 @@
       <height>81</height>
      </rect>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgba(255, 255, 255, 150); /* culoare albă cu opacitate pentru a vedea prin */
+    color: rgb(0, 0, 0); /* text negru */
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px; /* colțuri rotunjite */
+    border-color: rgba(0, 0, 0, 150);
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 200); /* mai puțin transparent când treci cu mouse-ul peste */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 100); /* mai transparent când este apăsat */
+}
+</string>
+    </property>
     <property name="text">
      <string>Create Room</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>-10</y>
+      <width>1081</width>
+      <height>651</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>skribbl.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <zorder>label</zorder>
+   <zorder>pushButton_2</zorder>
+   <zorder>pushButton</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1083</width>
+     <width>1084</width>
      <height>22</height>
     </rect>
    </property>
