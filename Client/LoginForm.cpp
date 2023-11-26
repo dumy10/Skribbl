@@ -24,12 +24,12 @@ void LoginForm::onLoginButtonClicked()
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 
-	if (username.isEmpty() || password.isEmpty())
+	if(username.isEmpty() || password.isEmpty()) 
 	{
-		m_ui.errorLabel->setText("Please fill in all fields.");
-		return;
-	}
-
+        m_ui.errorLabel->setStyleSheet("QLabel { color: red; font-size: 16px; text-align: center; }");
+        m_ui.errorLabel->setText("Please fill in all fields.");
+        return;
+    }
 	if (username == "admin" && password == "admin")
 	{
 		QMessageBox::information(this, "Success", "You have successfully logged in.");
