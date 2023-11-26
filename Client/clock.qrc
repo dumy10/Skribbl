@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="clock">
+    <file>clock.gif</file>
+  </qresource>
+</RCC>
