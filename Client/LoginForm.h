@@ -13,8 +13,10 @@ public:
 
 private:
     Ui::LoginFormClass m_ui;
+    void paintEvent(QPaintEvent* event);
 
 private slots:
     void onLoginButtonClicked();
     void onRegisterButtonClicked();
+
 };

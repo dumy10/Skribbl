@@ -3,7 +3,8 @@
 #include <regex>
 #include <QTime>
 #include <QCoreApplication>
-
+#include <QPainter>
+#include <QPixmap>
 #include <cpr/cpr.h>
 #include <crow.h>
 
@@ -49,6 +50,13 @@ void RegisterForm::waitForSeconds(int seconds)
 	QTime delayTime = QTime::currentTime().addSecs(seconds);
 	while (QTime::currentTime() < delayTime)
 		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+void RegisterForm::paintEvent(QPaintEvent* event)
+{
+	QPainter painter(this);
+	QPixmap background("D:\Namenotfound1.git\Client\pattern.png");
+	painter.drawPixmap(0, 0, width(), height(), background);
 }
 
 

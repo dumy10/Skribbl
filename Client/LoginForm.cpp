@@ -1,9 +1,8 @@
 #include "LoginForm.h"
 #include "RegisterForm.h"
 #include <QMessageBox>
-
-
-
+#include <QPainter>
+#include <QPixmap>
 
 LoginForm::LoginForm(QWidget* parent)
 	: QMainWindow(parent)
@@ -17,6 +16,13 @@ LoginForm::LoginForm(QWidget* parent)
 
 LoginForm::~LoginForm()
 {
+}
+
+void LoginForm::paintEvent(QPaintEvent* event)
+{
+	QPainter painter(this);
+	QPixmap background("D:\Namenotfound1.git\Client\pattern.png");
+	painter.drawPixmap(0, 0, width(), height(), background);
 }
 
 void LoginForm::onLoginButtonClicked()
