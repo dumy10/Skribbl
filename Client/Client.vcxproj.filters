@@ -19,6 +19,9 @@
     <ClCompile Include="Lobby.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Class Files">
@@ -50,6 +53,9 @@
     <QtMoc Include="Lobby.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Settings.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="LoginForm.ui">
@@ -62,6 +68,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Lobby.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Settings.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

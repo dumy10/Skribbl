@@ -1,6 +1,11 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QPlainTextEdit>
+#include <QVBoxLayout>
+#include <QApplication>
+#include <QWidget>
+
 #include "ui_Lobby.h"
 
 class Lobby : public QMainWindow
@@ -10,7 +15,10 @@ class Lobby : public QMainWindow
 public:
 	Lobby(QWidget *parent = nullptr);
 	~Lobby();
+	QPlainTextEdit* textEdit;
+	void enterEvent(QEvent* event);
 
 private:
-	Ui::LobbyClass ui;
+	Ui::LobbyClass m_ui;
+
 };

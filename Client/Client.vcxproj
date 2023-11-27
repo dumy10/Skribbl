@@ -108,6 +108,7 @@
     <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="utils.cpp" />
     <QtRcc Include="LoginForm.qrc" />
     <QtUic Include="Lobby.ui" />
@@ -117,6 +118,7 @@
     <ClCompile Include="main.cpp" />
     <QtUic Include="Menu.ui" />
     <QtUic Include="RegisterForm.ui" />
+    <QtUic Include="Settings.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="RegisterForm.h" />
@@ -124,6 +126,7 @@
   <ItemGroup>
     <QtMoc Include="Menu.h" />
     <QtMoc Include="Lobby.h" />
+    <QtMoc Include="Settings.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
