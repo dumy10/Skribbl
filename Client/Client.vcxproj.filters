@@ -22,6 +22,12 @@
     <ClCompile Include="Settings.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerProfile.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OtherPlayerProfile.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Class Files">
@@ -56,6 +62,12 @@
     <QtMoc Include="Settings.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="PlayerProfile.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="OtherPlayerProfile.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="LoginForm.ui">
@@ -71,6 +83,12 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Settings.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="PlayerProfile.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="OtherPlayerProfile.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

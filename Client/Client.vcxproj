@@ -107,6 +107,8 @@
   <ItemGroup>
     <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="OtherPlayerProfile.cpp" />
+    <ClCompile Include="PlayerProfile.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -117,6 +119,8 @@
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="main.cpp" />
     <QtUic Include="Menu.ui" />
+    <QtUic Include="OtherPlayerProfile.ui" />
+    <QtUic Include="PlayerProfile.ui" />
     <QtUic Include="RegisterForm.ui" />
     <QtUic Include="Settings.ui" />
   </ItemGroup>
@@ -127,6 +131,8 @@
     <QtMoc Include="Menu.h" />
     <QtMoc Include="Lobby.h" />
     <QtMoc Include="Settings.h" />
+    <QtMoc Include="PlayerProfile.h" />
+    <QtMoc Include="OtherPlayerProfile.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
