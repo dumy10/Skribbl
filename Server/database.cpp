@@ -45,6 +45,20 @@ std::vector<Word> Database::GetWords()
 	return m_db.get_all<Word>();
 }
 
+std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords)
+{
+	std::vector<std::string> words;
+	auto wordCount = m_db.count<Word>();
+
+	for (int i = 0; i < numberOfWords; ++i) {
+		auto randomWordIndex = GenerateRandomNumber(1, wordCount);
+		auto word = m_db.get<Word>(randomWordIndex);
+		words.push_back(word.getWord());
+	}
+
+	return words;
+}
+
 bool Database::AddPlayer(const Player& player)
 {
 	try {

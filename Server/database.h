@@ -58,6 +58,7 @@ public:
 	// Gets a random word from the database
 	std::string GetRandomWord();
 	std::vector<Word> GetWords();
+	std::vector<std::string> GetCustomNumberOfWords(int numberOfWords);
 
 	// Adds a player to the database
 	bool AddPlayer(const Player& player);

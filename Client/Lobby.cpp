@@ -5,6 +5,7 @@ Lobby::Lobby(QWidget *parent)
 {
 	m_ui.setupUi(this);
 	m_ui.label_2->setText("Linkul pentru invite");
+	connect(m_ui.pushButton_3 ,  SIGNAL(clicked()), this, SLOT(onpushButton_3()));
 }
 
 Lobby::~Lobby()
