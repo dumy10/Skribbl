@@ -26,7 +26,6 @@ void LoginForm::onLoginButtonClicked()
 
 	if(username.isEmpty() || password.isEmpty()) 
 	{
-        m_ui.errorLabel->setStyleSheet("QLabel { color: red; font-size: 16px; text-align: center; }");
         m_ui.errorLabel->setText("Please fill in all fields.");
         return;
     }

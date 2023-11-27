@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>982</width>
-    <height>682</height>
+    <width>1200</width>
+    <height>780</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,13 +16,13 @@
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
     <string notr="true">QWidget{
-	background-color: rgb(155, 190, 200);
+	background: url(:/background/pattern.png);
 }</string>
    </property>
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>320</x>
       <y>30</y>
       <width>451</width>
       <height>631</height>
@@ -30,6 +30,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QFrame {
+	background: transparent;
     background-color: rgba(0, 51, 102, 0.9); /* Albastru închis cu transparență mai mare */
     border-radius: 15px; /* Colțuri rotunjite */
 }</string>
@@ -51,6 +52,7 @@
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
+	background: transparent;
     background-color: rgba(255, 255, 255, 150); /* culoare albă cu opacitate pentru a vedea prin */
     color: rgb(0, 0, 0); /* text negru */
     border-style: solid;
@@ -86,13 +88,14 @@ QPushButton:pressed {
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
+	background: transparent;
     background-color: rgba(255, 255, 255, 0.9); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
     color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
     border: 1px solid rgb(255, 255, 255); /* Bordură albă clară */
     border-radius: 5px; /* Margini rotunjite */
     padding: 5px; /* Spațiere internă pentru text */
     font-size: 16px; /* Mărimea fontului adecvată */
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Umbră pentru a scoate în evidență câmpurile de input */
+
 }</string>
      </property>
      <property name="echoMode">
@@ -110,13 +113,14 @@ QPushButton:pressed {
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
+	background: transparent;
     background-color: rgba(255, 255, 255, 0.9); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
     color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
     border: 1px solid rgb(255, 255, 255); /* Bordură albă clară */
     border-radius: 5px; /* Margini rotunjite */
     padding: 5px; /* Spațiere internă pentru text */
     font-size: 16px; /* Mărimea fontului adecvată */
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Umbră pentru a scoate în evidență câmpurile de input */
+  
 }</string>
      </property>
      <property name="text">
@@ -140,13 +144,14 @@ QPushButton:pressed {
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
+	background: transparent;
     background-color: rgba(255, 255, 255, 0.9); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
     color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
     border: 1px solid rgb(255, 255, 255); /* Bordură albă clară */
     border-radius: 5px; /* Margini rotunjite */
     padding: 5px; /* Spațiere internă pentru text */
     font-size: 16px; /* Mărimea fontului adecvată */
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Umbră pentru a scoate în evidență câmpurile de input */
+   
 }</string>
      </property>
      <property name="text">
@@ -197,7 +202,6 @@ QPushButton:pressed {
     color: rgb(255, 255, 255); /* Text alb pentru contrast */
     font-size: 18px; /* Mărimea fontului mai mare pentru lizibilitate */
     font-weight: bold; /* Font îngroșat */
-    text-shadow: 1px 1px 3px rgb(0, 0, 0); /* Umbră neagră pentru a scoate în evidență textul */
 }</string>
      </property>
      <property name="text">
@@ -218,7 +222,6 @@ QPushButton:pressed {
     color: rgb(255, 255, 255); /* Text alb pentru contrast */
     font-size: 18px; /* Mărimea fontului mai mare pentru lizibilitate */
     font-weight: bold; /* Font îngroșat */
-    text-shadow: 1px 1px 3px rgb(0, 0, 0); /* Umbră neagră pentru a scoate în evidență textul */
 }</string>
      </property>
      <property name="text">
@@ -239,7 +242,6 @@ QPushButton:pressed {
     color: rgb(255, 255, 255); /* Text alb pentru contrast */
     font-size: 18px; /* Mărimea fontului mai mare pentru lizibilitate */
     font-weight: bold; /* Font îngroșat */
-    text-shadow: 1px 1px 3px rgb(0, 0, 0); /* Umbră neagră pentru a scoate în evidență textul */
 }</string>
      </property>
      <property name="text">
@@ -255,35 +257,26 @@ QPushButton:pressed {
        <height>51</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { 
+color: red; 
+font-size: 16px; 
+text-align: center;
+ }</string>
+     </property>
      <property name="text">
       <string/>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
    </widget>
-   <widget class="QLabel" name="background">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>1111</width>
-      <height>681</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>pattern.png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <zorder>background</zorder>
-   <zorder>frame</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="background.qrc"/>
+ </resources>
  <connections/>
 </ui>

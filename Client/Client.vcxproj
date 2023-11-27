@@ -112,6 +112,7 @@
     <ClCompile Include="RegisterForm.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="utils.cpp" />
+    <QtRcc Include="background.qrc" />
     <QtRcc Include="LoginForm.qrc" />
     <QtUic Include="Lobby.ui" />
     <QtUic Include="LoginForm.ui" />

@@ -23,39 +23,31 @@ RegisterForm::~RegisterForm()
 
 void RegisterForm::checkEmailPattern(const std::string& email)
 {
+	QMessageLogger logger;
+	logger.warning("Email: %s", email.c_str());
 	if (email == "")
-	{
-		m_ui.errorLabel->setStyleSheet("QLabel { color: red; font-size: 16px; text-align: center; }");
 		throw std::exception("Email cannot be empty");
-	}
+
 	const std::regex emailPattern("^([a-zA-Z0-9_\\ \\.+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$");
+
 	if (!std::regex_match(email, emailPattern))
-	{
-		m_ui.errorLabel->setStyleSheet("QLabel { color: red; font-size: 16px; text-align: center; }");
 		throw std::exception("Invalid email");
-	}
+
 }
 
 
 void RegisterForm::checkPasswordPattern(const std::string& password)
 {
 	if (password == "")
-	{
-		m_ui.errorLabel->setStyleSheet("QLabel { color: red; font-size: 16px; text-align: center; }");
 		throw std::exception("Password cannot be empty");
-	}
+
 	if (password.length() < 6)
-	{
-		m_ui.errorLabel->setStyleSheet("QLabel { color: red; font-size: 16px; text-align: center; }");
 		throw std::exception("Password must be at least 6 characters long");
-	}
 
 	const std::regex passwordPattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");
 	if (!std::regex_match(password, passwordPattern))
-	{
-		m_ui.errorLabel->setStyleSheet("QLabel { color: red; font-size: 16px; text-align: center; }");
 		throw std::exception("Invalid password");
-	}
+
 }
 
 void RegisterForm::waitForSeconds(int seconds)
@@ -72,6 +64,9 @@ void RegisterForm::onRegisterButtonClicked()
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
+	QMessageLogger logger;
+	logger.debug() << email;
+	logger.warning("Email: %s", email.toStdString().c_str());
 	try {
 		//checkUser(username.toStdString()); //tbi with database -> check if user exists
 		checkEmailPattern(email.toStdString());
@@ -85,7 +80,6 @@ void RegisterForm::onRegisterButtonClicked()
 	}
 	if (username.isEmpty())
 	{
-		m_ui.errorLabel->setStyleSheet("QLabel { color: red; font-size: 16px; text-align: center; }");
 		m_ui.errorLabel->setText("Please fill in all fields.");
 		return;
 	}

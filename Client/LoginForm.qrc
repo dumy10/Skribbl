@@ -1,4 +1,5 @@
 <RCC>
-    <qresource prefix="LoginForm">
-    </qresource>
+  <qresource prefix="LoginForm">
+    <file>pattern.png</file>
+  </qresource>
 </RCC>
