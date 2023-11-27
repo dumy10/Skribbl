@@ -251,9 +251,9 @@ QPushButton:pressed {
     <widget class="QLabel" name="errorLabel">
      <property name="geometry">
       <rect>
-       <x>90</x>
+       <x>80</x>
        <y>410</y>
-       <width>291</width>
+       <width>311</width>
        <height>51</height>
       </rect>
      </property>

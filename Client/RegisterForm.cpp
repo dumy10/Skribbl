@@ -3,6 +3,7 @@
 #include <regex>
 #include <QTime>
 #include <QCoreApplication>
+
 //#include <cpr/cpr.h>
 //#include <crow.h>
 
@@ -23,8 +24,7 @@ RegisterForm::~RegisterForm()
 
 void RegisterForm::checkEmailPattern(const std::string& email)
 {
-	QMessageLogger logger;
-	logger.warning("Email: %s", email.c_str());
+
 	if (email == "")
 		throw std::exception("Email cannot be empty");
 
@@ -64,13 +64,10 @@ void RegisterForm::onRegisterButtonClicked()
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
-	QMessageLogger logger;
-	logger.debug() << email;
-	logger.warning("Email: %s", email.toStdString().c_str());
 	try {
-		//checkUser(username.toStdString()); //tbi with database -> check if user exists
-		checkEmailPattern(email.toStdString());
-		checkPasswordPattern(password.toStdString());
+		//checkUser(username.toUtf8().constData()); //tbi with database -> check if user exists
+		checkEmailPattern(email.toUtf8().constData());
+		checkPasswordPattern(password.toUtf8().constData());
 	}
 	catch (std::exception& e)
 	{
