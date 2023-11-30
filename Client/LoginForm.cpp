@@ -1,8 +1,10 @@
 #include "LoginForm.h"
 #include "RegisterForm.h"
+#include "Menu.h"
 #include <QMessageBox>
 #include <QPainter>
 #include <QPixmap>
+#include <QTime>
 
 LoginForm::LoginForm(QWidget* parent)
 	: QMainWindow(parent)
@@ -18,20 +20,32 @@ LoginForm::~LoginForm()
 {
 }
 
+void LoginForm::waitForSeconds(int seconds)
+{
+	QTime delayTime = QTime::currentTime().addSecs(seconds);
+	while (QTime::currentTime() < delayTime)
+		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
 
 void LoginForm::onLoginButtonClicked()
 {
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 
-	if(username.isEmpty() || password.isEmpty()) 
+	if (username.isEmpty() || password.isEmpty())
 	{
-        m_ui.errorLabel->setText("Please fill in all fields.");
-        return;
-    }
+		m_ui.errorLabel->setText("Please fill in all fields.");
+		return;
+	}
 	if (username == "admin" && password == "admin")
 	{
-		QMessageBox::information(this, "Success", "You have successfully logged in.");
+		m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
+		m_ui.errorLabel->setText("You have successfully registered.");
+		waitForSeconds(5);
+		Menu* menu = new Menu();
+		menu->show();
+		this->close();
+
 		return;
 	}
 
