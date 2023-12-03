@@ -90,7 +90,7 @@ font: 700 12pt &quot;Segoe UI&quot;;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="DrawingWidget" name="drawingArea">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -103,7 +103,7 @@ font: 700 12pt &quot;Segoe UI&quot;;</string>
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>Loc de desenat</string>
+     <string/>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
@@ -367,7 +367,7 @@ QPushButton:pressed {
    <zorder>background</zorder>
    <zorder>label_4</zorder>
    <zorder>label_5</zorder>
-   <zorder>label_7</zorder>
+   <zorder>drawingArea</zorder>
    <zorder>label_8</zorder>
    <zorder>label_10</zorder>
    <zorder>CurrentAction</zorder>
@@ -384,6 +384,13 @@ QPushButton:pressed {
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>DrawingWidget</class>
+   <extends>QLabel</extends>
+   <header>DrawingWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="background.qrc"/>
   <include location="settings.qrc"/>
