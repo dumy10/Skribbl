@@ -3,6 +3,7 @@
 #include <regex>
 #include <QTime>
 #include <QCoreApplication>
+import hashing;
 
 //#include <cpr/cpr.h>
 //#include <crow.h>
