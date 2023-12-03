@@ -5,7 +5,7 @@
 #include <QVBoxLayout>
 #include <QApplication>
 #include <QWidget>
-
+#include "DrawingWidget.h"
 #include "ui_Lobby.h"
 
 class Lobby : public QMainWindow
@@ -20,5 +20,5 @@ public:
 
 private:
 	Ui::LobbyClass m_ui;
-
+	DrawingWidget* drawingArea;
 };

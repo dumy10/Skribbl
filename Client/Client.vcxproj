@@ -105,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DrawingWidget.cpp" />
     <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="OtherPlayerProfile.cpp" />
@@ -134,6 +135,7 @@
     <QtMoc Include="Settings.h" />
     <QtMoc Include="PlayerProfile.h" />
     <QtMoc Include="OtherPlayerProfile.h" />
+    <QtMoc Include="DrawingWidget.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

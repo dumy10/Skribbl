@@ -28,6 +28,9 @@
     <ClCompile Include="OtherPlayerProfile.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="DrawingWidget.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Class Files">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="OtherPlayerProfile.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DrawingWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
