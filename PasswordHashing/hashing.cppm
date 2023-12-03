@@ -1,5 +1,6 @@
 export module hashing;
 import <string>;
+import <iostream>;
 
 export class __declspec(dllexport) Hashing
 {
@@ -10,12 +11,12 @@ public:
 	Hashing(const Hashing&) = delete;
 	Hashing(std::string inputString);
 	~Hashing();
-	std::string hashString(const std::string& inputString);
+	std::string hashString(std::string inputString);
 };
 
 Hashing::Hashing()
 {
-	//constructor for hashing class
+	m_hashedString = std::string();
 }
 
 Hashing::Hashing(std::string inputString)
@@ -28,20 +29,22 @@ Hashing::~Hashing()
 	//empty
 }
 
-std::string Hashing::hashString(const std::string& inputString)
+std::string Hashing::hashString(std::string inputString)
 {
-	//returns a hashed string equivalent to the input string+next 3 characters of the alphabet or next 3 numbers
-	m_hashedString = inputString;
-	for (char& c : m_hashedString) {
-		if (isalpha(c))
-		{
+
+	//returns a hashed string equivalent to the input string+next 3 characters of the alphabet or next 3 numbers;
+	std::string hashedString;
+	for (char& c : inputString) {
+		if (isalpha(c)) {
 			char base = (isupper(c)) ? 'A' : 'a';
 			c = base + (c - base + 3) % 26;
+			hashedString += c;
 		}
-		else if (isdigit(c))
-		{
+		else if (isdigit(c)) {
 			c = '0' + (c - '0' + 3) % 10;
+			hashedString += c;
 		}
 	}
-	return m_hashedString;
+	return hashedString;
+
 }
