@@ -3,6 +3,7 @@
 #include <regex>
 #include <QTime>
 #include <QCoreApplication>
+#include <QDebug>
 import hashing;
 
 //#include <cpr/cpr.h>
@@ -65,7 +66,18 @@ void RegisterForm::onRegisterButtonClicked()
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
+	std::string pwdToString = password.toStdString();
+
 	try {
+		QMessageLogger logger;
+		logger.debug() << password;
+		QByteArray pwdByteArray= password.toUtf8();
+		std::string pwdToString = pwdByteArray.constData();
+		const char* pwdChar = pwdByteArray.constData();
+		Hashing hasher;
+		//std::string passwordToString = password.toUtf8().constData();
+		std::string hashedPwd = hasher.hashString(pwdToString);
+		logger.warning("Hashed password: %s", hashedPwd.c_str());
 		//checkUser(username.toUtf8().constData()); //tbi with database -> check if user exists
 		checkEmailPattern(email.toUtf8().constData());
 		checkPasswordPattern(password.toUtf8().constData());
@@ -81,12 +93,13 @@ void RegisterForm::onRegisterButtonClicked()
 		m_ui.errorLabel->setText("Please fill in all fields.");
 		return;
 	}
+
 	m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 	m_ui.errorLabel->setText("You have successfully registered.");
 	waitForSeconds(5);
-	this->close();
-	LoginForm* loginForm = new LoginForm();
-	loginForm->show();
+	//this->close();
+	//LoginForm* loginForm = new LoginForm();
+	//loginForm->show();
 
 
 }
