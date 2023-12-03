@@ -66,3 +66,15 @@ void DrawingWidget::setEraser()
     pen.setWidth(10); // Puteti ajusta grosimea pentru eraser
     erasing = true;
 }
+
+void DrawingWidget::clearDrawing() 
+{
+    image.fill(Qt::white); 
+    update();
+}
+
+
+void DrawingWidget::setPenColor(const QColor& newColor) 
+{
+    pen.setColor(newColor);
+}

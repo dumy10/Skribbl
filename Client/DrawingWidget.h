@@ -11,7 +11,8 @@ class DrawingWidget : public QWidget {
 
 public:
     explicit DrawingWidget(QWidget* parent = nullptr);
-
+    void clearDrawing();
+    void setPenColor(const QColor& newColor);
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
