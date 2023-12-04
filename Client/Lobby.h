@@ -1,24 +1,26 @@
-#pragma once
+﻿#ifndef LOBBY_H
+#define LOBBY_H
 
 #include <QMainWindow>
-#include <QPlainTextEdit>
-#include <QVBoxLayout>
-#include <QApplication>
-#include <QWidget>
-#include "DrawingWidget.h"
 #include "ui_Lobby.h"
+#include "DrawingWidget.h"
 
-class Lobby : public QMainWindow
-{
-	Q_OBJECT
+class Lobby : public QMainWindow {
+    Q_OBJECT
 
 public:
-	Lobby(QWidget *parent = nullptr);
-	~Lobby();
-	QPlainTextEdit* textEdit;
-	void enterEvent(QEvent* event);
+    explicit Lobby(QWidget* parent = nullptr);
+    ~Lobby();
+
+public slots:
+    void clearDrawingArea();
+    void setPenColorGreen();
+    void setPenColorRed();
+    void setPenColorBlue();
 
 private:
-	Ui::LobbyClass m_ui;
-	DrawingWidget* drawingArea;
+    Ui::LobbyClass m_ui;
+    DrawingWidget* drawingArea;
 };
+
+#endif // LOBBY_H
