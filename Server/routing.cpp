@@ -8,6 +8,7 @@ using namespace skribbl;
 
 void Routing::run(Database& storage)
 {
+
 	CROW_ROUTE(m_app, "/")([]() {
 		return "Hello, Skribbl World!"; });
 	CROW_ROUTE(m_app, "/randomWord")([&]() {
@@ -32,6 +33,26 @@ void Routing::run(Database& storage)
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		//m_game.leaderboard();
 		return crow::response{ "The winner is: " };
+		});
+	CROW_ROUTE(m_app, "/modifyRound")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		//m_game.modifyRound();
+		return crow::response{ "Round modified!" };
+		});
+	CROW_ROUTE(m_app, "/removePlayer")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		//m_game.removePlayer();
+		return crow::response{ "Player removed!" };
+		});
+	CROW_ROUTE(m_app, "/addAdmin")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		//m_game.addAdmin();
+		return crow::response{ "Admin added!" };
+		});
+	CROW_ROUTE(m_app, "/removeAdmin")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		//m_game.removeAdmin();
+		return crow::response{ "Admin removed!" };
 		});
 	m_app.port(18080).multithreaded().run();
 }
