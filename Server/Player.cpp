@@ -57,6 +57,11 @@ void skribbl::Player::makeAdmin()
 	this->is_admin = true;
 }
 
+void skribbl::Player::removeAdmin()
+{
+	this->is_admin = false;
+}
+
 int Player::getId() const
 {
 	return this->m_id;

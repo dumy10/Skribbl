@@ -11,6 +11,7 @@ namespace skribbl
 	public:
 		void addUser(const Player& player);
 		void removeUser(const Player& player);
+		//more functions for the admins should be added here or in game
 
 	private:
 		std::string lobbyLink;

@@ -18,6 +18,8 @@ namespace skribbl
 		void startGame();
 		void endGame();
 		Player getWinner(const Leaderboard& leaderboard) const;
+		void makeAdmin(const Player& player);
+		void removeAdmin(const Player& player);
 
 	private:
 		std::vector<Player> m_players;

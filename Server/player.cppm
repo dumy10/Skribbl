@@ -22,6 +22,7 @@ namespace skribbl
         void setPoints(int points);
         void addPoints(int points);
         void makeAdmin();
+        void removeAdmin();
 
         bool operator<(const Player& player);
         bool operator>(const Player& player);

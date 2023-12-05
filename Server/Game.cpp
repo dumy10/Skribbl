@@ -80,3 +80,27 @@ Player Game::getWinner(const Leaderboard& leaderboard) const
 	else
 		return leaderboard.getLeaderboard()[0];
 }
+
+void skribbl::Game::makeAdmin(const Player& player)
+{
+	for (size_t i = 0; i < this->m_players.size(); i++)
+	{
+		if (this->m_players[i] == player)
+		{
+			this->m_players[i].makeAdmin();
+			break;
+		}
+	}
+}
+
+void skribbl::Game::removeAdmin(const Player& player)
+{
+	for (size_t i = 0; i < this->m_players.size(); i++)
+	{
+		if (this->m_players[i] == player)
+		{
+			this->m_players[i].removeAdmin();
+			break;
+		}
+	}
+}
