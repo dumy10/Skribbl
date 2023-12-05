@@ -23,5 +23,7 @@ namespace skribbl
 		std::vector<Player> m_players;
 		std::vector<Round> m_rounds;
 		static const size_t kNoOfRounds{ 4 };
+
+		//leaderboard should come here and m_roundNumber should come here also . We should remember only one round , not a vector of rounds
 	};
 }
