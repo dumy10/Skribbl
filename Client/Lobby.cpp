@@ -5,7 +5,6 @@ Lobby::Lobby(QWidget* parent)
     : QMainWindow(parent) {
     m_ui.setupUi(this);
 
-    // Conectati butonul Clear la slotul clearDrawingArea
     connect(m_ui.Clear, &QPushButton::clicked, this, &Lobby::clearDrawingArea);
     connect(m_ui.Verde, &QPushButton::clicked, this, &Lobby::setPenColorGreen);
     connect(m_ui.Rosu, &QPushButton::clicked, this, &Lobby::setPenColorRed);

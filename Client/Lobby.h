@@ -17,8 +17,6 @@ public slots:
     void setPenColorGreen();
     void setPenColorRed();
     void setPenColorBlue();
-
-    //there is a QPushButton in Lobby.ui called SettingsButton that should open the Settings.ui window
     void openSettings();
 
 private:
