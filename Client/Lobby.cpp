@@ -1,4 +1,5 @@
 #include "Lobby.h"
+#include "Settings.h"
 
 Lobby::Lobby(QWidget* parent)
     : QMainWindow(parent) {
@@ -9,6 +10,7 @@ Lobby::Lobby(QWidget* parent)
     connect(m_ui.Verde, &QPushButton::clicked, this, &Lobby::setPenColorGreen);
     connect(m_ui.Rosu, &QPushButton::clicked, this, &Lobby::setPenColorRed);
     connect(m_ui.Albastru, &QPushButton::clicked, this, &Lobby::setPenColorBlue);
+    connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Lobby::openSettings);
 }
 
 Lobby::~Lobby() 
@@ -33,4 +35,11 @@ void Lobby::setPenColorRed() {
 
 void Lobby::setPenColorBlue() {
     drawingArea->setPenColor(Qt::blue);
+}
+
+void Lobby::openSettings()
+{
+    Settings* settings = new Settings(this);
+    settings->setWindowOpacity(0.5);
+    settings->show();
 }
