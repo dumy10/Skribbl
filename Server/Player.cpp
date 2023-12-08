@@ -11,7 +11,8 @@ Player::Player()
 
 }
 
-Player::Player(const std::string& name, const std::string& password, const std::string& email) :
+Player::Player(int id, const std::string& name, const std::string& password, const std::string& email) :
+	m_id{ id },
 	m_name{ name },
 	m_password{ password },
 	m_email{ email },

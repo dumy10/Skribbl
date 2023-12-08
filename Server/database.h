@@ -13,13 +13,6 @@ import word;
 
 using namespace skribbl;
 
-/*
-Todo:
-A table with the words should be created that should be initiallized with the words from the file
-
-*/
-
-
 inline auto CreateStorage(const std::string& filename)
 {
 	return sql::make_storage(
@@ -44,9 +37,6 @@ using Storage = decltype(CreateStorage(""));
 
 /*
 TODO:
-- Add a player to the database (register)
-- Check if a player exists in the database
-- Get a player from the database
 - Allow the player to login (check if user exists and if the password is correct)
 */
 
@@ -61,13 +51,10 @@ public:
 	std::vector<std::string> GetCustomNumberOfWords(int numberOfWords);
 
 	// Adds a player to the database
-	bool AddPlayer(const Player& player);
+	bool AddUser(const std::string& username, const std::string& password, const std::string& email);
 
-	// Checks if the player exists in the database
-	bool PlayerExists(const Player& player);
-
-	// Gets the player from the database
-	Player GetPlayer(const Player& player);
+	//Checks if a username exists in the database
+	bool CheckUsername(const std::string& username);
 
 private:
 	void PopulateStorage();

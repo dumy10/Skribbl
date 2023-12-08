@@ -24,7 +24,7 @@ void Database::PopulateStorage()
 		std::cerr << "Failed to open words.txt\n";
 		return;
 	}
-	while(std::getline(input,word))
+	while (std::getline(input, word))
 	{
 		words.emplace_back(Word{ -1, std::move(word) });
 	}
@@ -59,45 +59,30 @@ std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords)
 	return words;
 }
 
-bool Database::AddPlayer(const Player& player)
+
+bool Database::AddUser(const std::string& username, const std::string& password, const std::string& email)
 {
 	try {
-		if (PlayerExists(player)) {
-			std::cerr << "Player with the same name or email already exists.\n";
-			return false;
-		}
-
-		auto playerId = m_db.insert(player);
-
-		if (playerId > 0) {
-			std::cout << "Player added successfully with ID: " << playerId << "\n";
-			return true;
-		}
-		else {
-			std::cerr << "Failed to add player to the database.\n";
-			return false;
-		}
+		m_db.insert(Player{ -1, username, password, email});
+		return true;
 	}
 	catch (const std::exception& e) {
-		std::cerr << "Exception occurred while adding player: " << e.what() << "\n";
+		std::cerr << "Exception occurred while adding user: " << e.what() << "\n";
 		return false;
 	}
 }
 
-bool Database::PlayerExists(const Player& player) {
+bool Database::CheckUsername(const std::string& username)
+{
 	try {
-		auto existingPlayers1 = m_db.get_all<Player>(
-			sql::where(sql::c(&Player::getName) == player.getName())
+		auto existingPlayers = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::getName) == username)
 		);
 
-		auto existingPlayers2 = m_db.get_all<Player>(
-			sql::where(sql::c(&Player::getEmail) == player.getEmail())
-		);
-
-		return !existingPlayers1.empty() || !existingPlayers2.empty();
+		return !existingPlayers.empty();
 	}
 	catch (const std::exception& e) {
-		std::cerr << "Exception occurred while checking if player exists: " << e.what() << "\n";
+		std::cerr << "Exception occurred while checking if username exists: " << e.what() << "\n";
 		return false;
 	}
 }

@@ -7,7 +7,7 @@ namespace skribbl
     {
     public:
         Player();
-        Player(const std::string& name, const std::string& password, const std::string& email);
+        Player(int id, const std::string& name, const std::string& password, const std::string& email);
 
         const std::string getName() const noexcept;
         const std::string getPassword() const noexcept;
