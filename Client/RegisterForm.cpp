@@ -4,7 +4,7 @@
 #include <QTime>
 #include <QCoreApplication>
 #include <QDebug>
-import hashing;
+#include "Hashing.h"
 
 //#include <cpr/cpr.h>
 //#include <crow.h>
@@ -23,6 +23,15 @@ RegisterForm::~RegisterForm()
 	//empty
 }
 
+void RegisterForm::CheckUsername(const std::string& username)
+{
+	if(username == "")
+		throw std::exception("Username cannot be empty");
+	/*
+	Send a request to the server to check if the username is already taken
+	*/
+
+}
 
 void RegisterForm::checkEmailPattern(const std::string& email)
 {
@@ -36,7 +45,6 @@ void RegisterForm::checkEmailPattern(const std::string& email)
 		throw std::exception("Invalid email");
 
 }
-
 
 void RegisterForm::checkPasswordPattern(const std::string& password)
 {
@@ -59,6 +67,12 @@ void RegisterForm::waitForSeconds(int seconds)
 		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
+/*
+TODO:
+- check if user exists
+- Hasher getting a null password passed
+- add user to database 
+*/
 
 void RegisterForm::onRegisterButtonClicked()
 {
@@ -66,18 +80,12 @@ void RegisterForm::onRegisterButtonClicked()
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
-	std::string pwdToString = password.toStdString();
-
+	std::string stringPassword = password.toUtf8().data();
 	try {
 		QMessageLogger logger;
 		logger.debug() << password;
-		QByteArray pwdByteArray= password.toUtf8();
-		std::string pwdToString = pwdByteArray.constData();
-		const char* pwdChar = pwdByteArray.constData();
-		Hashing hasher;
-		//std::string passwordToString = password.toUtf8().constData();
-		std::string hashedPwd = hasher.hashString(pwdToString);
-		logger.warning("Hashed password: %s", hashedPwd.c_str());
+		Hasher::HashPassword(stringPassword);
+		//logger.warning("Hashed password: %s", hashedPwd.c_str());
 		//checkUser(username.toUtf8().constData()); //tbi with database -> check if user exists
 		checkEmailPattern(email.toUtf8().constData());
 		checkPasswordPattern(password.toUtf8().constData());
@@ -90,7 +98,7 @@ void RegisterForm::onRegisterButtonClicked()
 	}
 	if (username.isEmpty())
 	{
-		m_ui.errorLabel->setText("Please fill in all fields.");
+		m_ui.errorLabel->setText("Username can't be empty.");
 		return;
 	}
 
@@ -100,6 +108,5 @@ void RegisterForm::onRegisterButtonClicked()
 	//this->close();
 	//LoginForm* loginForm = new LoginForm();
 	//loginForm->show();
-
 
 }

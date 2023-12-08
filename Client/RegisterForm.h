@@ -15,6 +15,7 @@ private:
 	Ui::RegisterFormClass m_ui;
 
 private:
+	void CheckUsername(const std::string& username);
 	void checkEmailPattern(const std::string& email);
 	void checkPasswordPattern(const std::string& password);
 	void waitForSeconds(int seconds);
