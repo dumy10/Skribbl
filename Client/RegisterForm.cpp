@@ -6,8 +6,8 @@
 #include <QDebug>
 #include "Hashing.h"
 
-//#include <cpr/cpr.h>
-//#include <crow.h>
+#include <cpr/cpr.h>
+#include <crow.h>
 
 RegisterForm::RegisterForm(QWidget* parent)
 	: QMainWindow(parent)
@@ -27,13 +27,19 @@ void RegisterForm::CheckUsername(const std::string& username)
 {
 	if(username == "")
 		throw std::exception("Username cannot be empty");
-	/*
-	Send a request to the server to check if the username is already taken
-	*/
+
+	cpr::Response response = cpr::Get(cpr::Url{ "http://localhost:18080/checkUsername" },
+				cpr::Parameters{ {"username", username} });
+
+	if (response.status_code != 200)
+		throw std::exception("Server error");
+
+	if (response.text == "true")
+		throw std::exception("Username already taken");
 
 }
 
-void RegisterForm::checkEmailPattern(const std::string& email)
+void RegisterForm::CheckEmailPattern(const std::string& email)
 {
 
 	if (email == "")
@@ -46,7 +52,7 @@ void RegisterForm::checkEmailPattern(const std::string& email)
 
 }
 
-void RegisterForm::checkPasswordPattern(const std::string& password)
+void RegisterForm::CheckPasswordPattern(const std::string& password)
 {
 	if (password == "")
 		throw std::exception("Password cannot be empty");
@@ -60,7 +66,19 @@ void RegisterForm::checkPasswordPattern(const std::string& password)
 
 }
 
-void RegisterForm::waitForSeconds(int seconds)
+void RegisterForm::AddUserToDataBase(const std::string& username, const std::string& password, const std::string& email)
+{
+	cpr::Response response = cpr::Get(cpr::Url{ "http://localhost:18080/addUser" },
+				cpr::Parameters{ {"username", username}, {"password", password}, {"email", email} });
+
+	if (response.status_code != 200)
+		throw std::exception("Server error");
+
+	if (response.text == "false")
+		throw std::exception("Could not add user to database");
+}
+
+void RegisterForm::WaitForSeconds(int seconds)
 {
 	QTime delayTime = QTime::currentTime().addSecs(seconds);
 	while (QTime::currentTime() < delayTime)
@@ -69,9 +87,7 @@ void RegisterForm::waitForSeconds(int seconds)
 
 /*
 TODO:
-- check if user exists
 - Hasher getting a null password passed
-- add user to database 
 */
 
 void RegisterForm::onRegisterButtonClicked()
@@ -80,15 +96,17 @@ void RegisterForm::onRegisterButtonClicked()
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
-	std::string stringPassword = password.toUtf8().data();
+	//std::string stringPassword = password.toUtf8().data();
 	try {
-		QMessageLogger logger;
-		logger.debug() << password;
-		Hasher::HashPassword(stringPassword);
+		//QMessageLogger logger;
+		//logger.debug() << password;
+		//Hasher::HashPassword(stringPassword);
 		//logger.warning("Hashed password: %s", hashedPwd.c_str());
-		//checkUser(username.toUtf8().constData()); //tbi with database -> check if user exists
-		checkEmailPattern(email.toUtf8().constData());
-		checkPasswordPattern(password.toUtf8().constData());
+		CheckUsername(username.toUtf8().constData()); 
+		CheckEmailPattern(email.toUtf8().constData());
+		CheckPasswordPattern(password.toUtf8().constData());
+
+		AddUserToDataBase(username.toUtf8().constData(), password.toUtf8().constData(), email.toUtf8().constData());
 	}
 	catch (std::exception& e)
 	{
@@ -96,17 +114,12 @@ void RegisterForm::onRegisterButtonClicked()
 		return;
 
 	}
-	if (username.isEmpty())
-	{
-		m_ui.errorLabel->setText("Username can't be empty.");
-		return;
-	}
 
 	m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 	m_ui.errorLabel->setText("You have successfully registered.");
-	waitForSeconds(5);
-	//this->close();
-	//LoginForm* loginForm = new LoginForm();
-	//loginForm->show();
+	WaitForSeconds(5);
+	this->close();
+	LoginForm* loginForm = new LoginForm();
+	loginForm->show();
 
 }

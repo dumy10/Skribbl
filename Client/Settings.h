@@ -12,5 +12,5 @@ public:
 	~Settings();
 
 private:
-	Ui::SettingsClass ui;
+	Ui::SettingsClass m_ui;
 };

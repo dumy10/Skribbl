@@ -15,7 +15,7 @@ private:
     Ui::LoginFormClass m_ui;
 
 private:
-    void waitForSeconds(int seconds);
+    void WaitForSeconds(int seconds);
 
 private slots:
     void onLoginButtonClicked();

@@ -11,5 +11,5 @@ public:
 	Menu(QWidget *parent = nullptr);
 	~Menu();
 private:
-	Ui::MenuClass ui;
+	Ui::MenuClass m_ui;
 };

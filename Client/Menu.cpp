@@ -3,7 +3,7 @@
 Menu::Menu(QWidget *parent)
 	: QMainWindow(parent)
 {
-	ui.setupUi(this);
+	m_ui.setupUi(this);
 }
 
 Menu::~Menu()

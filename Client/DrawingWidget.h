@@ -11,8 +11,8 @@ class DrawingWidget : public QWidget {
 
 public:
     explicit DrawingWidget(QWidget* parent = nullptr);
-    void clearDrawing();
-    void setPenColor(const QColor& newColor);
+    void ClearDrawing();
+    void SetPenColor(const QColor& newColor);
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
@@ -20,13 +20,13 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
-    bool drawing; // Indica daca se deseneaza
-    bool erasing; // Indica daca se sterge
-    QImage image; // Imaginea pe care se deseneaza
-    QPoint lastPoint; // Ultimul punct pentru desen
-    QPen pen; // Stiloul folosit pentru desenare si stergere
-    void drawLineTo(const QPoint& endPoint); // Traseaza o linie pana la punctul dat
-    void setEraser(); // Pregateste stiloul pentru stergere
+    bool m_isDrawing; // Indica daca se deseneaza
+    bool m_isErasing; // Indica daca se sterge
+    QImage m_image; // Imaginea pe care se deseneaza
+    QPoint m_lastPoint; // Ultimul punct pentru desen
+    QPen m_pen; // Stiloul folosit pentru desenare si stergere
+    void DrawLineTo(const QPoint& endPoint); // Traseaza o linie pana la punctul dat
+    void SetEraser(); // Pregateste stiloul pentru stergere
 };
 
 #endif // DRAWINGWIDGET_H

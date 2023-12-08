@@ -12,5 +12,5 @@ public:
 	~OtherPlayerProfile();
 
 private:
-	Ui::OtherPlayerProfileClass ui;
+	Ui::OtherPlayerProfileClass m_ui;
 };

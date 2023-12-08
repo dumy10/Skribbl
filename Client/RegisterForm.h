@@ -16,9 +16,10 @@ private:
 
 private:
 	void CheckUsername(const std::string& username);
-	void checkEmailPattern(const std::string& email);
-	void checkPasswordPattern(const std::string& password);
-	void waitForSeconds(int seconds);
+	void CheckEmailPattern(const std::string& email);
+	void CheckPasswordPattern(const std::string& password);
+	void AddUserToDataBase(const std::string& username, const std::string& password, const std::string& email);
+	void WaitForSeconds(int seconds);
 private slots:
 	void onRegisterButtonClicked();
 };

@@ -21,7 +21,7 @@ public slots:
 
 private:
     Ui::LobbyClass m_ui;
-    DrawingWidget* drawingArea;
+    DrawingWidget* m_drawingArea;
 };
 
 #endif // LOBBY_H

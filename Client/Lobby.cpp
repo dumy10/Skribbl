@@ -21,19 +21,19 @@ void Lobby::clearDrawingArea()
 {
     DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
     if (drawingArea) 
-        drawingArea->clearDrawing();
+        drawingArea->ClearDrawing();
 }
 
 void Lobby::setPenColorGreen() {
-    drawingArea->setPenColor(Qt::green);
+    m_drawingArea->SetPenColor(Qt::green);
 }
 
 void Lobby::setPenColorRed() {
-    drawingArea->setPenColor(Qt::red);
+    m_drawingArea->SetPenColor(Qt::red);
 }
 
 void Lobby::setPenColorBlue() {
-    drawingArea->setPenColor(Qt::blue);
+    m_drawingArea->SetPenColor(Qt::blue);
 }
 
 void Lobby::openSettings()

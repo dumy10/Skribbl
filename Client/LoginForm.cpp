@@ -20,7 +20,7 @@ LoginForm::~LoginForm()
 {
 }
 
-void LoginForm::waitForSeconds(int seconds)
+void LoginForm::WaitForSeconds(int seconds)
 {
 	QTime delayTime = QTime::currentTime().addSecs(seconds);
 	while (QTime::currentTime() < delayTime)
@@ -41,7 +41,7 @@ void LoginForm::onLoginButtonClicked()
 	{
 		m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 		m_ui.errorLabel->setText("You have successfully registered.");
-		waitForSeconds(5);
+		WaitForSeconds(5);
 		Menu* menu = new Menu();
 		menu->show();
 		this->close();

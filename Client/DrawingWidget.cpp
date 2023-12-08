@@ -1,46 +1,46 @@
 #include "DrawingWidget.h"
 
-DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), drawing(false), erasing(false)
+DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), m_isDrawing(false), m_isErasing(false)
 {
     setAttribute(Qt::WA_StaticContents); // Continutul widgetului ramane static la redimensionare
-    image = QImage(500, 500, QImage::Format_ARGB32); // Initializare imagine
-    image.fill(Qt::white); // Umple imaginea cu alb
-    pen = QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // Initializare stilou
+    m_image = QImage(500, 500, QImage::Format_ARGB32); // Initializare imagine
+    m_image.fill(Qt::white); // Umple imaginea cu alb
+    m_pen = QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // Initializare stilou
 }
 
 void DrawingWidget::mousePressEvent(QMouseEvent* event) 
 {
     if (event->button() == Qt::LeftButton) 
     {
-        lastPoint = event->pos();
-        drawing = true;
-        if (erasing) 
+        m_lastPoint = event->pos();
+        m_isDrawing = true;
+        if (m_isErasing) 
         {
             // Daca se sterge, seteaza stiloul la modul de desenare
-            pen.setColor(Qt::black);
-            erasing = false;
+            m_pen.setColor(Qt::black);
+            m_isErasing = false;
         }
     }
     else if (event->button() == Qt::RightButton) 
     {
-        lastPoint = event->pos();
-        drawing = true;
-        setEraser(); // Seteaza modul de stergere
+        m_lastPoint = event->pos();
+        m_isDrawing = true;
+        SetEraser(); // Seteaza modul de stergere
     }
 }
 
 void DrawingWidget::mouseMoveEvent(QMouseEvent* event) 
 {
-    if ((event->buttons() & (Qt::LeftButton | Qt::RightButton)) && drawing)
-        drawLineTo(event->pos());
+    if ((event->buttons() & (Qt::LeftButton | Qt::RightButton)) && m_isDrawing)
+        DrawLineTo(event->pos());
 }
 
 void DrawingWidget::mouseReleaseEvent(QMouseEvent* event) 
 {
-    if ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && drawing) 
+    if ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && m_isDrawing) 
     {
-        drawLineTo(event->pos());
-        drawing = false;
+        DrawLineTo(event->pos());
+        m_isDrawing = false;
     }
 }
 
@@ -48,33 +48,33 @@ void DrawingWidget::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
     QRect dirtyRect = event->rect();
-    painter.drawImage(dirtyRect, image, dirtyRect);
+    painter.drawImage(dirtyRect, m_image, dirtyRect);
 }
 
-void DrawingWidget::drawLineTo(const QPoint& endPoint)
+void DrawingWidget::DrawLineTo(const QPoint& endPoint)
 {
-    QPainter painter(&image);
-    painter.setPen(pen);
-    painter.drawLine(lastPoint, endPoint);
-    lastPoint = endPoint;
-    update(QRect(lastPoint, endPoint).normalized().adjusted(-1, -1, 1, 1));
+    QPainter painter(&m_image);
+    painter.setPen(m_pen);
+    painter.drawLine(m_lastPoint, endPoint);
+    m_lastPoint = endPoint;
+    update(QRect(m_lastPoint, endPoint).normalized().adjusted(-1, -1, 1, 1));
 }
 
-void DrawingWidget::setEraser() 
+void DrawingWidget::SetEraser() 
 {
-    pen.setColor(Qt::white); // Culoarea de fundal pentru stergere
-    pen.setWidth(10); // Puteti ajusta grosimea pentru eraser
-    erasing = true;
+    m_pen.setColor(Qt::white); // Culoarea de fundal pentru stergere
+    m_pen.setWidth(10); // Puteti ajusta grosimea pentru eraser
+    m_isErasing = true;
 }
 
-void DrawingWidget::clearDrawing() 
+void DrawingWidget::ClearDrawing() 
 {
-    image.fill(Qt::white); 
+    m_image.fill(Qt::white); 
     update();
 }
 
 
-void DrawingWidget::setPenColor(const QColor& newColor) 
+void DrawingWidget::SetPenColor(const QColor& newColor) 
 {
-    pen.setColor(newColor);
+    m_pen.setColor(newColor);
 }

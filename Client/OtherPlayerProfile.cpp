@@ -3,7 +3,7 @@
 OtherPlayerProfile::OtherPlayerProfile(QWidget *parent)
 	: QMainWindow(parent)
 {
-	ui.setupUi(this);
+	m_ui.setupUi(this);
 }
 
 //make it a little bit transparent in the future to match the original game settings
