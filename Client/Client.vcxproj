@@ -106,6 +106,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DrawingWidget.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="OtherPlayerProfile.cpp" />
@@ -114,7 +115,9 @@
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="utils.cpp" />
     <QtRcc Include="background.qrc" />
+    <QtRcc Include="Lobby.qrc" />
     <QtRcc Include="LoginForm.qrc" />
+    <QtUic Include="Game.ui" />
     <QtUic Include="Lobby.ui" />
     <QtUic Include="LoginForm.ui" />
     <QtMoc Include="LoginForm.h" />
@@ -131,11 +134,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Menu.h" />
-    <QtMoc Include="Lobby.h" />
+    <QtMoc Include="Game.h" />
     <QtMoc Include="Settings.h" />
     <QtMoc Include="PlayerProfile.h" />
     <QtMoc Include="OtherPlayerProfile.h" />
     <QtMoc Include="DrawingWidget.h" />
+    <QtMoc Include="Lobby.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

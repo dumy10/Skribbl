@@ -12,4 +12,7 @@ public:
 	~Menu();
 private:
 	Ui::MenuClass m_ui;
+private slots:
+	void onCreateButtonClicked();
+	void onJoinButtonClicked();
 };

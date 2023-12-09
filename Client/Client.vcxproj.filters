@@ -16,7 +16,7 @@
     <ClCompile Include="Menu.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lobby.cpp">
+    <ClCompile Include="Game.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
     <ClCompile Include="Settings.cpp">
@@ -29,6 +29,9 @@
       <Filter>Class Files</Filter>
     </ClCompile>
     <ClCompile Include="DrawingWidget.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lobby.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,7 +62,7 @@
     <QtMoc Include="Menu.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Lobby.h">
+    <QtMoc Include="Game.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Settings.h">
@@ -74,6 +77,9 @@
     <QtMoc Include="DrawingWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Lobby.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="LoginForm.ui">
@@ -85,7 +91,7 @@
     <QtUic Include="Menu.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtUic Include="Lobby.ui">
+    <QtUic Include="Game.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Settings.ui">
@@ -97,12 +103,18 @@
     <QtUic Include="OtherPlayerProfile.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="Lobby.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="LoginForm.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
     <QtRcc Include="background.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="Lobby.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
   </ItemGroup>
