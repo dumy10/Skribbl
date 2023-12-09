@@ -76,17 +76,17 @@ void LoginForm::ValidateUserLogin(const std::string& username, const std::string
 
 void LoginForm::onLoginButtonClicked()
 {
-	QString username = m_ui.usernameField->text();
-	QString password = m_ui.passwordField->text();
+	std::string username = m_ui.usernameField->text().toUtf8().constData();
+	std::string password = m_ui.passwordField->text().toUtf8().constData();
 
 	try
 	{
-		ValidateUserLogin(username.toUtf8().constData(), password.toUtf8().constData());
+		ValidateUserLogin(username, password);
 
 		m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 		m_ui.errorLabel->setText("You have successfully logged into your account.");
-		WaitForSeconds(5);
-		Menu* menu = new Menu();
+		WaitForSeconds(1);
+		Menu* menu = new Menu(std::move(username));
 		menu->show();
 		this->close();
 	}

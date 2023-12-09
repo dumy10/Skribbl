@@ -9,12 +9,15 @@ class Lobby : public QMainWindow
 	Q_OBJECT
 
 public:
-	Lobby(QWidget* parent = 0);
+	Lobby(const std::string& username, QWidget* parent = nullptr);
 	~Lobby();
 
-public slots:
+private slots:
 
 private:
 	Ui::Lobby m_ui;
+	std::string m_username;
+private:
+	void initializeAdmin();
 };
 #endif // !LOBBY_H

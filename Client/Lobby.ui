@@ -116,6 +116,9 @@ background:url(:/background/pattern.png);
      <property name="echoMode">
       <enum>QLineEdit::Normal</enum>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <property name="readOnly">
       <bool>true</bool>
      </property>
@@ -213,6 +216,9 @@ QAbstractItemView{
      <property name="echoMode">
       <enum>QLineEdit::Normal</enum>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <property name="dragEnabled">
       <bool>false</bool>
      </property>
@@ -241,7 +247,7 @@ QAbstractItemView{
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="player1">
      <property name="geometry">
       <rect>
        <x>150</x>
@@ -262,8 +268,11 @@ QAbstractItemView{
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;
 &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
-    <widget class="QLabel" name="label_6">
+    <widget class="QLabel" name="player2">
      <property name="geometry">
       <rect>
        <x>150</x>
@@ -283,8 +292,11 @@ QAbstractItemView{
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
-    <widget class="QLabel" name="label_7">
+    <widget class="QLabel" name="player3">
      <property name="geometry">
       <rect>
        <x>150</x>
@@ -304,8 +316,11 @@ QAbstractItemView{
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
-    <widget class="QLabel" name="label_8">
+    <widget class="QLabel" name="player4">
      <property name="geometry">
       <rect>
        <x>150</x>
@@ -324,6 +339,9 @@ QAbstractItemView{
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </widget>

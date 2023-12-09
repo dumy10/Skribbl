@@ -8,10 +8,11 @@ class Menu : public QMainWindow
 	Q_OBJECT
 
 public:
-	Menu(QWidget *parent = nullptr);
+	Menu(const std::string& username, QWidget* parent = nullptr);
 	~Menu();
 private:
 	Ui::MenuClass m_ui;
+	std::string m_username;
 private slots:
 	void onCreateButtonClicked();
 	void onJoinButtonClicked();
