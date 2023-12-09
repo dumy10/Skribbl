@@ -2,7 +2,8 @@
 #include <QtWidgets/QApplication>
 
 /*
-Use to login: 
+Use to login:
+username: abcabc
 username: abc
 password: Abcabc1
 (make sure server is running)

@@ -35,11 +35,6 @@ inline auto CreateStorage(const std::string& filename)
 
 using Storage = decltype(CreateStorage(""));
 
-/*
-TODO:
-- Allow the player to login (check if user exists and if the password is correct)
-*/
-
 class Database
 {
 public:

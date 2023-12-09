@@ -1,7 +1,6 @@
 #include "database.h"
 
 #include <fstream>
-#include <iostream>
 
 
 bool Database::Initialize()
@@ -59,7 +58,6 @@ std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords)
 	return words;
 }
 
-
 bool Database::AddUser(const std::string& username, const std::string& password, const std::string& email)
 {
 	try {
@@ -104,7 +102,6 @@ bool Database::CheckPassword(const std::string& username, const std::string& pas
 		return false;
 	}
 }
-
 
 int Database::GenerateRandomNumber(int min, int max)
 {
