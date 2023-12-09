@@ -12,28 +12,39 @@ Game::Game(QWidget* parent)
     connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::openSettings);
 }
 
-Game::~Game() 
+Game::~Game()
 {
     // Destructorul clasei Game
 }
 
-void Game::clearDrawingArea() 
+void Game::clearDrawingArea()
 {
     DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-    if (drawingArea) 
+    if (drawingArea)
         drawingArea->ClearDrawing();
 }
 
-void Game::setPenColorGreen() {
-    m_drawingArea->SetPenColor(Qt::green);
+void Game::setPenColorGreen()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(Qt::green);
 }
 
-void Game::setPenColorRed() {
-    m_drawingArea->SetPenColor(Qt::red);
+
+void Game::setPenColorRed()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(Qt::red);
 }
 
-void Game::setPenColorBlue() {
-    m_drawingArea->SetPenColor(Qt::blue);
+
+void Game::setPenColorBlue()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(Qt::blue);
 }
 
 void Game::openSettings()
