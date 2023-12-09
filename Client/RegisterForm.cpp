@@ -15,6 +15,7 @@ RegisterForm::RegisterForm(QWidget* parent)
 	m_ui.setupUi(this);
 
 	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(onRegisterButtonClicked()));
+	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(onBackButtonClicked()));
 
 }
 
@@ -29,9 +30,10 @@ void RegisterForm::CheckUsername(const std::string& username)
 		throw std::exception("Username cannot be empty");
 
 	cpr::Response response = cpr::Get(cpr::Url{ "http://localhost:18080/checkUsername" },
-				cpr::Parameters{ {"username", username} });
+				cpr::Payload{ {"username", username} }
+	);
 
-	if (response.status_code != 200)
+	if (response.status_code != 200 && response.status_code != 409)
 		throw std::exception("Server error");
 
 	if (response.text == "true")
@@ -48,7 +50,7 @@ void RegisterForm::CheckEmailPattern(const std::string& email)
 	const std::regex emailPattern("^([a-zA-Z0-9_\\ \\.+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$");
 
 	if (!std::regex_match(email, emailPattern))
-		throw std::exception("Invalid email");
+		throw std::exception("Email should be like: example@mail.com");
 
 }
 
@@ -62,14 +64,15 @@ void RegisterForm::CheckPasswordPattern(const std::string& password)
 
 	const std::regex passwordPattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");
 	if (!std::regex_match(password, passwordPattern))
-		throw std::exception("Invalid password");
+		throw std::exception("The Password needs to contain at least 1 upper case,\n one lower case and a number");
 
 }
 
 void RegisterForm::AddUserToDataBase(const std::string& username, const std::string& password, const std::string& email)
 {
 	cpr::Response response = cpr::Get(cpr::Url{ "http://localhost:18080/addUser" },
-				cpr::Parameters{ {"username", username}, {"password", password}, {"email", email} });
+		cpr::Payload{ {"username", username}, {"password", password}, {"email", email} }
+	);
 
 	if (response.status_code != 200)
 		throw std::exception("Server error");
@@ -85,6 +88,13 @@ void RegisterForm::WaitForSeconds(int seconds)
 		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
+void RegisterForm::onBackButtonClicked()
+{
+	this->close();
+	LoginForm* loginForm = new LoginForm();
+	loginForm->show();
+}
+
 /*
 TODO:
 - Hasher getting a null password passed
@@ -96,12 +106,7 @@ void RegisterForm::onRegisterButtonClicked()
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
-	//std::string stringPassword = password.toUtf8().data();
 	try {
-		//QMessageLogger logger;
-		//logger.debug() << password;
-		//Hasher::HashPassword(stringPassword);
-		//logger.warning("Hashed password: %s", hashedPwd.c_str());
 		CheckUsername(username.toUtf8().constData()); 
 		CheckEmailPattern(email.toUtf8().constData());
 		CheckPasswordPattern(password.toUtf8().constData());

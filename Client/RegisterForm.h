@@ -22,4 +22,5 @@ private:
 	void WaitForSeconds(int seconds);
 private slots:
 	void onRegisterButtonClicked();
+	void onBackButtonClicked();
 };

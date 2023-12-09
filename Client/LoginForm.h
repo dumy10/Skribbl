@@ -16,6 +16,9 @@ private:
 
 private:
     void WaitForSeconds(int seconds);
+    void CheckUsername(const std::string& username);
+    void CheckPassword(const std::string& password);
+    void ValidateUserLogin(const std::string& username, const std::string& password);
 
 private slots:
     void onLoginButtonClicked();

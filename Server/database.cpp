@@ -87,6 +87,24 @@ bool Database::CheckUsername(const std::string& username)
 	}
 }
 
+bool Database::CheckPassword(const std::string& username, const std::string& password)
+{
+	try {
+		auto existingPlayers = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::getName) == username)
+		);
+
+		if (existingPlayers.empty())
+			return false;
+
+		return existingPlayers[0].getPassword() == password;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while checking if password is correct: " << e.what() << "\n";
+		return false;
+	}
+}
+
 
 int Database::GenerateRandomNumber(int min, int max)
 {

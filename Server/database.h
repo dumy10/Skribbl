@@ -56,6 +56,9 @@ public:
 	//Checks if a username exists in the database
 	bool CheckUsername(const std::string& username);
 
+	//Checks if a username and password match
+	bool CheckPassword(const std::string& username, const std::string& password);
+
 private:
 	void PopulateStorage();
 	int GenerateRandomNumber(int min, int max);

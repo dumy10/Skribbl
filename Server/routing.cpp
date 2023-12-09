@@ -1,5 +1,5 @@
 #include "routing.h"
-
+#include <iostream>
 import player;
 
 using namespace skribbl;
@@ -54,19 +54,24 @@ void Routing::run(Database& storage)
 		//m_game.removeAdmin();
 		return crow::response{ "Admin removed!" };
 			});
-
+	// check if the username exists in the database
 	CROW_ROUTE(m_app, "/checkUsername")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-		auto x = parseUrlArgs(req.url);
+		auto x = parseUrlArgs(req.body);
 		std::string username = x["username"];
+
+		if (username == "")
+			return crow::response{ 404, "Username not found."};
+
 		if (storage.CheckUsername(username))
 			return crow::response{ "true" };
-		return crow::response{ "false" };
+
+		return crow::response{409, "Username does not exist!" };
 			});
 
 	CROW_ROUTE(m_app, "/addUser")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-		auto x = parseUrlArgs(req.url);
+		auto x = parseUrlArgs(req.body);
 		std::string username = x["username"];
 		std::string password = x["password"];
 		std::string email = x["email"];
@@ -75,6 +80,22 @@ void Routing::run(Database& storage)
 			return crow::response{ "true" };
 
 		return crow::response{ "false" };
+			});
+
+	CROW_ROUTE(m_app, "/loginUser")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			std::string username = x["username"];
+			std::string password = x["password"];
+			
+			if(!storage.CheckUsername(username))
+				return crow::response {409, "Username does not exist!"};
+
+			if(!storage.CheckPassword(username, password))
+				return crow::response {409, "Wrong password!"};
+
+			return crow::response{ 200 };
+			
 			});
 	
 
