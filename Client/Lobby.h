@@ -18,6 +18,6 @@ private:
 	Ui::Lobby m_ui;
 	std::string m_username;
 private:
-	void initializeAdmin();
+	void getRoomID();
 };
 #endif // !LOBBY_H

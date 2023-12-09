@@ -13,19 +13,19 @@ void Routing::run(Database& storage)
 	CROW_ROUTE(m_app, "/randomWord")([&]() {
 		return crow::response{ storage.GetRandomWord() };
 		});
-	
+
 	CROW_ROUTE(m_app, "/checkUsername")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
 		std::string username = x["username"];
 
 		if (username == "")
-			return crow::response{ 404, "Username not found."};
+			return crow::response{ 404, "Username not found." };
 
 		if (storage.CheckUsername(username))
 			return crow::response{ "true" };
 
-		return crow::response{409, "Username does not exist!" };
+		return crow::response{ 409, "Username does not exist!" };
 			});
 
 	CROW_ROUTE(m_app, "/addUser")
@@ -35,7 +35,7 @@ void Routing::run(Database& storage)
 		std::string password = x["password"];
 		std::string email = x["email"];
 
-		if(storage.AddUser(username, password, email))
+		if (storage.AddUser(username, password, email))
 			return crow::response{ "true" };
 
 		return crow::response{ "false" };
@@ -43,20 +43,25 @@ void Routing::run(Database& storage)
 
 	CROW_ROUTE(m_app, "/loginUser")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-			auto x = parseUrlArgs(req.body);
-			std::string username = x["username"];
-			std::string password = x["password"];
-			
-			if(!storage.CheckUsername(username))
-				return crow::response {409, "Username does not exist!"};
+		auto x = parseUrlArgs(req.body);
+		std::string username = x["username"];
+		std::string password = x["password"];
 
-			if(!storage.CheckPassword(username, password))
-				return crow::response {409, "Wrong password!"};
+		if (!storage.CheckUsername(username))
+			return crow::response{ 409, "Username does not exist!" };
 
-			return crow::response{ 200 };
-			
+		if (!storage.CheckPassword(username, password))
+			return crow::response{ 409, "Wrong password!" };
+
+		return crow::response{ 200 };
+
 			});
-	
+
+	CROW_ROUTE(m_app, "/roomID")
+		.methods("GET"_method, "POST"_method)([&]() {
+		return crow::response{ storage.GetRandomID() };
+			});
+
 
 	m_app.port(18080).multithreaded().run();
 }

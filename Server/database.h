@@ -53,10 +53,12 @@ public:
 
 	//Checks if a username and password match
 	bool CheckPassword(const std::string& username, const std::string& password);
+	//Gets a random ID for game
+	std::string GetRandomID() ;
 
 private:
 	void PopulateStorage();
-	int GenerateRandomNumber(int min, int max);
+	int GenerateRandomNumber(int min, int max) ;
 private:
 	const std::string kDbFile{ "skribbl.sqlite" };
 private:

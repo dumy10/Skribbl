@@ -31,7 +31,7 @@ void Database::PopulateStorage()
 	m_db.insert_range(words.begin(), words.end());
 }
 
-std::string Database::GetRandomWord()
+std::string Database::GetRandomWord() 
 {
 	auto wordCount = m_db.count<Word>();
 	auto randomWordIndex = GenerateRandomNumber(1, wordCount);
@@ -39,12 +39,12 @@ std::string Database::GetRandomWord()
 	return word.getWord();
 }
 
-std::vector<Word> Database::GetWords()
+std::vector<Word> Database::GetWords() 
 {
 	return m_db.get_all<Word>();
 }
 
-std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords)
+std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords) 
 {
 	std::vector<std::string> words;
 	auto wordCount = m_db.count<Word>();
@@ -70,7 +70,7 @@ bool Database::AddUser(const std::string& username, const std::string& password,
 	}
 }
 
-bool Database::CheckUsername(const std::string& username)
+bool Database::CheckUsername(const std::string& username) 
 {
 	try {
 		auto existingPlayers = m_db.get_all<Player>(
@@ -85,7 +85,7 @@ bool Database::CheckUsername(const std::string& username)
 	}
 }
 
-bool Database::CheckPassword(const std::string& username, const std::string& password)
+bool Database::CheckPassword(const std::string& username, const std::string& password) 
 {
 	try {
 		auto existingPlayers = m_db.get_all<Player>(
@@ -103,7 +103,16 @@ bool Database::CheckPassword(const std::string& username, const std::string& pas
 	}
 }
 
-int Database::GenerateRandomNumber(int min, int max)
+std::string Database::GetRandomID() 
+{
+	std::string id = "";
+	for (uint8_t i = 0; i < 5; i++)
+		id += std::to_string(GenerateRandomNumber(0, 9));
+
+	return id;
+}
+
+int Database::GenerateRandomNumber(int min, int max) 
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
