@@ -20,6 +20,12 @@ public slots:
     void setPenColorOrange();
     void setPenColorBrown();
     void setPenColorPurple();
+    void setPenColorBlack();
+    void setPenColorWhite();
+    void setPenColorYellow();
+    void setPenColorGrey();
+    void setPenColorTurquoise();
+    void setPenColorPink();
     void openSettings();
 
 private:

@@ -541,6 +541,234 @@ QPushButton:default
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="Pink">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>630</y>
+      <width>84</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton
+ {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: #FFC0CB;
+    min-width: 80px;
+}
+
+QPushButton:pressed 
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}
+
+QPushButton:flat 
+{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default 
+{
+    border-color: navy; /* make the default button prominent */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Yellow">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>630</y>
+      <width>84</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton
+ {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: #FFFF00;
+    min-width: 80px;
+}
+
+QPushButton:pressed 
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}
+
+QPushButton:flat 
+{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default 
+{
+    border-color: navy; /* make the default button prominent */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Black">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>630</y>
+      <width>84</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton
+ {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+ 	background-color: #000000;
+    min-width: 80px;
+}
+
+QPushButton:pressed 
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}
+
+QPushButton:flat 
+{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default 
+{
+    border-color: navy; /* make the default button prominent */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Turquoise">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>670</y>
+      <width>84</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton
+ {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+	background-color: #30D5C8;
+    min-width: 80px;
+}
+
+QPushButton:pressed 
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}
+
+QPushButton:flat 
+{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default 
+{
+    border-color: navy; /* make the default button prominent */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Grey">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>670</y>
+      <width>84</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton
+ {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: #808080;
+    min-width: 80px;
+}
+
+QPushButton:pressed 
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}
+
+QPushButton:flat 
+{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default 
+{
+    border-color: navy; /* make the default button prominent */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="White">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>670</y>
+      <width>84</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton
+ {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    min-width: 80px;
+}
+
+QPushButton:pressed 
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}
+
+QPushButton:flat 
+{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default 
+{
+    border-color: navy; /* make the default button prominent */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <zorder>label_6</zorder>
    <zorder>background</zorder>
    <zorder>label_5</zorder>
@@ -562,6 +790,12 @@ QPushButton:default
    <zorder>Orange</zorder>
    <zorder>Purple</zorder>
    <zorder>Brown</zorder>
+   <zorder>Pink</zorder>
+   <zorder>Yellow</zorder>
+   <zorder>Black</zorder>
+   <zorder>Turquoise</zorder>
+   <zorder>Grey</zorder>
+   <zorder>White</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

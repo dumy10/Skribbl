@@ -12,6 +12,12 @@ Game::Game(QWidget* parent)
     connect(m_ui.Orange, &QPushButton::clicked, this, &Game::setPenColorOrange);
     connect(m_ui.Brown, &QPushButton::clicked, this, &Game::setPenColorBrown);
     connect(m_ui.Purple, &QPushButton::clicked, this, &Game::setPenColorPurple);
+    connect(m_ui.White, &QPushButton::clicked, this, &Game::setPenColorWhite);
+    connect(m_ui.Black, &QPushButton::clicked, this, &Game::setPenColorBlack);
+    connect(m_ui.Grey, &QPushButton::clicked, this, &Game::setPenColorGrey);
+    connect(m_ui.Yellow, &QPushButton::clicked, this, &Game::setPenColorYellow);
+    connect(m_ui.Pink, &QPushButton::clicked, this, &Game::setPenColorPink);
+    connect(m_ui.Turquoise, &QPushButton::clicked, this, &Game::setPenColorTurquoise);
     connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::openSettings);
 }
 
@@ -68,6 +74,48 @@ void Game::setPenColorBrown()
     DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
     if (drawingArea)
         drawingArea->SetPenColor(QColor(165, 42, 42)); // RGB for brown
+}
+
+void Game::setPenColorBlack()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(QColor(0, 0, 0)); // RGB for black
+}
+
+void Game::setPenColorWhite()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(QColor(255, 255, 255)); // RGB for white
+}
+
+void Game::setPenColorYellow()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(QColor(255, 255, 0)); // RGB for yellow
+}
+
+void Game::setPenColorGrey()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(QColor(128, 128, 128)); // RGB for grey
+}
+
+void Game::setPenColorTurquoise()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(QColor(64, 224, 208)); // RGB for turquoise
+}
+
+void Game::setPenColorPink()
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea)
+        drawingArea->SetPenColor(QColor(255, 192, 203)); // RGB for pink
 }
 
 void Game::openSettings()
