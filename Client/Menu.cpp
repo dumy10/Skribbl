@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "Lobby.h"
+#include"LobbyID.h"
 
 /*
 TODO:
@@ -15,6 +16,7 @@ Menu::Menu(const std::string& username, QWidget* parent)
 {
 	m_ui.setupUi(this);
 	connect(m_ui.createRoom, SIGNAL(clicked()), this, SLOT(onCreateButtonClicked()));
+	connect(m_ui.joinRoom, SIGNAL(clicked()), this, SLOT(onJoinButtonClicked()));
 }
 
 //consructor of menu with string parameters, to be used with move semantics
@@ -33,4 +35,9 @@ void Menu::onCreateButtonClicked()
 
 void Menu::onJoinButtonClicked()
 {
+	LobbyID* lobbyID = new LobbyID();
+	lobbyID->show();
+	lobbyID->setUserName(m_username);
+
+	this->close();
 }

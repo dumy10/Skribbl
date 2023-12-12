@@ -56,6 +56,15 @@ void Routing::run(Database& storage)
 		return crow::response{ 200 };
 
 			});
+	CROW_ROUTE(m_app, "/joinRoomID")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			std::string roomID = x["RoomID"];
+			//check if roomID exists
+
+			return crow::response{ 200 };
+
+			});
 
 	CROW_ROUTE(m_app, "/roomID")
 		.methods("GET"_method, "POST"_method)([&]() {
@@ -69,11 +78,12 @@ void Routing::run(Database& storage)
 			return crow::response(400);
 		}
 
-		std::string receivedString = json["message"].s();
+		std::string receivedString = json["message"].s();	
 		std::cout << "Server received: " << receivedString << std::endl;
 
 		return crow::response("Server received: " + receivedString);
 			});
+
 
 	m_app.port(18080).multithreaded().run();
 }

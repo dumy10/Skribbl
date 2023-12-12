@@ -13,9 +13,6 @@
     <ClCompile Include="utils.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
@@ -32,6 +29,12 @@
       <Filter>Class Files</Filter>
     </ClCompile>
     <ClCompile Include="Lobby.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyID.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,6 +83,9 @@
     <QtMoc Include="Lobby.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="LobbyID.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="LoginForm.ui">
@@ -104,6 +110,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Lobby.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="LobbyID.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
