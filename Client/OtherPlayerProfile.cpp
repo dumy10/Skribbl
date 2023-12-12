@@ -7,6 +7,7 @@ OtherPlayerProfile::OtherPlayerProfile(QWidget *parent)
 }
 
 //make it a little bit transparent in the future to match the original game settings
+//the report button should send a message to the admin with the player problem
 
 OtherPlayerProfile::~OtherPlayerProfile()
 {}

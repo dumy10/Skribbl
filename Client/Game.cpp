@@ -19,6 +19,7 @@ Game::Game(QWidget* parent)
     connect(m_ui.Pink, &QPushButton::clicked, this, &Game::setPenColorPink);
     connect(m_ui.Turquoise, &QPushButton::clicked, this, &Game::setPenColorTurquoise);
     connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::openSettings);
+    connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::sendMessage);
 }
 
 Game::~Game()
@@ -123,4 +124,22 @@ void Game::openSettings()
     Settings* settings = new Settings(this);
     settings->setWindowOpacity(0.5);
     settings->show();
+}
+
+void Game::sendMessage()
+{
+    QString message = m_ui.textEdit->toPlainText();
+    m_ui.textEdit->clear();
+    
+    //crow::SimpleApp app;
+    
+    //crow::json::wvalue requestJson;
+    //requestJson["message"] = message.toStdString();
+    //std::ostringstream os;
+    //os << crow::json::dump(requestJson);
+
+    //crow::SimplePostRequest req("/sendString", os.str());
+    //auto response = app.handle(req);
+
+    //my project doesn't work for now and i can't test it , so i will leave it with // for now
 }

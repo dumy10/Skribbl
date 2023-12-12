@@ -61,7 +61,19 @@ void Routing::run(Database& storage)
 		.methods("GET"_method, "POST"_method)([&]() {
 		return crow::response{ storage.GetRandomID() };
 			});
+	CROW_ROUTE(m_app, "/sendString")
+		.methods("POST"_method)
+		([](const crow::request& req) {
+		auto json = crow::json::load(req.body);
+		if (!json) {
+			return crow::response(400);
+		}
 
+		std::string receivedString = json["message"].s();
+		std::cout << "Server received: " << receivedString << std::endl;
+
+		return crow::response("Server received: " + receivedString);
+			});
 
 	m_app.port(18080).multithreaded().run();
 }

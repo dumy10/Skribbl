@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
-    <height>311</height>
+    <width>483</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,14 +43,14 @@
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>  Player Picture in the Future</string>
+     <string>             Player name</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>110</y>
+      <x>260</x>
+      <y>60</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -66,30 +66,14 @@ font: 14pt &quot;Segoe UI&quot;;</string>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>150</y>
+      <x>230</x>
+      <y>110</y>
       <width>211</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
      <string>Click to copy invite</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>131</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string>Player Name</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
@@ -105,13 +89,26 @@ font: 14pt &quot;Segoe UI&quot;;</string>
      <string>X</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_3">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>170</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>View your game history!</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>479</width>
+     <width>483</width>
      <height>22</height>
     </rect>
    </property>

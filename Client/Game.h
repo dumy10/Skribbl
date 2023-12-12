@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "ui_Game.h"
 #include "DrawingWidget.h"
+//#include<crow.h>
 
 class Game : public QMainWindow {
     Q_OBJECT
@@ -27,6 +28,7 @@ public slots:
     void setPenColorTurquoise();
     void setPenColorPink();
     void openSettings();
+    void sendMessage();
 
 private:
     Ui::GameClass m_ui;
