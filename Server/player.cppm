@@ -21,6 +21,7 @@ namespace skribbl
         void setEmail(const std::string& email);
         void setPoints(int points);
         void addPoints(int points);
+        void substractPoints(int points);
         void makeAdmin();
         void removeAdmin();
 
@@ -33,6 +34,7 @@ namespace skribbl
         std::string m_password;
         std::string m_email;
         int m_points;
+        bool guessedTheWord=false;
         bool is_admin;
     };
 }

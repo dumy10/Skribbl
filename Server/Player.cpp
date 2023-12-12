@@ -53,6 +53,11 @@ void Player::addPoints(int points)
 	this->m_points += points;
 }
 
+void skribbl::Player::substractPoints(int points)
+{
+	this->m_points -= points;
+}
+
 void skribbl::Player::makeAdmin()
 {
 	this->is_admin = true;
