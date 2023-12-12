@@ -4,16 +4,15 @@
 #include <QMainWindow>
 #include "ui_Game.h"
 #include "DrawingWidget.h"
-//#include<crow.h>
 
 class Game : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit Game(QWidget* parent = nullptr);
+    explicit Game(const std::string& username, bool isOwner = false, QWidget* parent = nullptr);
     ~Game();
 
-public slots:
+private slots:
     void clearDrawingArea();
     void setPenColorGreen();
     void setPenColorRed();
@@ -28,11 +27,13 @@ public slots:
     void setPenColorTurquoise();
     void setPenColorPink();
     void openSettings();
-    void sendMessage();
+    void onSendButtonClicked();
 
 private:
     Ui::GameClass m_ui;
     DrawingWidget* m_drawingArea;
+    std::string m_username;
+    bool m_isOwner;
 };
 
 #endif // GAME_H
