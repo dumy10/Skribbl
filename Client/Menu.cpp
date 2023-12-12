@@ -1,6 +1,13 @@
 #include "Menu.h"
 #include "Lobby.h"
-#include <QPainter>
+
+/*
+TODO:
+- connect to server
+- create a room / save it in the database (Create Room button), send the room id to the server (can be created as a game)
+- let other players join the room (max 4 players) with the same room id if the room is not full and the room id is correct
+- add player to the room and send the player name to the server
+*/
 
 Menu::Menu(const std::string& username, QWidget* parent)
 	: QMainWindow(parent),
@@ -19,7 +26,7 @@ Menu::~Menu()
 void Menu::onCreateButtonClicked()
 {
 	// open new lobby
-	Lobby* lobby = new Lobby(std::move(m_username));
+	Lobby* lobby = new Lobby(std::move(m_username), true);
 	lobby->show();
 	this->close();
 }
