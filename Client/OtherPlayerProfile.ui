@@ -30,7 +30,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="PlayerNameLabel">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -72,7 +72,7 @@
      <string>View player game history</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="CloseButton">
     <property name="geometry">
      <rect>
       <x>450</x>
