@@ -3,7 +3,7 @@
 DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), m_isDrawing(false), m_isErasing(false)
 {
     setAttribute(Qt::WA_StaticContents); // Continutul widgetului ramane static la redimensionare
-    m_image = QImage(500, 500, QImage::Format_ARGB32); // Initializare imagine
+    m_image = QImage(621, 491, QImage::Format_ARGB32); // Initializare imagine
     m_image.fill(Qt::white); // Umple imaginea cu alb
     m_pen = QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // Initializare stilou
 }
@@ -69,6 +69,12 @@ void DrawingWidget::ClearDrawing()
 void DrawingWidget::SetPenColor(const QColor& newColor)
 {
     m_pen.setColor(newColor);
+}
+
+void DrawingWidget::setText(const QString& text)
+{
+    // Qt generates an error if the function doesnt exist, the function is not needed for this project, it is called by mistake by Qt when the project is cleaned and rebuilt
+    return;
 }
 
 void DrawingWidget::DrawLineTo(const QPoint& endPoint)

@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1030</width>
+    <width>1080</width>
     <height>720</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1080</width>
+    <height>720</height>
+   </size>
   </property>
   <property name="maximumSize">
    <size>
@@ -39,17 +45,21 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QLabel" name="logo">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>10</y>
-      <width>191</width>
-      <height>81</height>
+      <y>20</y>
+      <width>201</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image: url(:/skribbl name/logo.gif);</string>
+     <string notr="true">QLabel
+{
+background: transparent;
+border-image: url(:/skribbl name/logo.gif);
+}</string>
     </property>
     <property name="text">
      <string/>
@@ -215,23 +225,6 @@ QPushButton:pressed {
 }</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>470</y>
-      <width>391</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 85, 255);</string>
-    </property>
-    <property name="text">
-     <string>aici va fi linkul catre joc</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="SettingsButton">
     <property name="geometry">
      <rect>
@@ -247,32 +240,6 @@ background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Chat">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>130</y>
-      <width>181</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Player1</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_4">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>190</y>
-      <width>181</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Player2</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Clear">
@@ -769,9 +736,126 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <zorder>label_6</zorder>
+   <widget class="QFrame" name="frame_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>150</y>
+      <width>211</width>
+      <height>421</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame {background:transparent;
+ background-color: rgba(0, 51, 102, 0.9); /* Albastru închis cu transparență mai mare */
+    border-radius: 15px; /* Colțuri rotunjite */}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="player1_3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>201</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;
+&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="player2_3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>110</y>
+       <width>201</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="player3_3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>210</y>
+       <width>201</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="player4_3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>310</y>
+       <width>201</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
    <zorder>background</zorder>
-   <zorder>label_5</zorder>
+   <zorder>logo</zorder>
    <zorder>drawingArea</zorder>
    <zorder>label_8</zorder>
    <zorder>label_10</zorder>
@@ -781,8 +865,6 @@ QPushButton:default
    <zorder>label_9</zorder>
    <zorder>textEdit</zorder>
    <zorder>SettingsButton</zorder>
-   <zorder>Chat</zorder>
-   <zorder>pushButton_4</zorder>
    <zorder>Clear</zorder>
    <zorder>Albastru</zorder>
    <zorder>Verde</zorder>
@@ -796,6 +878,7 @@ QPushButton:default
    <zorder>Turquoise</zorder>
    <zorder>Grey</zorder>
    <zorder>White</zorder>
+   <zorder>frame_2</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

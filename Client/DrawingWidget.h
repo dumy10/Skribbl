@@ -13,6 +13,7 @@ public:
     explicit DrawingWidget(QWidget* parent = nullptr);
     void ClearDrawing();
     void SetPenColor(const QColor& newColor);
+    void setText(const QString& text);
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
