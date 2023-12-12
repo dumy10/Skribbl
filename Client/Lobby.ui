@@ -44,7 +44,7 @@ background:url(:/background/pattern.png);
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>70</y>
+        <y>120</y>
         <width>511</width>
         <height>421</height>
        </rect>
@@ -162,7 +162,7 @@ background:url(:/background/pattern.png);
       <property name="geometry">
        <rect>
         <x>560</x>
-        <y>70</y>
+        <y>120</y>
         <width>511</width>
         <height>421</height>
        </rect>
@@ -283,11 +283,6 @@ QAbstractItemView{
        </property>
        <item>
         <property name="text">
-         <string>1 Player</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>2 Players</string>
         </property>
        </item>
@@ -364,8 +359,8 @@ QAbstractItemView{
      <widget class="QPushButton" name="createLobby">
       <property name="geometry">
        <rect>
-        <x>860</x>
-        <y>550</y>
+        <x>870</x>
+        <y>570</y>
         <width>171</width>
         <height>91</height>
        </rect>
@@ -397,13 +392,32 @@ QPushButton:pressed {
        <string>Create Lobby</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1081</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel{
+background: rgb(22, 72, 99);
+    border-radius: 15px; /* Colțuri rotunjite */
+}</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:700; color:#ffffff;&quot;&gt;Game Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_6">
      <widget class="QFrame" name="frame_3">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>70</y>
+        <y>120</y>
         <width>511</width>
         <height>421</height>
        </rect>
@@ -521,7 +535,7 @@ QPushButton:pressed {
       <property name="geometry">
        <rect>
         <x>560</x>
-        <y>70</y>
+        <y>120</y>
         <width>511</width>
         <height>421</height>
        </rect>
@@ -740,6 +754,25 @@ QPushButton:pressed {
       </property>
       <property name="text">
        <string>Start Game</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1081</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel{
+background: rgb(22, 72, 99);
+    border-radius: 15px; /* Colțuri rotunjite */
+}</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:700; color:#ffffff;&quot;&gt;Game Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
