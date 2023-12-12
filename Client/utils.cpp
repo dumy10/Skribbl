@@ -31,3 +31,20 @@ std::unordered_map<std::string, std::string> parseUrlArgs(const std::string& url
     }
     return result;
 }
+
+std::string Server::m_ip;
+
+void Server::SetIp(const std::string& ip)
+{
+    m_ip = ip;
+}
+
+std::string Server::GetIp()
+{
+    return m_ip;
+}
+
+std::string Server::GetUrl()
+{
+    return "http://" + m_ip + ":18080";
+}

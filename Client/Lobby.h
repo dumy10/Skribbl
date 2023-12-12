@@ -20,7 +20,9 @@ private:
 	std::string m_username;
 	std::string m_roomID;
 	bool m_isOwner;
+	int m_playerIndex;
 private:
-	void getRoomID();
+	void GetRoomID();
+	void DisplayPlayer(const std::string& username, int index);
 };
 #endif // !LOBBY_H

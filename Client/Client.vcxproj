@@ -113,6 +113,7 @@
     <ClCompile Include="OtherPlayerProfile.cpp" />
     <ClCompile Include="PlayerProfile.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="ServerConnectForm.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="utils.cpp" />
     <QtRcc Include="background.qrc" />
@@ -129,6 +130,7 @@
     <QtUic Include="OtherPlayerProfile.ui" />
     <QtUic Include="PlayerProfile.ui" />
     <QtUic Include="RegisterForm.ui" />
+    <QtUic Include="ServerConnectForm.ui" />
     <QtUic Include="Settings.ui" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +145,7 @@
     <QtMoc Include="DrawingWidget.h" />
     <QtMoc Include="Lobby.h" />
     <QtMoc Include="LobbyID.h" />
+    <QtMoc Include="ServerConnectForm.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

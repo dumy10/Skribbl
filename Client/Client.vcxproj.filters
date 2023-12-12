@@ -37,6 +37,9 @@
     <ClCompile Include="Menu.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="ServerConnectForm.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Class Files">
@@ -86,6 +89,9 @@
     <QtMoc Include="LobbyID.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="ServerConnectForm.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="LoginForm.ui">
@@ -113,6 +119,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="LobbyID.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ServerConnectForm.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

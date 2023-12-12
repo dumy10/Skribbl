@@ -3,9 +3,9 @@
 #include <regex>
 #include <QTime>
 #include <QCoreApplication>
-#include <QDebug>
-#include "Hashing.h"
 
+//#include "Hashing.h"
+#include "utils.h"
 #include <cpr/cpr.h>
 #include <crow.h>
 
@@ -26,11 +26,11 @@ RegisterForm::~RegisterForm()
 
 void RegisterForm::CheckUsername(const std::string& username)
 {
-	if(username == "")
+	if (username == "")
 		throw std::exception("Username cannot be empty");
 
-	cpr::Response response = cpr::Get(cpr::Url{ "http://localhost:18080/checkUsername" },
-				cpr::Payload{ {"username", username} }
+	cpr::Response response = cpr::Get(cpr::Url{ Server::GetUrl() + "/checkUsername" },
+		cpr::Payload{ {"username", username} }
 	);
 
 	if (response.status_code != 200 && response.status_code != 409)
@@ -70,7 +70,7 @@ void RegisterForm::CheckPasswordPattern(const std::string& password)
 
 void RegisterForm::AddUserToDataBase(const std::string& username, const std::string& password, const std::string& email)
 {
-	cpr::Response response = cpr::Get(cpr::Url{ "http://localhost:18080/addUser" },
+	cpr::Response response = cpr::Get(cpr::Url{ Server::GetUrl() + "/addUser" },
 		cpr::Payload{ {"username", username}, {"password", password}, {"email", email} }
 	);
 
@@ -107,7 +107,7 @@ void RegisterForm::onRegisterButtonClicked()
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
 	try {
-		CheckUsername(username.toUtf8().constData()); 
+		CheckUsername(username.toUtf8().constData());
 		CheckEmailPattern(email.toUtf8().constData());
 		CheckPasswordPattern(password.toUtf8().constData());
 

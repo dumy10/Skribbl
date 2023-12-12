@@ -1,9 +1,7 @@
 #include "LoginForm.h"
 #include "RegisterForm.h"
 #include "Menu.h"
-#include <QMessageBox>
-#include <QPainter>
-#include <QPixmap>
+#include "utils.h"
 #include <QTime>
 #include <regex>
 
@@ -37,7 +35,7 @@ void LoginForm::CheckUsername(const std::string& username)
 		throw std::exception("Username cannot be empty");
 
 	cpr::Response response = cpr::Get(
-		cpr::Url{ "http://localhost:18080/checkUsername" },
+		cpr::Url{ Server::GetUrl() + "/checkUsername" },
 		cpr::Payload{ {"username", username} }
 	);
 
@@ -66,11 +64,11 @@ void LoginForm::ValidateUserLogin(const std::string& username, const std::string
 	CheckPassword(password);
 
 	cpr::Response loginRequest = cpr::Get(
-		cpr::Url{ "http://localhost:18080/loginUser" },
+		cpr::Url{ Server::GetUrl() + "/loginUser" },
 		cpr::Payload{ {"username", username}, {"password", password} }
 	);
 
-	if(loginRequest.status_code != 200)
+	if (loginRequest.status_code != 200)
 		throw std::exception(loginRequest.text.c_str());
 }
 

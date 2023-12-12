@@ -1,12 +1,16 @@
 #include "Game.h"
 #include "Settings.h"
 #include <QScrollBar>
+#include "utils.h"
+
+#include <cpr/cpr.h>
+#include <crow.h>
 
 
 /*
 TODO:
 - connect to server
-- send message to server 
+- send message to server
 - check if the message is the same as the word
 - if it is, send a message to the server that the player won and display a message in the chat that the player won
 - send the chat to the server and display it to the other players
@@ -17,16 +21,22 @@ TODO:
 - update room information (players, timer, word, image that is being drawn)
 - display the image that is being drawn to the other players (the image is updated every 0.5 seconds)
 - display the timer to all players (the timer is updated every 0.5 seconds)
-- add the player score in the UI 
+- add the player score in the UI
 */
 
-Game::Game(const std::string& username, bool isOwner, QWidget* parent)
-    : QMainWindow(parent) , m_username(username) , m_isOwner(isOwner)
+Game::Game(const std::string& username, int playerIndex, bool isOwner, QWidget* parent)
+    : QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex)
 {
     m_drawingArea = new DrawingWidget(this);
     m_ui.setupUi(this);
     m_ui.chat->setPlainText("Welcome to skribbl!");
-    m_ui.player1_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+    m_ui.player1_3->hide();
+    m_ui.player2_3->hide();
+    m_ui.player3_3->hide();
+    m_ui.player4_3->hide();
+
+    DisplayPlayer(m_username, m_playerIndex);
+
 
     connect(m_ui.Clear, &QPushButton::clicked, this, &Game::clearDrawingArea);
     connect(m_ui.Verde, &QPushButton::clicked, this, &Game::setPenColorGreen);
@@ -78,21 +88,21 @@ void Game::setPenColorBlue()
         drawingArea->SetPenColor(Qt::blue);
 }
 
-void Game::setPenColorOrange() 
+void Game::setPenColorOrange()
 {
     DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
     if (drawingArea)
         drawingArea->SetPenColor(QColor(255, 165, 0)); // RGB for orange
 }
 
-void Game::setPenColorPurple() 
+void Game::setPenColorPurple()
 {
     DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
     if (drawingArea)
         drawingArea->SetPenColor(QColor(128, 0, 128)); // RGB for purple
 }
 
-void Game::setPenColorBrown() 
+void Game::setPenColorBrown()
 {
     DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
     if (drawingArea)
@@ -162,10 +172,35 @@ void Game::onSendButtonClicked()
     }
     else
     {
-		m_ui.chat->setPlainText(m_ui.chat->toPlainText() + "\n" + QString::fromUtf8(m_username.data(), int(m_username.size())) + ": " + text);
+        m_ui.chat->setPlainText(m_ui.chat->toPlainText() + "\n" + QString::fromUtf8(m_username.data(), int(m_username.size())) + ": " + text);
         m_ui.chat->ensureCursorVisible();
-		m_ui.textEdit->clear();
-	}
+        m_ui.textEdit->clear();
+    }
     m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
 
+}
+
+void Game::DisplayPlayer(const std::string& username, int index)
+{
+    switch (index)
+    {
+    case 1:
+        m_ui.player1_3->show();
+        m_ui.player1_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+        break;
+    case 2:
+        m_ui.player2_3->show();
+        m_ui.player2_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+        break;
+    case 3:
+        m_ui.player3_3->show();
+        m_ui.player3_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+        break;
+    case 4:
+        m_ui.player4_3->show();
+        m_ui.player4_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+        break;
+    default:
+        break;
+    }
 }

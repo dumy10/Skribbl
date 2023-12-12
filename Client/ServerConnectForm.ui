@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ServerConnectFormClass</class>
+ <widget class="QMainWindow" name="ServerConnectFormClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1080</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1080</width>
+    <height>720</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>ServerConnectForm</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="styleSheet">
+    <string notr="true">QWidget{
+background: url(:/background/pattern.png);
+}</string>
+   </property>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>80</y>
+      <width>871</width>
+      <height>541</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame {
+	background:transparent;
+    background-color: rgba(0, 51, 102, 0.9); /* Albastru închis cu transparență mai mare */
+    border-radius: 15px; /* Colțuri rotunjite */
+}
+</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>871</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+background: rgb(22, 72, 99)
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:700; color:#ffffff;&quot;&gt;Connect to the server&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>90</y>
+       <width>331</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;Server IP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="IPField">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>190</y>
+       <width>231</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+	background:transparent;
+    background-color: rgba(255, 255, 255, 0.9); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
+    color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
+    border: 1px solid rgb(255, 255, 255); /* Bordură albă clară */
+    border-radius: 5px; /* Margini rotunjite */
+    padding: 5px; /* Spațiere internă pentru text */
+    font-size: 16px; /* Mărimea fontului adecvată */
+
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Normal</enum>
+     </property>
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="connectButton">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>250</y>
+       <width>161</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+background:transparent;
+    background-color: rgba(255, 255, 255, 150); /* culoare albă cu opacitate pentru a vedea prin */
+    color: rgb(0, 0, 0); /* text negru */
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px; /* colțuri rotunjite */
+    border-color: rgba(0, 0, 0, 150);
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 200); /* mai puțin transparent când treci cu mouse-ul peste */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 100); /* mai transparent când este apăsat */
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Connect</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="errorLabel">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>330</y>
+       <width>371</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { 
+color: red;
+ font-size: 16px; 
+text-align: center; 
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="background.qrc"/>
+ </resources>
+ <connections/>
+</ui>

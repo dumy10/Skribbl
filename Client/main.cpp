@@ -1,7 +1,7 @@
 #include "LoginForm.h"
 #include <QtWidgets/QApplication>
 #include "Game.h" 
-
+#include "ServerConnectForm.h"
 /*
 Use to login:
 username: abcabc
@@ -13,7 +13,7 @@ password: Abcabc1
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
-    LoginForm w;
+    ServerConnectForm w;
     w.show();
     return a.exec();
 }
