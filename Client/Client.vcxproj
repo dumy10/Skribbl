@@ -108,7 +108,6 @@
     <ClCompile Include="DrawingWidget.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Lobby.cpp" />
-    <ClCompile Include="LobbyID.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="OtherPlayerProfile.cpp" />
     <ClCompile Include="PlayerProfile.cpp" />
@@ -121,7 +120,6 @@
     <QtRcc Include="LoginForm.qrc" />
     <QtUic Include="Game.ui" />
     <QtUic Include="Lobby.ui" />
-    <QtUic Include="LobbyID.ui" />
     <QtUic Include="LoginForm.ui" />
     <QtMoc Include="LoginForm.h" />
     <ClCompile Include="LoginForm.cpp" />
@@ -144,7 +142,6 @@
     <QtMoc Include="OtherPlayerProfile.h" />
     <QtMoc Include="DrawingWidget.h" />
     <QtMoc Include="Lobby.h" />
-    <QtMoc Include="LobbyID.h" />
     <QtMoc Include="ServerConnectForm.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

@@ -16,4 +16,5 @@ private:
 private slots:
 	void onCreateButtonClicked();
 	void onJoinButtonClicked();
+	void onJoinGameButtonClicked();
 };

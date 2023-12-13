@@ -88,10 +88,17 @@ void Lobby::onCreateLobbyButtonPress()
 	m_ui.player1_2->setText(QString::fromUtf8(m_username.data(), int(m_username.size())));
 	m_ui.stackedWidget->setCurrentIndex(1);
 
+	// send request to server to create a room (game) with the room id the owner of the room the max number of players and how many players are already in the room
+
+
+
+
 }
 
 void Lobby::onStartGameButtonPress()
 {
+	// send request to server to start the game 
+
 	Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
 	game->show();
 	this->close();

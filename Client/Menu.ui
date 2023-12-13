@@ -124,14 +124,108 @@ QPushButton:pressed {
      <bool>false</bool>
     </property>
    </widget>
+   <widget class="QLineEdit" name="roomCode">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>580</y>
+      <width>161</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit {
+	background:transparent;
+    background-color: rgba(255, 255, 255, 0.9); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
+    color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
+    border: 1px solid rgb(255, 255, 255); /* Bordură albă clară */
+    border-radius: 5px; /* Margini rotunjite */
+    padding: 5px; /* Spațiere internă pentru text */
+    font-size: 16px; /* Mărimea fontului adecvată */
+
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::Normal</enum>
+    </property>
+    <property name="dragEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="joinGame">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>580</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+background:transparent;
+    background-color: rgba(255, 255, 255, 150); /* culoare albă cu opacitate pentru a vedea prin */
+    color: rgb(0, 0, 0); /* text negru */
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px; /* colțuri rotunjite */
+    border-color: rgba(0, 0, 0, 150);
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 200); /* mai puțin transparent când treci cu mouse-ul peste */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 100); /* mai transparent când este apăsat */
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Join</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="errorLabel">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>630</y>
+      <width>201</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel { 
+background: transparent;
+ background-color: rgba(0, 51, 102, 0.9);
+color: red;
+ font-size: 16px; 
+text-align: center; 
+    border-radius: 15px; /* Colțuri rotunjite */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
    <zorder>background</zorder>
    <zorder>joinRoom</zorder>
    <zorder>createRoom</zorder>
+   <zorder>roomCode</zorder>
+   <zorder>joinGame</zorder>
+   <zorder>errorLabel</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="menu.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

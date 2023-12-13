@@ -1,6 +1,8 @@
 #include "Menu.h"
 #include "Lobby.h"
-#include"LobbyID.h"
+#include "utils.h"
+#include <crow.h>
+#include <cpr/cpr.h>
 
 /*
 TODO:
@@ -15,15 +17,20 @@ Menu::Menu(const std::string& username, QWidget* parent)
 	m_username(username)
 {
 	m_ui.setupUi(this);
+
+	m_ui.roomCode->hide();
+	m_ui.joinGame->hide();
+	m_ui.errorLabel->hide();
+
 	connect(m_ui.createRoom, SIGNAL(clicked()), this, SLOT(onCreateButtonClicked()));
 	connect(m_ui.joinRoom, SIGNAL(clicked()), this, SLOT(onJoinButtonClicked()));
+	connect(m_ui.joinGame, SIGNAL(clicked()), this, SLOT(onJoinGameButtonClicked()));
 }
 
-//consructor of menu with string parameters, to be used with move semantics
-
-
 Menu::~Menu()
-{}
+{
+
+}
 
 void Menu::onCreateButtonClicked()
 {
@@ -35,9 +42,31 @@ void Menu::onCreateButtonClicked()
 
 void Menu::onJoinButtonClicked()
 {
-	LobbyID* lobbyID = new LobbyID();
-	lobbyID->show();
-	lobbyID->setUserName(m_username);
+	m_ui.joinGame->show();
+	m_ui.roomCode->show();
+	m_ui.errorLabel->show();
+}
 
-	this->close();
+void Menu::onJoinGameButtonClicked()
+{
+	std::string roomID = m_ui.roomCode->text().toUtf8().constData();
+
+	try
+	{
+		if (roomID == "")
+			throw std::exception("Room ID cannot be empty");
+
+		// send request to server to check if the room exists
+	
+		// put player in the room
+
+
+	}
+	catch (const std::exception& exception)
+	{
+		m_ui.errorLabel->setText(exception.what());
+	}
+
+
+
 }
