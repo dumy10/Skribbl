@@ -25,6 +25,8 @@ namespace skribbl
         void makeAdmin();
         void removeAdmin();
 
+        void setGuessedTheWord(bool guessed);
+
         bool operator<(const Player& player);
         bool operator>(const Player& player);
         bool operator==(const Player& player);
@@ -34,7 +36,7 @@ namespace skribbl
         std::string m_password;
         std::string m_email;
         int m_points;
-        bool guessedTheWord=false;
+        bool m_guessedTheWord{ false };
         bool is_admin;
     };
 }

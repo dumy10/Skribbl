@@ -68,10 +68,14 @@ void skribbl::Player::removeAdmin()
 	this->is_admin = false;
 }
 
+void skribbl::Player::setGuessedTheWord(bool guessed)
+{
+	this->m_guessedTheWord = guessed;
+}
+
 int Player::getId() const
 {
 	return this->m_id;
-
 }
 
 int Player::getPoints() const

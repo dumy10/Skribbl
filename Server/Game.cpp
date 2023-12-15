@@ -32,26 +32,7 @@ startGame function needs rethinking
 
 void Game::startGame()
 {
-	std::string password, username;
-	std::cout << "Welcome to skribbl";
-	std::cout << "Login";//make this a button in the future
-	//the first player in the game should become the admin and be able to make the others admin if he wants to
-	std::cin >> username >> password;
-	//search the username in the database and see if the password is correct
-	//primul jucator care intra este facut admin
-	while (m_players.size() < 2) //do this every 10 secconds
-	{
-		std::cout << "Waiting for more players";
-		std::cout << "The invite link is:"; //put the link to the game
-	}
-	std::cout << "The game will start shortly";
-	/* Cannot cast a nonstatic member function to a function pointer
-	while (Round::getRound() < 5) //the admin will be able to modify it
-	{
-		//Round::startRound();
-		//Round::modifyRound();
-	}*/
-	endGame();
+
 }
 
 void Game::endGame()
@@ -73,13 +54,7 @@ void clearScreen()
 	system("clear");
 }*/
 
-Player Game::getWinner(const Leaderboard& leaderboard) const
-{
-	if(leaderboard.getLeaderboard().size() == 0)
-		return Player();
-	else
-		return leaderboard.getLeaderboard()[0];
-}
+
 
 void skribbl::Game::makeAdmin(const Player& player)
 {

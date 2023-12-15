@@ -1,5 +1,4 @@
 module round;
-import leaderboard;
 import player;
 import turn;
 
@@ -10,8 +9,7 @@ import <thread>;
 import <chrono>;
 import <iostream>;
 
-Round::Round(const Leaderboard& leaderboard, const Turn& turn, const std::string& currentWord, uint8_t roundNumber, const std::vector<Player>& players):
-	m_leaderboard{leaderboard},
+Round::Round( const Turn& turn, const std::string& currentWord, uint8_t roundNumber, const std::vector<Player>& players):
 	m_turn{turn},
 	m_word{currentWord},
 	m_roundNumber{roundNumber},
@@ -82,10 +80,6 @@ void Round::startRound()
 	}
 }
 
-void Round::setLeaderboard(const std::vector<Player>& players)
-{
-	this->m_leaderboard.setLeaderboard(players);
-}
 
 void Round::setWord(const std::string& word)
 {
