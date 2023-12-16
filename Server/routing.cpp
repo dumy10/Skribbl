@@ -90,6 +90,9 @@ void Routing::run(Database& storage)
 		if (!storage.CheckRoomID(roomID))
 			return crow::response{ 409, "Game not found"};
 
+		if(storage.GetGame(roomID).getCurrentPlayers()>= storage.GetGame(roomID).getMaxPlayers())
+			return crow::response{ 409, "Game is full" };
+
 		if(storage.GetGame(roomID).getGameStatusAsInt() != 1)
 			return crow::response{ 409, "Game already started" };
 
