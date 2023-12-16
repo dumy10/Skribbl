@@ -70,6 +70,26 @@ bool Database::AddUser(const std::string& username, const std::string& password,
 	}
 }
 
+bool Database::AddGame(const Player& player, const std::string& gameCode, size_t maxPlayers)
+{
+	try {
+		m_db.insert(Game{-1,player, gameCode, maxPlayers,1});
+		return true;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while adding game: " << e.what() << "\n";
+		return false;
+	}
+}
+
+
+Game Database::GetGame(const std::string& roomID)
+{
+	auto existingGames = m_db.get_all<Game>(
+		sql::where(sql::c(&Game::getGameCode) == roomID)
+	);
+	return existingGames[0];
+}
 Player Database::GetPlayer(const std::string& username)
 {
 	auto existingPlayers = m_db.get_all<Player>(
@@ -107,6 +127,21 @@ bool Database::CheckPassword(const std::string& username, const std::string& pas
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Exception occurred while checking if password is correct: " << e.what() << "\n";
+		return false;
+	}
+}
+
+bool Database::CheckRoomID(const std::string& roomID)
+{
+	try {
+		auto existingGames = m_db.get_all<Game>(
+			sql::where(sql::c(&Game::getGameCode) == roomID)
+		);
+
+		return !existingGames.empty();
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while checking if roomID exists: " << e.what() << "\n";
 		return false;
 	}
 }

@@ -23,10 +23,11 @@ Lobby::Lobby(const std::string& username, bool isOwner, QWidget* parent) :
 	QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(0)
 {
 	m_ui.setupUi(this);
-	/*m_ui.player1_2->hide();
+
+	m_ui.player1_2->hide();
 	m_ui.player2_2->hide();
 	m_ui.player3_2->hide();
-	m_ui.player4_2->hide();*/
+	m_ui.player4_2->hide();
 
 
 	connect(m_ui.createLobby, SIGNAL(clicked()), this, SLOT(onCreateLobbyButtonPress()));
@@ -55,6 +56,7 @@ void Lobby::DisplayPlayer(const std::string& username, int index)
 	switch (index)
 	{
 	case 1:
+		m_ui.player1_2->show();
 		m_ui.player1_2->setText(QString::fromUtf8(username.data(), int(username.size())));
 		m_ui.roomOwnerField_2->setText(QString::fromUtf8(username.data(), int(username.size())));
 		break;
@@ -91,15 +93,15 @@ void Lobby::onCreateLobbyButtonPress()
 	DisplayPlayer(m_username, m_playerIndex);
 
 	// send request to server to create a room (game) with the room id, the max number of players and how many players are already in the room
-	/*cpr::Response response = cpr::Get(
+	cpr::Response response = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/createRoom" },
 		cpr::Payload{
 			{ "gameCode", m_roomID },
 			{ "username", m_username },
 			{ "maxPlayers", std::to_string(numberOfPlayers[0].digitValue()) },
-			{ "currentPlayers", std::to_string(m_playerIndex+1) }
+			{ "currentPlayers", std::to_string(m_playerIndex + 1) }
 		}
-	);*/
+	);
 
 
 

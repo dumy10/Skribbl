@@ -59,7 +59,13 @@ void Menu::onJoinGameButtonClicked()
 			throw std::exception("Room ID cannot be empty");
 
 		// send request to server to check if the room exists
-	
+		cpr::Response response = cpr::Get(
+			cpr::Url{ Server::GetUrl() + "/checkRoomID" },
+			cpr::Payload{ {"roomID", roomID} }
+		);
+
+		if (response.status_code != 200)
+			throw std::exception(response.text.c_str());
 		// put player in the room
 
 

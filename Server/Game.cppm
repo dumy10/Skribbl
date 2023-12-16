@@ -21,7 +21,7 @@ namespace skribbl
 
 	public:
 		Game() = default;
-		Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers);
+		Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers, size_t currentPlayers);
 		void addPlayer(const Player& player);
 		void removePlayer(const Player& player);
 		void startGame();

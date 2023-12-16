@@ -1,6 +1,6 @@
 #include "routing.h"
 import player;
-
+import game;
 using namespace skribbl;
 
 
@@ -59,26 +59,42 @@ void Routing::run(Database& storage)
 
 	CROW_ROUTE(m_app, "/roomID")
 		.methods("GET"_method, "POST"_method)([&]() {
-		/*TODO:
-		- check if the roomID exists already for a game, check the game status and then return the roomID
-		*/
-
-		return crow::response{ storage.GetRandomID() };
+		std::string roomID = storage.GetRandomID();
+		
+		while (storage.CheckRoomID(roomID) && storage.GetGame(roomID).getGameStatusAsInt() != 3) 
+			roomID = storage.GetRandomID();
+		
+		return crow::response{ roomID };
 			});
 
-	//CROW_ROUTE(m_app, "/createRoom")
-	//	.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-	//	auto x = parseUrlArgs(req.body);
-	//	std::string roomID = x["gameCode"];
-	//	std::string username = x["username"];
-	//	/*int maxPlayers = static_cast<int> (x["maxPlayers"]);
-	//	int currentPlayers = static_cast<int> (x["currentPlayers"]);*/
-	//	Player player = storage.GetPlayer(username);
-	//	//Game game(-1, player, roomID,maxPlayers, currentPlayers);
 
+	CROW_ROUTE(m_app, "/createRoom")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["gameCode"];
+		std::string username = x["username"];
+		int maxPlayers = std::stoi(x["maxPlayers"]);
+		int currentPlayers = std::stoi(x["currentPlayers"]);
+		Player player = storage.GetPlayer(username);
+		if(!storage.AddGame(player,roomID,maxPlayers))
+			return crow::response{409, "Error creating the game."};
 
-	//		});
+		return crow::response{ 200 };
+			});
 
+	CROW_ROUTE(m_app, "/checkRoomID")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+
+		if (!storage.CheckRoomID(roomID))
+			return crow::response{ 409, "Game not found"};
+
+		if(storage.GetGame(roomID).getGameStatusAsInt() != 1)
+			return crow::response{ 409, "Game already started" };
+
+		return crow::response{ 200 };
+			});
 
 	m_app.port(18080).multithreaded().run();
 }

@@ -59,10 +59,16 @@ public:
 	// Adds a player to the database
 	bool AddUser(const std::string& username, const std::string& password, const std::string& email);
 
+	bool AddGame(const Player& player, const std::string& gameCode, size_t maxPlayers);
+
+	Game GetGame(const std::string& roomID);
+
 	Player GetPlayer(const std::string& username);
 
 	//Checks if a username exists in the database
 	bool CheckUsername(const std::string& username);
+
+	bool CheckRoomID(const std::string& roomID);
 
 	//Checks if a username and password match
 	bool CheckPassword(const std::string& username, const std::string& password);

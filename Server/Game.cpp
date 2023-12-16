@@ -11,10 +11,11 @@ using namespace skribbl;
 
 
 
-Game::Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers)
+Game::Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers, size_t currentPlayers)
 	: m_id{ id },
 	m_gameCode{ gameCode },
 	m_maxPlayers{ maxPlayers }
+
 {
 	this->m_players.push_back(player);
 	m_gameStatus = GameStatus::Waiting;
@@ -48,15 +49,7 @@ void Game::startGame()
 
 void Game::endGame()
 {
-	//clearScreen(); function not declared
-	std::cout << "The winner is : "; //show the first place <<
-	std::cout << "Points : ";//show the points 
-	std::cout << "\n Seccond place : ";
-	std::cout << "Points : ";
-	std::cout << "\n Third place : ";
-	std::cout << "Points:";
-	std::cout << "\n Play again?";
-	std::cout << "Leave";//make them buttons in the future
+
 }
 
 std::string Game::getGameCode() const noexcept
