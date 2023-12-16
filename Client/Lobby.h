@@ -15,6 +15,7 @@ public:
 private slots:
 	void onCreateLobbyButtonPress();
 	void onStartGameButtonPress();
+	void onBackButtonPress();
 private:
 	Ui::Lobby m_ui;
 	std::string m_username;

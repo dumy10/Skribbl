@@ -411,6 +411,42 @@ background: rgb(22, 72, 99);
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'Times New Roman'; font-size:20pt; font-weight:700; color:#ffffff;&quot;&gt;Game Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="backButton">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>570</y>
+        <width>171</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	background: transparent;
+    background-color: rgba(255, 255, 255, 150); /* culoare albă cu opacitate pentru a vedea prin */
+    color: rgb(0, 0, 0); /* text negru */
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px; /* colțuri rotunjite */
+    border-color: rgba(0, 0, 0, 150);
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 200); /* mai puțin transparent când treci cu mouse-ul peste */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 100); /* mai transparent când este apăsat */
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Back </string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_6">
      <widget class="QFrame" name="frame_3">

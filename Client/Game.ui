@@ -206,9 +206,9 @@ QPushButton:pressed {
    <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
      <rect>
-      <x>830</x>
+      <x>860</x>
       <y>640</y>
-      <width>161</width>
+      <width>131</width>
       <height>51</height>
      </rect>
     </property>
@@ -740,9 +740,9 @@ QPushButton:default
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>150</y>
+      <y>130</y>
       <width>211</width>
-      <height>421</height>
+      <height>491</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -760,7 +760,7 @@ QPushButton:default
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>10</y>
+       <y>70</y>
        <width>201</width>
        <height>61</height>
       </rect>
@@ -785,7 +785,7 @@ QPushButton:default
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>110</y>
+       <y>170</y>
        <width>201</width>
        <height>61</height>
       </rect>
@@ -809,7 +809,7 @@ QPushButton:default
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>210</y>
+       <y>270</y>
        <width>201</width>
        <height>61</height>
       </rect>
@@ -833,7 +833,7 @@ QPushButton:default
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>310</y>
+       <y>370</y>
        <width>201</width>
        <height>61</height>
       </rect>

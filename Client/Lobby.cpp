@@ -1,5 +1,6 @@
 #include "Lobby.h"
 #include "Game.h"
+#include "Menu.h"
 
 #include "utils.h"
 #include <crow.h>
@@ -32,6 +33,7 @@ Lobby::Lobby(const std::string& username, bool isOwner, QWidget* parent) :
 
 	connect(m_ui.createLobby, SIGNAL(clicked()), this, SLOT(onCreateLobbyButtonPress()));
 	connect(m_ui.startGame, SIGNAL(clicked()), this, SLOT(onStartGameButtonPress()));
+	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(onBackButtonPress()));
 }
 
 Lobby::~Lobby()
@@ -116,4 +118,12 @@ void Lobby::onStartGameButtonPress()
 	this->close();
 	this->deleteLater();
 
+}
+
+void Lobby::onBackButtonPress()
+{
+	Menu* menuBar = new Menu(std::move(m_username));
+	menuBar->show();
+	this->close();
+	this->deleteLater();
 }
