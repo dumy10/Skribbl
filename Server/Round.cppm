@@ -1,32 +1,35 @@
 export module round;
 
 import player;
-import player;
 import turn;
 
 import <vector>;
 import <string>;
 
 
-namespace skribbl 
+namespace skribbl
 {
-    export class Round {
-    public:
+	export class Round {
+	public:
 
-        Round(const Turn& turn, const std::string& currentWord, uint8_t roundNumber, const std::vector<Player>& players);
-        void startRound();
-        void endRound();
-        void setWord(const std::string& word);
-        const bool guessWord(const std::string& word) const;
-        const int getRound() const noexcept;
-        void modifyRound();
-        void setTurn(const Player& player); 
+		Round(const Turn& turn, const std::string& currentWord, uint8_t roundNumber, const std::vector<Player>& players);
 
-    private:
-        std::vector<Player> m_players;
-        Turn m_turn;
-        std::string m_word;
+		void StartRound();
+		void EndRound();
+		void SetWord(const std::string& word);
+
+		const bool GuessWord(const std::string& word) const;
+		const int GetRound() const noexcept;
+
+		void ModifyRound();
+		void SetTurn(const Player& player, const std::string& word);
+
+	private:
+		// Use a reference to the player instead of copying it
+		std::vector<Player> m_players;
+		Turn m_turn;
+		std::string m_word;
 		uint8_t m_roundNumber;
-    };
-    
+	};
+
 }

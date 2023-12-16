@@ -9,22 +9,22 @@ Word::Word(int id, const std::string& word) :
 	// Empty
 }
 
-int Word::getId() const noexcept
+int Word::GetId() const noexcept
 {
 	return m_id;
-
 }
-std::string Word::getWord() const noexcept
+
+std::string Word::GetWord() const noexcept
 {
 	return m_word;
 }
 
-void Word::setId(int id)
+void Word::SetId(int id)
 {
 	m_id = id;
 }
 
-void Word::setWord(const std::string& word)
+void Word::SetWord(const std::string& word)
 {
 	m_word = word;
 }

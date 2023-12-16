@@ -1,43 +1,43 @@
 export module player;
 import <string>;
 
-namespace skribbl 
+namespace skribbl
 {
-    export class Player
-    {
-    public:
-        Player();
-        Player(int id, const std::string& name, const std::string& password, const std::string& email);
+	export class Player
+	{
+	public:
+		Player() = default;
+		Player(int id, const std::string& name, const std::string& password, const std::string& email);
 
-        const std::string getName() const noexcept;
-        const std::string getPassword() const noexcept;
-        const std::string getEmail() const noexcept;
-        int getPoints() const;
-        int getId() const;
+		const std::string GetName() const noexcept;
+		const std::string GetPassword() const noexcept;
+		const std::string GetEmail() const noexcept;
+		int GetPoints() const;
+		int GetId() const;
+		bool IsDrawing() const;
+		bool HasGuessedTheWord() const;
 
-        void setId(int id);
-        void setName(const std::string& name);
-		void setPassword(const std::string& password);
-        void setEmail(const std::string& email);
-        void setPoints(int points);
-        void addPoints(int points);
-        void substractPoints(int points);
-        void makeAdmin();
-        void removeAdmin();
+		void SetId(int id);
+		void SetName(const std::string& name);
+		void SetPassword(const std::string& password);
+		void SetEmail(const std::string& email);
+		void SetPoints(int points);
+		void AddPoints(int points);
+		void SubstractPoints(int points);
+		void SetDrawing(bool IsDrawing);
+		void SetGuessedTheWord(bool guessed);
 
-        void setGuessedTheWord(bool guessed);
-
-        bool operator<(const Player& player);
-        bool operator>(const Player& player);
-        bool operator==(const Player& player);
-    private:
-        int m_id;
-        std::string m_name;
-        std::string m_password;
-        std::string m_email;
-        int m_points;
-        bool m_guessedTheWord{ false };
-        bool is_admin;
-    };
+		bool operator<(const Player& player);
+		bool operator>(const Player& player);
+		bool operator==(const Player& player);
+	private:
+		int m_id;
+		std::string m_name;
+		std::string m_password;
+		std::string m_email;
+		int m_points;
+		bool m_guessedTheWord{ false };
+		bool m_isDrawing{ false };
+	};
 }
 

@@ -10,11 +10,11 @@ namespace skribbl
 		Word() = default;
 		Word(int id, const std::string& word);
 
-		int getId() const noexcept;
-		std::string getWord() const noexcept;
+		int GetId() const noexcept;
+		std::string GetWord() const noexcept;
 
-		void setId(int id);
-		void setWord(const std::string& word);
+		void SetId(int id);
+		void SetWord(const std::string& word);
 
 	private:
 		int m_id;

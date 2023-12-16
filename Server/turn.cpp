@@ -10,28 +10,28 @@ Turn::Turn(const Player& player, const std::string& word):
 	// Empty
 }
 
-void Turn::setPlayerTurn(const Player& player, const std::string& word)
+void Turn::SetPlayerTurn(const Player& player, const std::string& word)
 {
 	this->m_player = player;
 	this->m_word = word;
 }
 
-void Turn::startTimer() noexcept
+void Turn::StartTimer() noexcept
 {
 	m_startTime = std::chrono::steady_clock::now();
 }
 
-const Player& Turn::getCurrentPlayer() const noexcept
+const Player& Turn::GetCurrentPlayer() const noexcept
 {
 	return this->m_player;
 }
 
-const std::string_view Turn::getCurrentWord() const noexcept
+const std::string Turn::GetCurrentWord() const noexcept
 {
 	return this->m_word;
 }
 
-const bool Turn::guessWord(const std::string& word) const
+const bool Turn::GuessWord(const std::string& word) const
 {
 	return this->m_word == word;
 }

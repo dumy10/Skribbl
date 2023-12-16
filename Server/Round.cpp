@@ -1,13 +1,7 @@
 module round;
-import player;
-import turn;
 
 using namespace skribbl;
 
-import <cstdlib>;
-import <thread>;
-import <chrono>;
-import <iostream>;
 
 Round::Round( const Turn& turn, const std::string& currentWord, uint8_t roundNumber, const std::vector<Player>& players):
 	m_turn{turn},
@@ -18,47 +12,7 @@ Round::Round( const Turn& turn, const std::string& currentWord, uint8_t roundNum
 	// Empty
 }
 
-void Round::endRound()
-{
-	/*
-	End round:
-		- Display leaderboard
-		- Display word
-		- Display next round start in 5 seconds
-	*/
-	std::cout << "Next round start in :";
-	for (int i = 5; i > 0; i--)
-	{
-		std::cout << i << std::endl;
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	}
-}
-
-const int skribbl::Round::getRound() const noexcept
-{
-	return m_roundNumber;
-}
-
-void skribbl::Round::modifyRound()
-{
-	/*
-	Next round:
-		- Clear board
-		- Set new word
-		- Set new turn
-		- Set new leaderboard
-	*/
-
-
-	m_roundNumber++;
-}
-
-void clearScreen() 
-{
-	system("clear");
-}
-
-void Round::startRound() 
+void Round::StartRound()
 {
 	/*
 	Start round:
@@ -68,36 +22,48 @@ void Round::startRound()
 		- Display who's turn is
 		- Display timer
 	*/
-
-	if (getRound() == 1)
-		std::cout << "Welcome to skribbl \n Your round will begin shortly\n";
-	else 
-	{
-		clearScreen();
-		//draw();  //to be implemented later, leave it comented for now	as it will cause compilation errors
-		modifyRound();
-		endRound();
-	}
 }
 
+void Round::EndRound()
+{
+	/*
+	End round:
+		- Display leaderboard
+		- Display word
+		- Display next round start in 5 seconds
+	*/
+}
 
-void Round::setWord(const std::string& word)
+void Round::SetWord(const std::string& word)
 {
 	this->m_word = word;
 }
 
-
-const bool Round::guessWord(const std::string& word) const
+const bool Round::GuessWord(const std::string& word) const
 {
 	return word == m_word;
 }
 
-/*
-Grab a word from the DB
-*/
-
-void Round::setTurn(const Player& player)
+const int Round::GetRound() const noexcept
 {
-	this->m_turn.setPlayerTurn(player, "word");
+	return m_roundNumber;
+}
+
+void Round::ModifyRound()
+{
+	/*
+	Next round:
+		- Clear board
+		- Set new word
+		- Set new turn
+		- Set new leaderboard
+	*/
+
+	m_roundNumber++;
+}
+
+void Round::SetTurn(const Player& player, const std::string& word)
+{
+	this->m_turn.SetPlayerTurn(player, word);
 }
 
