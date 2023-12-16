@@ -38,6 +38,8 @@ void Menu::onCreateButtonClicked()
 	Lobby* lobby = new Lobby(std::move(m_username), true);
 	lobby->show();
 	this->close();
+	this->deleteLater();
+
 }
 
 void Menu::onJoinButtonClicked()

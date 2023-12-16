@@ -10,6 +10,7 @@ namespace sql = sqlite_orm;
 import utils;
 import player;
 import word;
+import game;
 
 using namespace skribbl;
 
@@ -29,7 +30,17 @@ inline auto CreateStorage(const std::string& filename)
 			"Words",
 			sql::make_column("id", &Word::setId, &Word::getId, sql::primary_key().autoincrement()),
 			sql::make_column("word", &Word::setWord, &Word::getWord)
+		),
+		sql::make_table(
+			"Games",
+			sql::make_column("id", &Game::setId, &Game::getId, sql::primary_key().autoincrement()),
+			sql::make_column("players", &Game::serializePlayers, &Game::deserializePlayers),
+			sql::make_column("gamecode", &Game::setGameCode, &Game::getGameCode),
+			sql::make_column("maxplayers", &Game::setMaxPlayers, &Game::getMaxPlayers),
+			sql::make_column("currentplayers", &Game::setCurrentPlayers, &Game::getCurrentPlayers),
+			sql::make_column("status", &Game::setGameStatusInt, &Game::getGameStatusAsInt)
 		)
+		    
 	);
 }
 
@@ -47,6 +58,8 @@ public:
 
 	// Adds a player to the database
 	bool AddUser(const std::string& username, const std::string& password, const std::string& email);
+
+	Player GetPlayer(const std::string& username);
 
 	//Checks if a username exists in the database
 	bool CheckUsername(const std::string& username);

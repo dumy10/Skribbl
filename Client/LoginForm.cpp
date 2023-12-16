@@ -87,6 +87,7 @@ void LoginForm::onLoginButtonClicked()
 		Menu* menu = new Menu(std::move(username));
 		menu->show();
 		this->close();
+		this->deleteLater();
 	}
 	catch (const std::exception& exception)
 	{
@@ -100,4 +101,5 @@ void LoginForm::onRegisterButtonClicked()
 	RegisterForm* registerForm = new RegisterForm();
 	registerForm->show();
 	this->close();
+	this->deleteLater();
 }

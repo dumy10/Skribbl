@@ -70,6 +70,14 @@ bool Database::AddUser(const std::string& username, const std::string& password,
 	}
 }
 
+Player Database::GetPlayer(const std::string& username)
+{
+	auto existingPlayers = m_db.get_all<Player>(
+		sql::where(sql::c(&Player::getName) == username)
+	);
+	return existingPlayers[0];
+}
+
 bool Database::CheckUsername(const std::string& username) 
 {
 	try {

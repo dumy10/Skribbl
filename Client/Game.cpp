@@ -164,6 +164,15 @@ void Game::onSendButtonClicked()
     if (text == "" || text.size() < 3)
         return;
 
+    /*
+    TODO:
+    needs to send the text to the server
+    check if the text is the same as the word
+    if it is, send a message to the server that the player won and display a message in the chat that the player won
+    send the chat to the server and display it to the other players
+    display the chat from the server
+    */
+
     if (text == "word")
     {
         m_ui.chat->setPlainText(m_ui.chat->toPlainText() + "\n" + QString::fromUtf8(m_username.data(), int(m_username.size())) + " guessed the word");

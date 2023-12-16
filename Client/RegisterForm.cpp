@@ -91,6 +91,7 @@ void RegisterForm::WaitForSeconds(int seconds)
 void RegisterForm::onBackButtonClicked()
 {
 	this->close();
+	this->deleteLater();
 	LoginForm* loginForm = new LoginForm();
 	loginForm->show();
 }
@@ -122,8 +123,9 @@ void RegisterForm::onRegisterButtonClicked()
 
 	m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 	m_ui.errorLabel->setText("You have successfully registered.");
-	WaitForSeconds(5);
+	WaitForSeconds(2);
 	this->close();
+	this->deleteLater();
 	LoginForm* loginForm = new LoginForm();
 	loginForm->show();
 

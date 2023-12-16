@@ -56,33 +56,28 @@ void Routing::run(Database& storage)
 		return crow::response{ 200 };
 
 			});
-	CROW_ROUTE(m_app, "/joinRoomID")
-		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-			auto x = parseUrlArgs(req.body);
-			std::string roomID = x["RoomID"];
-			//check if roomID exists
-
-			return crow::response{ 200 };
-
-			});
 
 	CROW_ROUTE(m_app, "/roomID")
 		.methods("GET"_method, "POST"_method)([&]() {
+		/*TODO:
+		- check if the roomID exists already for a game, check the game status and then return the roomID
+		*/
+
 		return crow::response{ storage.GetRandomID() };
 			});
-	CROW_ROUTE(m_app, "/sendString")
-		.methods("POST"_method)
-		([](const crow::request& req) {
-		auto json = crow::json::load(req.body);
-		if (!json) {
-			return crow::response(400);
-		}
 
-		std::string receivedString = json["message"].s();	
-		std::cout << "Server received: " << receivedString << std::endl;
+	//CROW_ROUTE(m_app, "/createRoom")
+	//	.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+	//	auto x = parseUrlArgs(req.body);
+	//	std::string roomID = x["gameCode"];
+	//	std::string username = x["username"];
+	//	/*int maxPlayers = static_cast<int> (x["maxPlayers"]);
+	//	int currentPlayers = static_cast<int> (x["currentPlayers"]);*/
+	//	Player player = storage.GetPlayer(username);
+	//	//Game game(-1, player, roomID,maxPlayers, currentPlayers);
 
-		return crow::response("Server received: " + receivedString);
-			});
+
+	//		});
 
 
 	m_app.port(18080).multithreaded().run();
