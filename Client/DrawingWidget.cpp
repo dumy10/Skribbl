@@ -100,3 +100,7 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
     update(QRect(m_lastPoint, endPoint).normalized().adjusted(-1, -1, 1, 1));
 }
 
+void DrawingWidget::setFillMode(bool active)
+{
+    fillMode = active;
+}

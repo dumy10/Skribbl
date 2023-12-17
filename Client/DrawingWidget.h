@@ -14,6 +14,7 @@ public:
     void ClearDrawing();
     void SetPenColor(const QColor& newColor);
     void setText(const QString& text);
+    void setFillMode(bool active);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
@@ -27,6 +28,7 @@ private:
     QImage m_image; // Imaginea pe care se deseneaza
     QPoint m_lastPoint; // Ultimul punct pentru desen
     QPen m_pen; // Stiloul folosit pentru desenare si stergere
+    bool fillMode;//indica daca se umple
 
 private:
     void DrawLineTo(const QPoint& endPoint); // Traseaza o linie pana la punctul dat

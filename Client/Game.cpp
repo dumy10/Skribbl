@@ -53,6 +53,8 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, QWidget* 
     connect(m_ui.Turquoise, &QPushButton::clicked, this, &Game::SetPenColorTurquoise);
     connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::OpenSettings);
     connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::OnSendButtonClicked);
+    connect(m_ui.fillButton, &QPushButton::clicked, this, &Game::onFillButtonClicked);
+
 }
 
 Game::~Game()
@@ -149,6 +151,13 @@ void Game::SetPenColorPink()
     DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
     if (drawingArea)
         drawingArea->SetPenColor(QColor(255, 192, 203)); // RGB for pink
+}
+
+void Game::onFillButtonClicked() 
+{
+    DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+    if (drawingArea) 
+        drawingArea->setFillMode(true); 
 }
 
 void Game::OpenSettings()
