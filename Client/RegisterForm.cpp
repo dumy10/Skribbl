@@ -14,8 +14,8 @@ RegisterForm::RegisterForm(QWidget* parent)
 {
 	m_ui.setupUi(this);
 
-	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(onRegisterButtonClicked()));
-	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(onBackButtonClicked()));
+	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(OnRegisterButtonClicked()));
+	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(OnBackButtonClicked()));
 
 }
 
@@ -88,7 +88,7 @@ void RegisterForm::WaitForSeconds(int seconds)
 		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
-void RegisterForm::onBackButtonClicked()
+void RegisterForm::OnBackButtonClicked()
 {
 	this->close();
 	this->deleteLater();
@@ -101,7 +101,7 @@ TODO:
 - Hasher getting a null password passed
 */
 
-void RegisterForm::onRegisterButtonClicked()
+void RegisterForm::OnRegisterButtonClicked()
 {
 
 	QString username = m_ui.usernameField->text();

@@ -17,5 +17,5 @@ private:
 	Ui::ServerConnectFormClass m_ui;
 
 private slots:
-	void onConnectButtonClicked();
+	void OnConnectButtonClicked();
 };

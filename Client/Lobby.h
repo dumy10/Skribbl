@@ -9,21 +9,23 @@ class Lobby : public QMainWindow
 	Q_OBJECT
 
 public:
-	Lobby(const std::string& username, bool isOwner = false, QWidget* parent = nullptr);
+	Lobby(const std::string& username, int playerIndex = 0, bool isOwner = false, QWidget* parent = nullptr);
 	~Lobby();
 
 private slots:
-	void onCreateLobbyButtonPress();
-	void onStartGameButtonPress();
-	void onBackButtonPress();
+	void OnCreateLobbyButtonPress();
+	void OnStartGameButtonPress();
+	void OnBackButtonPress();
+
+private:
+	void GetRoomID();
+	void DisplayPlayer(const std::string& username, int index);
+
 private:
 	Ui::Lobby m_ui;
 	std::string m_username;
 	std::string m_roomID;
 	bool m_isOwner;
 	int m_playerIndex;
-private:
-	void GetRoomID();
-	void DisplayPlayer(const std::string& username, int index);
 };
 #endif // !LOBBY_H

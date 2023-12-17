@@ -1,8 +1,8 @@
-#include "LoginForm.h"
 #include <QtWidgets/QApplication>
-#include "Game.h" 
 #include "ServerConnectForm.h"
+
 /*
+Use to connect to server: 127.0.0.1
 Use to login:
 username: abcabc
 username: abc
@@ -17,13 +17,3 @@ int main(int argc, char* argv[])
     w.show();
     return a.exec();
 }
-
-//int main(int argc, char* argv[])
-//{
-//    QApplication a(argc, argv);
-//    Game w;
-//    w.show();
-//    return a.exec();
-//}
-
-

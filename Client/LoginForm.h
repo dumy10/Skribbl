@@ -21,7 +21,7 @@ private:
     void ValidateUserLogin(const std::string& username, const std::string& password);
 
 private slots:
-    void onLoginButtonClicked();
-    void onRegisterButtonClicked();
+    void OnLoginButtonClicked();
+    void OnRegisterButtonClicked();
 
 };

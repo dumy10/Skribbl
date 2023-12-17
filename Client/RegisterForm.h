@@ -20,7 +20,8 @@ private:
 	void CheckPasswordPattern(const std::string& password);
 	void AddUserToDataBase(const std::string& username, const std::string& password, const std::string& email);
 	void WaitForSeconds(int seconds);
+
 private slots:
-	void onRegisterButtonClicked();
-	void onBackButtonClicked();
+	void OnRegisterButtonClicked();
+	void OnBackButtonClicked();
 };

@@ -14,8 +14,8 @@ LoginForm::LoginForm(QWidget* parent)
 	m_ui.setupUi(this);
 
 
-	connect(m_ui.loginButton, SIGNAL(clicked()), this, SLOT(onLoginButtonClicked()));
-	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(onRegisterButtonClicked()));
+	connect(m_ui.loginButton, SIGNAL(clicked()), this, SLOT(OnLoginButtonClicked()));
+	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(OnRegisterButtonClicked()));
 }
 
 LoginForm::~LoginForm()
@@ -72,7 +72,7 @@ void LoginForm::ValidateUserLogin(const std::string& username, const std::string
 		throw std::exception(loginRequest.text.c_str());
 }
 
-void LoginForm::onLoginButtonClicked()
+void LoginForm::OnLoginButtonClicked()
 {
 	std::string username = m_ui.usernameField->text().toUtf8().constData();
 	std::string password = m_ui.passwordField->text().toUtf8().constData();
@@ -96,7 +96,7 @@ void LoginForm::onLoginButtonClicked()
 
 }
 
-void LoginForm::onRegisterButtonClicked()
+void LoginForm::OnRegisterButtonClicked()
 {
 	RegisterForm* registerForm = new RegisterForm();
 	registerForm->show();

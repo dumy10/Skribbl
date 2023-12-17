@@ -13,25 +13,25 @@ public:
     ~Game();
 
 private slots:
-    void clearDrawingArea();
-    void setPenColorGreen();
-    void setPenColorRed();
-    void setPenColorBlue();
-    void setPenColorOrange();
-    void setPenColorBrown();
-    void setPenColorPurple();
-    void setPenColorBlack();
-    void setPenColorWhite();
-    void setPenColorYellow();
-    void setPenColorGrey();
-    void setPenColorTurquoise();
-    void setPenColorPink();
-    void openSettings();
-    void onSendButtonClicked();
+    void ClearDrawingArea();
+    void SetPenColorGreen();
+    void SetPenColorRed();
+    void SetPenColorBlue();
+    void SetPenColorOrange();
+    void SetPenColorBrown();
+    void SetPenColorPurple();
+    void SetPenColorBlack();
+    void SetPenColorWhite();
+    void SetPenColorYellow();
+    void SetPenColorGrey();
+    void SetPenColorTurquoise();
+    void SetPenColorPink();
+    void OpenSettings();
+
+    void OnSendButtonClicked();
 
 private:
     void DisplayPlayer(const std::string& username, int index);
-
 
 private:
     Ui::GameClass m_ui;

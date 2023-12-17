@@ -20,8 +20,8 @@ TODO:
 */
 
 
-Lobby::Lobby(const std::string& username, bool isOwner, QWidget* parent) :
-	QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(0)
+Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, QWidget* parent) :
+	QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex)
 {
 	m_ui.setupUi(this);
 
@@ -30,10 +30,17 @@ Lobby::Lobby(const std::string& username, bool isOwner, QWidget* parent) :
 	m_ui.player3_2->hide();
 	m_ui.player4_2->hide();
 
+	if(playerIndex != 1)
+		m_ui.stackedWidget->setCurrentIndex(1);
 
-	connect(m_ui.createLobby, SIGNAL(clicked()), this, SLOT(onCreateLobbyButtonPress()));
-	connect(m_ui.startGame, SIGNAL(clicked()), this, SLOT(onStartGameButtonPress()));
-	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(onBackButtonPress()));
+	if(!m_isOwner)
+		m_ui.startGame->hide();
+
+	DisplayPlayer(m_username, m_playerIndex);
+
+	connect(m_ui.createLobby, SIGNAL(clicked()), this, SLOT(OnCreateLobbyButtonPress()));
+	connect(m_ui.startGame, SIGNAL(clicked()), this, SLOT(OnStartGameButtonPress()));
+	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(OnBackButtonPress()));
 }
 
 Lobby::~Lobby()
@@ -79,20 +86,19 @@ void Lobby::DisplayPlayer(const std::string& username, int index)
 	}
 }
 
-void Lobby::onCreateLobbyButtonPress()
+void Lobby::OnCreateLobbyButtonPress()
 {
 	if (!m_isOwner)
 		return;
 
 	QString numberOfPlayers = m_ui.comboBox->itemText(m_ui.comboBox->currentIndex());
 	GetRoomID();
-	m_playerIndex = 1;
 	m_ui.playerNumber->setText(numberOfPlayers);
+
 	m_ui.roomOwnerField_2->setText(QString::fromUtf8(m_username.data(), int(m_username.size())));
 	m_ui.roomIdField_2->setText(QString::fromUtf8(m_roomID.data(), int(m_roomID.size())));
-	m_ui.player1_2->setText(QString::fromUtf8(m_username.data(), int(m_username.size())));
+
 	m_ui.stackedWidget->setCurrentIndex(1);
-	DisplayPlayer(m_username, m_playerIndex);
 
 	// send request to server to create a room (game) with the room id, the max number of players and how many players are already in the room
 	cpr::Response response = cpr::Get(
@@ -101,7 +107,7 @@ void Lobby::onCreateLobbyButtonPress()
 			{ "gameCode", m_roomID },
 			{ "username", m_username },
 			{ "maxPlayers", std::to_string(numberOfPlayers[0].digitValue()) },
-			{ "currentPlayers", std::to_string(m_playerIndex + 1) }
+			{ "currentPlayers", std::to_string(m_playerIndex) }
 		}
 	);
 
@@ -109,7 +115,7 @@ void Lobby::onCreateLobbyButtonPress()
 
 }
 
-void Lobby::onStartGameButtonPress()
+void Lobby::OnStartGameButtonPress()
 {
 	// send request to server to start the game 
 
@@ -120,7 +126,7 @@ void Lobby::onStartGameButtonPress()
 
 }
 
-void Lobby::onBackButtonPress()
+void Lobby::OnBackButtonPress()
 {
 	Menu* menuBar = new Menu(std::move(m_username));
 	menuBar->show();

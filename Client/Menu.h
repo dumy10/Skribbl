@@ -10,11 +10,16 @@ class Menu : public QMainWindow
 public:
 	Menu(const std::string& username, QWidget* parent = nullptr);
 	~Menu();
+
 private:
 	Ui::MenuClass m_ui;
 	std::string m_username;
+
+private:
+	void WaitForSeconds(int seconds);
+
 private slots:
-	void onCreateButtonClicked();
-	void onJoinButtonClicked();
-	void onJoinGameButtonClicked();
+	void OnCreateButtonClicked();
+	void OnJoinButtonClicked();
+	void OnJoinGameButtonClicked();
 };

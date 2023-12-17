@@ -11,10 +11,10 @@ ServerConnectForm::ServerConnectForm(QWidget *parent)
 {
 	m_ui.setupUi(this);
 
-	connect(m_ui.connectButton, SIGNAL(clicked()), this, SLOT(onConnectButtonClicked()));
+	connect(m_ui.connectButton, SIGNAL(clicked()), this, SLOT(OnConnectButtonClicked()));
 }
 
-void ServerConnectForm::onConnectButtonClicked()
+void ServerConnectForm::OnConnectButtonClicked()
 {
 	std::string ip = m_ui.IPField->text().toUtf8().constData();
 
