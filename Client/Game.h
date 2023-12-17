@@ -27,7 +27,7 @@ private slots:
     void SetPenColorTurquoise();
     void SetPenColorPink();
     void OpenSettings();
-
+    void onFillButtonClicked();
     void OnSendButtonClicked();
 
 private:

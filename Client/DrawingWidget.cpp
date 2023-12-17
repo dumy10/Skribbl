@@ -6,27 +6,36 @@ DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), m_isDrawing(fal
     m_image = QImage(621, 491, QImage::Format_ARGB32); // Initializare imagine
     m_image.fill(Qt::white); // Umple imaginea cu alb
     m_pen = QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // Initializare stilou
+    fillMode = false;
 }
 
 void DrawingWidget::mousePressEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton && fillMode) 
     {
-        m_lastPoint = event->pos();
-        m_isDrawing = true;
-        if (m_isErasing)
-        {
-            // Daca se sterge, seteaza stiloul la modul de desenare
-            m_pen.setColor(Qt::black);
-            m_isErasing = false;
-        }
+        QPoint fillStartPoint = event->pos();
+        QColor oldColor = m_image.pixelColor(fillStartPoint);
+        floodFill(fillStartPoint, currentFillColor, oldColor);
     }
-    else if (event->button() == Qt::RightButton)
+    else
     {
-        m_lastPoint = event->pos();
-        m_isDrawing = true;
-        SetEraser(); // Seteaza modul de stergere
-
+        if (event->button() == Qt::LeftButton)
+        {
+            m_lastPoint = event->pos();
+            m_isDrawing = true;
+            if (m_isErasing)
+            {
+                // Daca se sterge, seteaza stiloul la modul de desenare
+                m_pen.setColor(Qt::black);
+                m_isErasing = false;
+            }
+        }
+        else if (event->button() == Qt::RightButton)
+        {
+            m_lastPoint = event->pos();
+            m_isDrawing = true;
+            SetEraser(); // Seteaza modul de stergere
+        }
     }
 }
 
@@ -100,7 +109,39 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
     update(QRect(m_lastPoint, endPoint).normalized().adjusted(-1, -1, 1, 1));
 }
 
-void DrawingWidget::setFillMode(bool active)
+
+void DrawingWidget::floodFill(const QPoint& startPoint, const QColor& fillColor, const QColor& oldColor) 
 {
-    fillMode = active;
+    if (!image.rect().contains(startPoint) || image.pixel(startPoint) != oldColor.rgb() || fillColor == oldColor) {
+        return;
+    }
+
+    QStack<QPoint> stack;
+    stack.push(startPoint);
+
+    while (!stack.isEmpty()) {
+        QPoint p = stack.pop();
+        if (image.pixel(p) == oldColor.rgb()) {
+            QPainter painter(&image);
+            painter.setPen(fillColor);
+            painter.drawPoint(p);
+            stack.push(QPoint(p.x() + 1, p.y()));
+            stack.push(QPoint(p.x() - 1, p.y()));
+            stack.push(QPoint(p.x(), p.y() + 1));
+            stack.push(QPoint(p.x(), p.y() - 1));
+        }
+    }
+
+    update();
+}
+
+
+void DrawingWidget::setCurrentFillColor(const QColor& color)
+{
+    currentFillColor = color;
+}
+
+void DrawingWidget::toggleFillMode()
+{
+    fillMode = !fillMode; // Inverseazã valoarea lui fillMode
 }

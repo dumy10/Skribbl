@@ -5,6 +5,11 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
+#include <QWidget>
+#include <QImage>
+#include <QStack>
+#include <QPoint>
+
 
 class DrawingWidget : public QWidget {
     Q_OBJECT
@@ -14,7 +19,7 @@ public:
     void ClearDrawing();
     void SetPenColor(const QColor& newColor);
     void setText(const QString& text);
-    void setFillMode(bool active);
+    void toggleFillMode();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
@@ -29,10 +34,14 @@ private:
     QPoint m_lastPoint; // Ultimul punct pentru desen
     QPen m_pen; // Stiloul folosit pentru desenare si stergere
     bool fillMode;//indica daca se umple
+    QColor currentFillColor;
+    QImage image;
 
 private:
     void DrawLineTo(const QPoint& endPoint); // Traseaza o linie pana la punctul dat
     void SetEraser(); // Pregateste stiloul pentru stergere
+    void setCurrentFillColor(const QColor& color);
+    void floodFill(const QPoint& startpoint, const QColor& fillColor, const QColor& oldColor);//Functia de umplere
 };
 
 #endif // DRAWINGWIDGET_H
