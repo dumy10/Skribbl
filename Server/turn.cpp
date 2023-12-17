@@ -2,9 +2,9 @@ module turn;
 
 using namespace skribbl;
 
-Turn::Turn(const Player& player, const std::string& word):
+Turn::Turn(const Player& player, const std::string& word) :
 	m_player{ player },
-	m_word {word},
+	m_word{ word },
 	m_drawTime(std::chrono::seconds(60))
 {
 	// Empty

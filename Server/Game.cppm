@@ -11,7 +11,7 @@ import <sstream>;
 namespace skribbl
 {
 	export class Game {
-	public:
+	private:
 		enum class GameStatus : uint8_t
 		{
 			UNKNOWN,
@@ -23,13 +23,13 @@ namespace skribbl
 	public:
 		Game() = default;
 		Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers, size_t currentPlayers);
-		
+
 		void StartGame();
 		void EndGame();
 
 		void AddPlayer(const Player& player);
 		void RemovePlayer(const Player& player);
-		
+
 		void DeserializePlayers(const std::string& serializedPlayers);
 		int GetCurrentPlayers() const;
 		int GetGameStatusAsInt() const;

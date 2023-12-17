@@ -18,7 +18,7 @@ void Game::StartGame()
 	- check if there are enough players
 	- check if game state is waiting, switch to INPROGRESS
 	- need to create a round (4 rounds in total)
-	- need to set the first player to draw 
+	- need to set the first player to draw
 	- need to set the first word
 	- provide the word to the player who draws and start the timer, provide the length of the word to the other players
 	- set a timer for the round (60 seconds)
@@ -51,7 +51,6 @@ void Game::RemovePlayer(const Player& player)
 		}
 	}
 }
-
 
 std::string Game::GetGameCode() const noexcept
 {
@@ -107,9 +106,8 @@ void Game::DeserializePlayers(const std::string& serializedPlayers) {
 	m_players.clear();
 	std::istringstream iss(serializedPlayers);
 	std::string playerName;
-	while (std::getline(iss, playerName, ',')) {
+	while (std::getline(iss, playerName, ','))
 		m_players.push_back(Player{ 0, playerName, "", "" }); // Assuming default values for other parameters
-	}
 }
 
 int Game::GetCurrentPlayers() const
@@ -120,12 +118,12 @@ int Game::GetCurrentPlayers() const
 std::string Game::SerializePlayers() const
 {
 	std::string serializedPlayers;
-	for (const auto& player : m_players) {
+	for (const auto& player : m_players)
 		serializedPlayers += player.GetName() + ",";
-	}
-	if (!serializedPlayers.empty()) {
+
+	if (!serializedPlayers.empty())
 		serializedPlayers.pop_back();
-	}
+
 	return serializedPlayers;
 }
 

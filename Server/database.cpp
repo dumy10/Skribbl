@@ -29,7 +29,7 @@ void Database::PopulateStorage()
 	m_db.insert_range(words.begin(), words.end());
 }
 
-std::string Database::GetRandomWord() 
+std::string Database::GetRandomWord()
 {
 	auto wordCount = m_db.count<Word>();
 	auto randomWordIndex = GenerateRandomNumber(1, wordCount);
@@ -37,17 +37,17 @@ std::string Database::GetRandomWord()
 	return word.GetWord();
 }
 
-std::vector<Word> Database::GetWords() 
+std::vector<Word> Database::GetWords()
 {
 	return m_db.get_all<Word>();
 }
 
-std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords) 
+std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords)
 {
 	std::vector<std::string> words;
 	auto wordCount = m_db.count<Word>();
 
-	for (int i = 0; i < numberOfWords; i++) 
+	for (int i = 0; i < numberOfWords; i++)
 	{
 		auto randomWordIndex = GenerateRandomNumber(1, wordCount);
 		auto word = m_db.get<Word>(randomWordIndex);
@@ -59,9 +59,9 @@ std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords)
 
 bool Database::AddUser(const std::string& username, const std::string& password, const std::string& email)
 {
-	try 
+	try
 	{
-		m_db.insert(Player{ -1, username, password, email});
+		m_db.insert(Player{ -1, username, password, email });
 		return true;
 	}
 	catch (const std::exception& e) {
@@ -72,9 +72,9 @@ bool Database::AddUser(const std::string& username, const std::string& password,
 
 bool Database::AddGame(const Player& player, const std::string& gameCode, size_t maxPlayers)
 {
-	try 
+	try
 	{
-		m_db.insert(Game{-1,player, gameCode, maxPlayers,1});
+		m_db.insert(Game{ -1, player, gameCode, maxPlayers, 1 });
 		return true;
 	}
 	catch (const std::exception& e) {
@@ -99,9 +99,9 @@ Player Database::GetPlayer(const std::string& username)
 	return existingPlayers[0];
 }
 
-bool Database::CheckUsername(const std::string& username) 
+bool Database::CheckUsername(const std::string& username)
 {
-	try 
+	try
 	{
 		auto existingPlayers = m_db.get_all<Player>(
 			sql::where(sql::c(&Player::GetName) == username)
@@ -115,9 +115,9 @@ bool Database::CheckUsername(const std::string& username)
 	}
 }
 
-bool Database::CheckPassword(const std::string& username, const std::string& password) 
+bool Database::CheckPassword(const std::string& username, const std::string& password)
 {
-	try 
+	try
 	{
 		auto existingPlayers = m_db.get_all<Player>(
 			sql::where(sql::c(&Player::GetName) == username)
@@ -136,7 +136,7 @@ bool Database::CheckPassword(const std::string& username, const std::string& pas
 
 bool Database::CheckRoomID(const std::string& roomID)
 {
-	try 
+	try
 	{
 		auto existingGames = m_db.get_all<Game>(
 			sql::where(sql::c(&Game::GetGameCode) == roomID)
@@ -150,7 +150,7 @@ bool Database::CheckRoomID(const std::string& roomID)
 	}
 }
 
-std::string Database::GetRandomID() 
+std::string Database::GetRandomID()
 {
 	std::string id = "";
 	for (uint8_t i = 0; i < 5; i++)
@@ -159,7 +159,7 @@ std::string Database::GetRandomID()
 	return id;
 }
 
-int Database::GenerateRandomNumber(int min, int max) 
+int Database::GenerateRandomNumber(int min, int max)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());

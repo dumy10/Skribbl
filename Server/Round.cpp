@@ -3,11 +3,11 @@ module round;
 using namespace skribbl;
 
 
-Round::Round( const Turn& turn, const std::string& currentWord, uint8_t roundNumber, const std::vector<Player>& players):
-	m_turn{turn},
-	m_word{currentWord},
-	m_roundNumber{roundNumber},
-	m_players{players}
+Round::Round(const Turn& turn, const std::string& currentWord, uint8_t roundNumber, const std::vector<Player>& players) :
+	m_turn{ turn },
+	m_word{ currentWord },
+	m_roundNumber{ roundNumber },
+	m_players{ players }
 {
 	// Empty
 }

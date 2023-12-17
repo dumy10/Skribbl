@@ -66,10 +66,10 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/roomID")
 		.methods("GET"_method, "POST"_method)([&]() {
 		std::string roomID = storage.GetRandomID();
-		
-		while (storage.CheckRoomID(roomID) && storage.GetGame(roomID).GetGameStatusAsInt() != 3) 
+
+		while (storage.CheckRoomID(roomID) && storage.GetGame(roomID).GetGameStatusAsInt() != 3)
 			roomID = storage.GetRandomID();
-		
+
 		return crow::response{ roomID };
 			});
 
@@ -84,8 +84,8 @@ void Routing::Run(Database& storage)
 		int currentPlayers = std::stoi(x["currentPlayers"]);
 		Player player = storage.GetPlayer(username);
 
-		if(!storage.AddGame(player,roomID,maxPlayers))
-			return crow::response{409, "Error creating the game."};
+		if (!storage.AddGame(player, roomID, maxPlayers))
+			return crow::response{ 409, "Error creating the game." };
 
 		return crow::response{ 200 };
 			});
@@ -96,12 +96,12 @@ void Routing::Run(Database& storage)
 		std::string roomID = x["roomID"];
 
 		if (!storage.CheckRoomID(roomID))
-			return crow::response{ 409, "Game not found"};
+			return crow::response{ 409, "Game not found" };
 
-		if(storage.GetGame(roomID).GetCurrentPlayers()>= storage.GetGame(roomID).GetMaxPlayers())
+		if (storage.GetGame(roomID).GetCurrentPlayers() >= storage.GetGame(roomID).GetMaxPlayers())
 			return crow::response{ 409, "Game is full" };
 
-		if(storage.GetGame(roomID).GetGameStatusAsInt() != 1)
+		if (storage.GetGame(roomID).GetGameStatusAsInt() != 1)
 			return crow::response{ 409, "Game already started" };
 
 		return crow::response{ 200 };
