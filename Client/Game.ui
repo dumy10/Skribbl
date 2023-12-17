@@ -892,6 +892,97 @@ QPushButton:default
      <string>Bucket</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="Undo">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>630</y>
+      <width>84</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #f6f7fa, stop:1 #dadbde);
+    min-width: 80px;
+}
+
+QPushButton:pressed 
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}
+
+QPushButton:flat 
+{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default
+ {
+    border-color: navy; /* make the default button prominent */
+}</string>
+    </property>
+    <property name="text">
+     <string>Undo</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="BrushSize">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>670</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTextEdit {
+	background:transparent;
+    background-color: rgba(255, 255, 255, 0.9); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
+    color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
+    border: 1px solid rgb(255, 255, 255); /* Bordură albă clară */
+    border-radius: 5px; /* Margini rotunjite */
+    font-size: 16px; /* Mărimea fontului adecvată */
+
+}</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>630</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #f6f7fa, stop:1 #dadbde);
+    min-width: 80px;
+}
+
+QPushButton:flat 
+{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:default
+ {
+    border-color: navy; /* make the default button prominent */
+}</string>
+    </property>
+    <property name="text">
+     <string>BrushSize</string>
+    </property>
+   </widget>
    <zorder>background</zorder>
    <zorder>logo</zorder>
    <zorder>drawingArea</zorder>
@@ -918,6 +1009,9 @@ QPushButton:default
    <zorder>White</zorder>
    <zorder>frame_2</zorder>
    <zorder>fillButton</zorder>
+   <zorder>Undo</zorder>
+   <zorder>BrushSize</zorder>
+   <zorder>pushButton</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
