@@ -46,7 +46,6 @@ void Menu::OnJoinButtonClicked()
 {
 	m_ui.joinGame->show();
 	m_ui.roomCode->show();
-	m_ui.errorLabel->show();
 }
 
 void Menu::OnJoinGameButtonClicked()
@@ -91,8 +90,10 @@ void Menu::OnJoinGameButtonClicked()
 	}
 	catch (const std::exception& exception)
 	{
+		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(exception.what());
 		WaitForSeconds(5);
 		m_ui.errorLabel->setText("");
+		m_ui.errorLabel->hide();
 	}
 }
