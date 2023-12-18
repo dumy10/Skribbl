@@ -23,6 +23,8 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 	m_ui.player3_2->hide();
 	m_ui.player4_2->hide();
 	m_ui.errorLabel->hide();
+	m_ui.startGame->hide();
+
 
 	if (playerIndex != 1)
 	{
@@ -35,8 +37,8 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 
 	if (!m_isOwner)
 	{
-		m_ui.startGame->hide();
 		m_updateTimer->start(1000);
+		connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(CheckGameStarted()));
 	}
 
 	connect(m_ui.createLobby, SIGNAL(clicked()), this, SLOT(OnCreateLobbyButtonPress()));
@@ -44,7 +46,6 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(OnBackButtonPress()));
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdatePlayerInformation()));
 	connect(this, SIGNAL(PlayerLeft()), this, SLOT(OnPlayerLeft()));
-	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(CheckGameStarted()));
 }
 
 Lobby::~Lobby()
@@ -144,6 +145,9 @@ void Lobby::UpdatePlayerInformation()
 	if (players.empty())
 		return;
 
+	if(players.size() != 1 && m_isOwner)
+		m_ui.startGame->show();
+
 	switch (players.size())
 	{
 	case 1:
@@ -196,14 +200,14 @@ void Lobby::CheckGameStarted()
 		cpr::Url{ Server::GetUrl() + "/gameStarted" },
 		cpr::Payload{ {"roomID", m_roomID} }
 	);
-	
+
 	if (request.status_code != 200)
 		return;
 
-		Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
-		game->show();
-		this->hide();
-		this->deleteLater();
+	Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
+	game->show();
+	this->hide();
+	this->deleteLater();
 }
 
 void Lobby::OnCreateLobbyButtonPress()
@@ -245,20 +249,32 @@ void Lobby::OnCreateLobbyButtonPress()
 
 void Lobby::OnStartGameButtonPress()
 {
-	// send request to server to start the game for all the players in the room
-
-	auto request = cpr::Post(
-		cpr::Url{ Server::GetUrl() + "/startGame" },
+	auto req = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/currentNumberOfPlayers" },
 		cpr::Payload{ {"roomID", m_roomID} }
 	);
 
-	if (request.status_code != 200)
+	if (req.status_code != 200)
 		return;
+	int numberOfPlayers = std::stoi(req.text);
 
-	Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
-	game->show();
-	this->hide();
-	this->deleteLater();
+	if (numberOfPlayers > 1)
+	{
+
+		// send request to server to start the game for all the players in the room
+		auto request = cpr::Post(
+			cpr::Url{ Server::GetUrl() + "/startGame" },
+			cpr::Payload{ {"roomID", m_roomID} }
+		);
+
+		if (request.status_code != 200)
+			return;
+
+		Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
+		game->show();
+		this->hide();
+		this->deleteLater();
+	}
 }
 
 void Lobby::OnBackButtonPress()
