@@ -6,6 +6,9 @@
 #include "database.h"
 #include "routing.h"
 
+import game;
+import player;
+
 
 int main()
 {
@@ -16,6 +19,9 @@ int main()
 		std::cout << "Failed to initialize database" << std::endl;
 		return -1;
 	}
+
+	std::vector<Player> players = storage.GetPlayers(); // leave this for debugging
+	std::vector<Game> games = storage.GetGames(); // leave this for debugging
 
 	Routing router;
 	router.Run(storage);

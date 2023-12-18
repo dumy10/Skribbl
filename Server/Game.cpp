@@ -79,7 +79,7 @@ void Game::SetMaxPlayers(size_t maxPlayers)
 
 void Game::SetCurrentPlayers(int currentPlayers)
 {
-	// setter fictiv
+	this->m_currentPlayers = currentPlayers;
 }
 
 void Game::SetId(int id)
@@ -132,7 +132,7 @@ const size_t Game::GetMaxPlayers() const noexcept
 	return this->m_maxPlayers;
 }
 
-const std::vector<Player>& skribbl::Game::GetPlayers() const noexcept
+const std::vector<Player>& Game::GetPlayers() const noexcept
 {
 	return this->m_players;
 }

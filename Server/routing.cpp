@@ -104,7 +104,41 @@ void Routing::Run(Database& storage)
 		if (storage.GetGame(roomID).GetGameStatusAsInt() != 1)
 			return crow::response{ 409, "Game already started" };
 
+		std::string currentPlayers = std::to_string(storage.GetGame(roomID).GetCurrentPlayers());
+		return crow::response{ 200 , currentPlayers };
+			});
+
+	CROW_ROUTE(m_app, "/joinRoom")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+		std::string username = x["username"];
+		Player player = storage.GetPlayer(username);
+		int currentPlayers = std::stoi(x["currentPlayers"]);
+
+		if (!storage.AddPlayerToGame(player, roomID, currentPlayers))
+			return crow::response{ 409, "Error joining the game." };
+
 		return crow::response{ 200 };
+			});
+	CROW_ROUTE(m_app, "/roomPlayers")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+
+		std::string players = storage.GetGame(roomID).SerializePlayers();
+
+		return crow::response{ players };
+			});
+
+	CROW_ROUTE(m_app, "/numberOfPlayers")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+
+		std::string numberOfPlayers = std::to_string(storage.GetGame(roomID).GetMaxPlayers());
+
+		return crow::response{ numberOfPlayers };
 			});
 
 	m_app.port(18080).multithreaded().run();

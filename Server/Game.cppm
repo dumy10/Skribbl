@@ -52,6 +52,7 @@ namespace skribbl
 	private:
 		int m_id;
 		static const size_t kNoOfRounds{ 4 };
+		size_t m_currentPlayers;
 		size_t m_maxPlayers;
 		std::string m_gameCode;
 		std::vector<Player> m_players; // map with players and their scores to iterate more easily in order to change the scores / check winner / check if player is in game??
