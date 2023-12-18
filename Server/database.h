@@ -58,6 +58,10 @@ public:
 	std::vector<Word> GetWords();
 	std::vector<std::string> GetCustomNumberOfWords(int numberOfWords);
 
+	//Gets all the stored games in the database *debugging purposes, will be removed later*
+	std::vector<Game> GetGames();
+	std::vector<Player> GetPlayers();
+
 	// Adds a player to the database
 	bool AddUser(const std::string& username, const std::string& password, const std::string& email);
 
@@ -66,6 +70,9 @@ public:
 
 	// Gets a game from the database based on the roomID
 	Game GetGame(const std::string& roomID);
+
+	// Adds a player to an existing game based on the roomID in the database and updates the currentPlayers count
+	bool AddPlayerToGame(const Player& player, const std::string& roomID, int currentPlayers);
 
 	// Gets a player from the database based on the username
 	Player GetPlayer(const std::string& username);

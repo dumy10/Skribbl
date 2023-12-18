@@ -57,6 +57,16 @@ std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords)
 	return words;
 }
 
+std::vector<Game> Database::GetGames()
+{
+	return m_db.get_all<Game>();
+}
+
+std::vector<Player> Database::GetPlayers()
+{
+	return m_db.get_all<Player>();
+}
+
 bool Database::AddUser(const std::string& username, const std::string& password, const std::string& email)
 {
 	try
@@ -89,6 +99,29 @@ Game Database::GetGame(const std::string& roomID)
 		sql::where(sql::c(&Game::GetGameCode) == roomID)
 	);
 	return existingGames[0];
+}
+
+bool Database::AddPlayerToGame(const Player& player, const std::string& roomID, int currentPlayers)
+{
+	try
+	{
+		auto existingGames = m_db.get_all<Game>(
+			sql::where(sql::c(&Game::GetGameCode) == roomID)
+		);
+
+		if (existingGames.empty())
+			return false;
+
+		auto game = existingGames[0];
+		game.AddPlayer(player);
+		game.SetCurrentPlayers(currentPlayers);
+		m_db.update(game);
+		return true;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while adding player to game: " << e.what() << "\n";
+		return false;
+	}
 }
 
 Player Database::GetPlayer(const std::string& username)
