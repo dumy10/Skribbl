@@ -27,12 +27,38 @@ void Game::StartGame()
 	- after the timer runs out need to switch to the next player and set a new word
 	- after 4 rounds, the game ends and the player with the most points wins
 	*/
+	if (m_currentPlayers < 2)
+	{
+		// not enough players
+		return;
+	}
+	if (m_gameStatus == GameStatus::WAITING)
+	{
+		m_gameStatus = GameStatus::INPROGRESS;
+	}
+	//the next part depends on how we remember the rounds , or if we remember them at all in game class.
+	//round and turn constructor ask for a word, we would need to include the database here to get it.
 
 }
 
 void Game::EndGame()
 {
-
+	/*
+		- check if game state is in progress, switch to FINISHED
+		- display winner
+		- display leaderboard
+						*/
+	if (m_gameStatus == GameStatus::INPROGRESS)
+	{
+		m_gameStatus = GameStatus::FINISHED;
+	    // display winner and leaderboard
+	}
+	else
+	{
+		// game is not in progress
+		return;
+	}
+	
 }
 
 void Game::AddPlayer(const Player& player)
@@ -141,4 +167,46 @@ const std::vector<Player>& Game::GetPlayers() const noexcept
 int Game::GetId() const noexcept
 {
 	return this->m_id;
+}
+
+void skribbl::Game::AddPoints(Player& player, const int& timeLeft)
+{
+	int points = 0;
+	if (timeLeft > 30)
+	{
+		points = 100;
+		player.AddPoints(points);
+	}
+	else {
+		if (timeLeft > 0)
+		{
+			points = int((60 - timeLeft) * 100 / 30);
+			player.AddPoints(points);
+		}
+		else {
+			SubstractPoints(player);
+		}
+	}
+}
+
+void skribbl::Game::SubstractPoints(Player& player)
+{
+	player.SubstractPoints(50);
+}
+
+void skribbl::Game::AddPointsForTheDrawer(Player& player)
+{
+	int points = int((60 - m_averageTime) * 100 / 60);
+	player.AddPoints(points);
+}
+
+void skribbl::Game::SubstractPointsForTheDrawer(Player& player)
+{
+	player.SubstractPoints(100);
+}
+
+void skribbl::Game::AverageTime(const int& timeLeft)
+{
+	this->m_averageTime += 60 - timeLeft;
+	this->m_averageTime /= 2;
 }
