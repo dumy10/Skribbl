@@ -6,6 +6,8 @@ using namespace skribbl;
 
 void Routing::Run(Database& storage)
 {
+	std::vector<crow::websocket::connection*> connections;
+
 	// Just a test route
 	CROW_ROUTE(m_app, "/")([]() {
 		return "Hello, Skribbl World!"; });
@@ -153,6 +155,28 @@ void Routing::Run(Database& storage)
 				return crow::response{ 409, "Error leaving the game." };
 			return crow::response{ 200 };
 			});
+
+	CROW_ROUTE(m_app, "/chat")
+		.websocket()
+		.onopen([&connections](crow::websocket::connection& conn) {
+
+		connections.push_back(&conn);
+		conn.send_text("A new user has joined the chat!");
+			})
+		.onclose([&connections](crow::websocket::connection& conn, const std::string& reason) {
+
+				connections.erase(std::remove(connections.begin(), connections.end(), &conn), connections.end());
+				conn.send_text("A user has left the chat.");
+			})
+				.onmessage([&connections](crow::websocket::connection& conn, const std::string& data, bool /*is_binary*/) {
+
+
+				for (auto& connection : connections) {
+					if (connection != &conn) {
+						connection->send_text("User sent: " + data);
+					}
+				}
+					});
 
 	m_app.port(18080).multithreaded().run();
 }
