@@ -47,6 +47,7 @@ void Game::RemovePlayer(const Player& player)
 		if (this->m_players[i] == player)
 		{
 			this->m_players.erase(this->m_players.begin() + i);
+			this->m_currentPlayers--;
 			break;
 		}
 	}

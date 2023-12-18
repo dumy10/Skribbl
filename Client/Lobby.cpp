@@ -7,10 +7,9 @@
 #include <cpr/cpr.h>
 #include <QTime>
 
-
 /*
 TODO:
-- update room information when a player joins for the players that are already in the room
+- send a request to the server when the user presses the start game button to start the game for all the players in the room
 */
 
 
@@ -25,24 +24,28 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 	m_ui.player4_2->hide();
 	m_ui.errorLabel->hide();
 
-	if(playerIndex != 1)
+	if (playerIndex != 1)
 	{
 		m_ui.stackedWidget->setCurrentIndex(1);
 		DisplayRoomInformation();
 	}
 
-	if(!m_isOwner)
+	if (!m_isOwner)
 		m_ui.startGame->hide();
 
 	DisplayPlayer(m_username, m_playerIndex);
+	m_updateTimer = std::make_unique<QTimer>(this);
 
 	connect(m_ui.createLobby, SIGNAL(clicked()), this, SLOT(OnCreateLobbyButtonPress()));
 	connect(m_ui.startGame, SIGNAL(clicked()), this, SLOT(OnStartGameButtonPress()));
 	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(OnBackButtonPress()));
+	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdatePlayerInformation()));
+	connect(this, SIGNAL(PlayerLeft()), this, SLOT(OnPlayerLeft()));
 }
 
 Lobby::~Lobby()
 {
+	m_updateTimer->stop();
 }
 
 void Lobby::GetRoomID()
@@ -99,8 +102,9 @@ void Lobby::DisplayRoomInformation()
 	);
 
 	m_ui.playerNumber->setText(QString::fromUtf8(req2.text.data(), int(req2.text.size())));
-
+	m_ui.playerNumber->setText(m_ui.playerNumber->text() + " Players");
 	std::vector<std::string> players = split(req.text, ",");
+
 	for (int i = 0; i < players.size(); i++)
 		DisplayPlayer(players[i], i + 1);
 
@@ -113,10 +117,71 @@ void Lobby::WaitForSeconds(int seconds)
 		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
+void Lobby::StartTimer()
+{
+	m_updateTimer->start(1000);
+}
+
+void Lobby::closeEvent(QCloseEvent* event)
+{
+	emit PlayerLeft();
+
+	QMainWindow::closeEvent(event);
+}
+
+void Lobby::UpdatePlayerInformation()
+{
+	auto req = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+	std::vector<std::string> players = split(req.text, ",");
+
+	if (players.empty())
+		return;
+
+	switch (players.size())
+	{
+	case 1:
+		m_ui.player1_2->show();
+		m_ui.player2_2->hide();
+		m_ui.player3_2->hide();
+		m_ui.player4_2->hide();
+		break;
+	case 2:
+		m_ui.player2_2->show();
+		break;
+	case 3:
+		m_ui.player3_2->show();
+		break;
+	case 4:
+		m_ui.player4_2->show();
+		break;
+	default:
+		break;
+	}
+
+	for (int i = 0; i < players.size(); i++)
+		DisplayPlayer(players[i], i + 1);
+}
+
+void Lobby::OnPlayerLeft()
+{
+	// send request to server to remove the player from the room (game)
+	auto req = cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/leaveRoom" },
+		cpr::Payload{
+			{"roomID", m_roomID},
+			{"username", m_username}
+		}
+	);
+
+}
+
 void Lobby::OnCreateLobbyButtonPress()
 {
 	try
-	{	
+	{
 		QString numberOfPlayers = m_ui.comboBox->itemText(m_ui.comboBox->currentIndex());
 		GetRoomID();
 		m_ui.playerNumber->setText(numberOfPlayers);
@@ -132,12 +197,14 @@ void Lobby::OnCreateLobbyButtonPress()
 			}
 		);
 
-		if(response.status_code != 200)
+		if (response.status_code != 200)
 			throw std::exception(response.text.c_str());
 
 		m_ui.roomOwnerField_2->setText(QString::fromUtf8(m_username.data(), int(m_username.size())));
 		m_ui.roomIdField_2->setText(QString::fromUtf8(m_roomID.data(), int(m_roomID.size())));
 		m_ui.stackedWidget->setCurrentIndex(1);
+		StartTimer();
+
 	}
 	catch (const std::exception& exception)
 	{
@@ -147,7 +214,6 @@ void Lobby::OnCreateLobbyButtonPress()
 		m_ui.errorLabel->setText("");
 		m_ui.errorLabel->hide();
 	}
-
 }
 
 void Lobby::OnStartGameButtonPress()
@@ -158,7 +224,6 @@ void Lobby::OnStartGameButtonPress()
 	game->show();
 	this->close();
 	this->deleteLater();
-
 }
 
 void Lobby::OnBackButtonPress()

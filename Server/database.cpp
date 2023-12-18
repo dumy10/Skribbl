@@ -124,6 +124,28 @@ bool Database::AddPlayerToGame(const Player& player, const std::string& roomID, 
 	}
 }
 
+bool Database::RemovePlayerFromGame(const Player& player, const std::string& roomID)
+{
+	try
+	{
+		auto existingGames = m_db.get_all<Game>(
+			sql::where(sql::c(&Game::GetGameCode) == roomID)
+		);
+
+		if (existingGames.empty())
+			return false;
+
+		auto game = existingGames[0];
+		game.RemovePlayer(player);
+		m_db.update(game);
+		return true;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while removing player from game: " << e.what() << "\n";
+		return false;
+	}
+}
+
 Player Database::GetPlayer(const std::string& username)
 {
 	auto existingPlayers = m_db.get_all<Player>(

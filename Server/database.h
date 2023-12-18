@@ -74,6 +74,9 @@ public:
 	// Adds a player to an existing game based on the roomID in the database and updates the currentPlayers count
 	bool AddPlayerToGame(const Player& player, const std::string& roomID, int currentPlayers);
 
+	// Removes a player from an existing game based on the roomID in the database and updates the currentPlayers count
+	bool RemovePlayerFromGame(const Player& player, const std::string& roomID);
+
 	// Gets a player from the database based on the username
 	Player GetPlayer(const std::string& username);
 

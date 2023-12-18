@@ -141,5 +141,18 @@ void Routing::Run(Database& storage)
 		return crow::response{ numberOfPlayers };
 			});
 
+	CROW_ROUTE(m_app, "/leaveRoom")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			std::string roomID = x["roomID"];
+			std::string username = x["username"];
+
+			Player player = storage.GetPlayer(username);
+
+			if(!storage.RemovePlayerFromGame(player, roomID))
+				return crow::response{ 409, "Error leaving the game." };
+			return crow::response{ 200 };
+			});
+
 	m_app.port(18080).multithreaded().run();
 }

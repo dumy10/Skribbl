@@ -3,11 +3,14 @@
 
 #include <QMainWindow>
 #include <ui_Lobby.h>
+#include <QTimer>
 
 class Lobby : public QMainWindow
 {
 	Q_OBJECT
 
+signals:
+	void PlayerLeft();
 public:
 	Lobby(const std::string& username, int playerIndex = 0, bool isOwner = false, const std::string& roomID = "", QWidget* parent = nullptr);
 	~Lobby();
@@ -16,12 +19,16 @@ private slots:
 	void OnCreateLobbyButtonPress();
 	void OnStartGameButtonPress();
 	void OnBackButtonPress();
+	void UpdatePlayerInformation();
+	void OnPlayerLeft();
 
 private:
 	void GetRoomID();
 	void DisplayPlayer(const std::string& username, int index);
 	void DisplayRoomInformation();
 	void WaitForSeconds(int seconds);
+	void StartTimer();
+	void closeEvent(QCloseEvent* event) override;
 
 private:
 	Ui::Lobby m_ui;
@@ -29,5 +36,8 @@ private:
 	std::string m_roomID;
 	bool m_isOwner;
 	int m_playerIndex;
+
+private:
+	std::unique_ptr<QTimer> m_updateTimer;
 };
 #endif // !LOBBY_H

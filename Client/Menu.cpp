@@ -82,6 +82,8 @@ void Menu::OnJoinGameButtonClicked()
 		if(req.status_code != 200)
 			throw std::exception(req.text.c_str());
 
+		emit PlayerJoined(m_username, playerIndex);
+
 		// open new lobby for the player
 		Lobby* lobby = new Lobby(std::move(m_username), playerIndex, false, roomID);
 		lobby->show();
