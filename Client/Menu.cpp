@@ -5,12 +5,6 @@
 #include <cpr/cpr.h>
 #include <QTime>
 
-/*
-TODO:
-- let other players join the room (max 4 players) with the same room id if the room is not full and the room id is correct
-- add player to the room and send the player name to the server
-*/
-
 Menu::Menu(const std::string& username, QWidget* parent)
 	: QMainWindow(parent),
 	m_username(username)
@@ -73,9 +67,27 @@ void Menu::OnJoinGameButtonClicked()
 		if (response.status_code != 200)
 			throw std::exception(response.text.c_str());
 
-		// put player in the room
+		// get the number of players that are already in the room to put the player in the correct slot
+		int playerIndex = std::stoi(response.text.c_str()) + 1;
 
+		// put player in the room (game)
+		auto req = cpr::Post(
+			cpr::Url{ Server::GetUrl() + "/joinRoom" },
+			cpr::Payload{
+				{"roomID", roomID},
+				{"username", m_username},
+				{"currentPlayers", std::to_string(playerIndex)}
+			}
+		);
 
+		if(req.status_code != 200)
+			throw std::exception(req.text.c_str());
+
+		// open new lobby for the player
+		Lobby* lobby = new Lobby(std::move(m_username), playerIndex, false, roomID);
+		lobby->show();
+		this->close();
+		this->deleteLater();
 	}
 	catch (const std::exception& exception)
 	{

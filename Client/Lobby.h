@@ -9,7 +9,7 @@ class Lobby : public QMainWindow
 	Q_OBJECT
 
 public:
-	Lobby(const std::string& username, int playerIndex = 0, bool isOwner = false, QWidget* parent = nullptr);
+	Lobby(const std::string& username, int playerIndex = 0, bool isOwner = false, const std::string& roomID = "", QWidget* parent = nullptr);
 	~Lobby();
 
 private slots:
@@ -20,6 +20,8 @@ private slots:
 private:
 	void GetRoomID();
 	void DisplayPlayer(const std::string& username, int index);
+	void DisplayRoomInformation();
+	void WaitForSeconds(int seconds);
 
 private:
 	Ui::Lobby m_ui;

@@ -447,6 +447,32 @@ QPushButton:pressed {
        <string>Back </string>
       </property>
      </widget>
+     <widget class="QLabel" name="errorLabel">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>590</y>
+        <width>371</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel { 
+background:transparent;
+ background-color: rgba(0, 51, 102, 0.9); /* Albastru închis cu transparență mai mare */
+    border-radius: 15px; /* Colțuri rotunjite */
+color: red;
+ font-size: 16px; 
+text-align: center; 
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_6">
      <widget class="QFrame" name="frame_3">
