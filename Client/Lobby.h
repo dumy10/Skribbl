@@ -21,6 +21,7 @@ private slots:
 	void OnBackButtonPress();
 	void UpdatePlayerInformation();
 	void OnPlayerLeft();
+	void CheckGameStarted();
 
 private:
 	void GetRoomID();

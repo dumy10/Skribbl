@@ -30,17 +30,21 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 		DisplayRoomInformation();
 	}
 
-	if (!m_isOwner)
-		m_ui.startGame->hide();
-
 	DisplayPlayer(m_username, m_playerIndex);
 	m_updateTimer = std::make_unique<QTimer>(this);
+
+	if (!m_isOwner)
+	{
+		m_ui.startGame->hide();
+		m_updateTimer->start(1000);
+	}
 
 	connect(m_ui.createLobby, SIGNAL(clicked()), this, SLOT(OnCreateLobbyButtonPress()));
 	connect(m_ui.startGame, SIGNAL(clicked()), this, SLOT(OnStartGameButtonPress()));
 	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(OnBackButtonPress()));
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdatePlayerInformation()));
 	connect(this, SIGNAL(PlayerLeft()), this, SLOT(OnPlayerLeft()));
+	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(CheckGameStarted()));
 }
 
 Lobby::~Lobby()
@@ -186,6 +190,22 @@ void Lobby::OnPlayerLeft()
 	);
 }
 
+void Lobby::CheckGameStarted()
+{
+	auto request = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/gameStarted" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+	
+	if (request.status_code != 200)
+		return;
+
+		Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
+		game->show();
+		this->hide();
+		this->deleteLater();
+}
+
 void Lobby::OnCreateLobbyButtonPress()
 {
 	try
@@ -227,9 +247,17 @@ void Lobby::OnStartGameButtonPress()
 {
 	// send request to server to start the game for all the players in the room
 
+	auto request = cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/startGame" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (request.status_code != 200)
+		return;
+
 	Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
 	game->show();
-	this->close();
+	this->hide();
 	this->deleteLater();
 }
 
