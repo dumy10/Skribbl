@@ -7,9 +7,6 @@ class Menu : public QMainWindow
 {
 	Q_OBJECT
 
-signals: 
-		void PlayerJoined(const std::string& username, int playerIndex);
-
 public:
 	Menu(const std::string& username, QWidget* parent = nullptr);
 	~Menu();
@@ -25,5 +22,4 @@ private slots:
 	void OnCreateButtonClicked();
 	void OnJoinButtonClicked();
 	void OnJoinGameButtonClicked();
-	
 };

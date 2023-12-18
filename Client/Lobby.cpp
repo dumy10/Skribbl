@@ -149,12 +149,21 @@ void Lobby::UpdatePlayerInformation()
 		m_ui.player4_2->hide();
 		break;
 	case 2:
+		m_ui.player1_2->show();
 		m_ui.player2_2->show();
+		m_ui.player3_2->hide();
+		m_ui.player4_2->hide();
 		break;
 	case 3:
+		m_ui.player1_2->show();
+		m_ui.player2_2->show();
 		m_ui.player3_2->show();
+		m_ui.player4_2->hide();
 		break;
 	case 4:
+		m_ui.player1_2->show();
+		m_ui.player2_2->show();
+		m_ui.player3_2->show();
 		m_ui.player4_2->show();
 		break;
 	default:
@@ -175,7 +184,6 @@ void Lobby::OnPlayerLeft()
 			{"username", m_username}
 		}
 	);
-
 }
 
 void Lobby::OnCreateLobbyButtonPress()
@@ -204,7 +212,6 @@ void Lobby::OnCreateLobbyButtonPress()
 		m_ui.roomIdField_2->setText(QString::fromUtf8(m_roomID.data(), int(m_roomID.size())));
 		m_ui.stackedWidget->setCurrentIndex(1);
 		StartTimer();
-
 	}
 	catch (const std::exception& exception)
 	{
