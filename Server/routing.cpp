@@ -156,6 +156,32 @@ void Routing::Run(Database& storage)
 			return crow::response{ 200 };
 			});
 
+	CROW_ROUTE(m_app, "/gameStarted")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			std::string roomID = x["roomID"];
+
+			if (storage.GetGame(roomID).GetGameStatusAsInt() == 2)
+				return crow::response{ 200 };
+
+			return crow::response{ 409 };
+			});
+
+	CROW_ROUTE(m_app, "/startGame")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			std::string roomID = x["roomID"];
+
+			/*
+			This route should be modified later when StartGame() will be implemented.
+			*/
+
+			if(!storage.SetGameStatus(roomID, 2))
+				return crow::response{ 409, "Error starting the game." };
+
+			return crow::response{ 200 };
+			});
+
 	CROW_ROUTE(m_app, "/chat")
 		.websocket()
 		.onopen([&connections](crow::websocket::connection& conn) {

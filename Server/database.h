@@ -67,6 +67,8 @@ public:
 
 	// Adds a game to the database
 	bool AddGame(const Player& player, const std::string& gameCode, size_t maxPlayers);
+	bool SetGameStatus(const std::string& roomID, int status);
+
 
 	// Gets a game from the database based on the roomID
 	Game GetGame(const std::string& roomID);

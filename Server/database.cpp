@@ -93,6 +93,28 @@ bool Database::AddGame(const Player& player, const std::string& gameCode, size_t
 	}
 }
 
+bool Database::SetGameStatus(const std::string& roomID, int status)
+{
+	try
+	{
+		auto existingGames = m_db.get_all<Game>(
+			sql::where(sql::c(&Game::GetGameCode) == roomID)
+		);
+
+		if (existingGames.empty())
+			return false;
+
+		auto game = existingGames[0];
+		game.SetGameStatusInt(status);
+		m_db.update(game);
+		return true;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while setting game status: " << e.what() << "\n";
+		return false;
+	}
+}
+
 Game Database::GetGame(const std::string& roomID)
 {
 	auto existingGames = m_db.get_all<Game>(
