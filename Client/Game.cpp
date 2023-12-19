@@ -24,8 +24,8 @@ TODO:
 - add the player score in the UI
 */
 
-Game::Game(const std::string& username, int playerIndex, bool isOwner, QWidget* parent)
-    : QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex)
+Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
+    : QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(m_roomID)
 {
     m_drawingArea = new DrawingWidget(this);
     m_ui.setupUi(this);
@@ -36,7 +36,9 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, QWidget* 
     m_ui.player4_3->hide();
 
     DisplayPlayer(m_username, m_playerIndex);
+    m_updateTimer = std::make_unique<QTimer>(this);
 
+    StartTimer();
 
     connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
     connect(m_ui.Verde, &QPushButton::clicked, this, &Game::SetPenColorGreen);
@@ -54,13 +56,12 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, QWidget* 
     connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::OpenSettings);
     connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::OnSendButtonClicked);
     connect(m_ui.fillButton, &QPushButton::clicked, m_drawingArea, &DrawingWidget::toggleFillMode);
-
-
+    connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdatePlayerInformation()));
 }
 
 Game::~Game()
 {
-    // Destructorul clasei Game
+    m_updateTimer->stop();
 }
 
 void Game::ClearDrawingArea()
@@ -154,7 +155,7 @@ void Game::SetPenColorPink()
         drawingArea->SetPenColor(QColor(255, 192, 203)); // RGB for pink
 }
 
-void Game::onFillButtonClicked() 
+void Game::OnFillButtonClicked() 
 {
     DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
     if (drawingArea)
@@ -199,6 +200,50 @@ void Game::OnSendButtonClicked()
 
 }
 
+void Game::UpdatePlayerInformation()
+{
+    auto req = cpr::Get(
+        cpr::Url{ Server::GetUrl() + "/roomPlayers" },
+        cpr::Payload{ {"roomID", m_roomID} }
+    );
+    std::vector<std::string> players = split(req.text, ",");
+
+    if (players.empty())
+        return;
+    switch (players.size())
+    {
+    case 1:
+        m_ui.player1_3->show();
+        m_ui.player2_3->hide();
+        m_ui.player3_3->hide();
+        m_ui.player4_3->hide();
+        break;
+    case 2:
+        m_ui.player1_3->show();
+        m_ui.player2_3->show();
+        m_ui.player3_3->hide();
+        m_ui.player4_3->hide();
+        break;
+    case 3:
+        m_ui.player1_3->show();
+        m_ui.player2_3->show();
+        m_ui.player3_3->show();
+        m_ui.player4_3->hide();
+        break;
+    case 4:
+        m_ui.player1_3->show();
+        m_ui.player2_3->show();
+        m_ui.player3_3->show();
+        m_ui.player4_3->show();
+        break;
+    default:
+        break;
+    }
+
+    for (int i = 0; i < players.size(); i++)
+        DisplayPlayer(players[i], i + 1);
+}
+
 void Game::DisplayPlayer(const std::string& username, int index)
 {
     switch (index)
@@ -223,3 +268,9 @@ void Game::DisplayPlayer(const std::string& username, int index)
         break;
     }
 }
+
+void Game::StartTimer()
+{
+    m_updateTimer->start(500);
+}
+

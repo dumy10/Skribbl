@@ -31,7 +31,7 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 
 	if (!m_isOwner)
 	{
-		m_updateTimer->start(1000);
+		StartTimer();
 		connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(CheckGameStarted()));
 	}
 
@@ -200,7 +200,7 @@ void Lobby::CheckGameStarted()
 	if (request.status_code != 200)
 		return;
 
-	Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
+	Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex, m_roomID);
 	game->show();
 	this->hide();
 	this->deleteLater();
@@ -266,7 +266,7 @@ void Lobby::OnStartGameButtonPress()
 		if (request.status_code != 200)
 			return;
 
-		Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex);
+		Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex, m_roomID);
 		game->show();
 		this->hide();
 		this->deleteLater();

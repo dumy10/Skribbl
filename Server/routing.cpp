@@ -100,11 +100,11 @@ void Routing::Run(Database& storage)
 		if (!storage.CheckRoomID(roomID))
 			return crow::response{ 409, "Game not found" };
 
-		if (storage.GetGame(roomID).GetCurrentPlayers() >= storage.GetGame(roomID).GetMaxPlayers())
-			return crow::response{ 409, "Game is full" };
-
 		if (storage.GetGame(roomID).GetGameStatusAsInt() != 1)
 			return crow::response{ 409, "Game already started" };
+
+		if (storage.GetGame(roomID).GetCurrentPlayers() >= storage.GetGame(roomID).GetMaxPlayers())
+			return crow::response{ 409, "Game is full" };
 
 		std::string currentPlayers = std::to_string(storage.GetGame(roomID).GetCurrentPlayers());
 		return crow::response{ 200 , currentPlayers };
