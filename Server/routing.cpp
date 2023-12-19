@@ -193,6 +193,17 @@ void Routing::Run(Database& storage)
 			return crow::response{ 200 };
 			});
 
+	CROW_ROUTE(m_app, "/gameEnded")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			std::string roomID = x["roomID"];
+
+			if (storage.GetGame(roomID).GetGameStatusAsInt() == 3)
+				return crow::response{ 200 };
+
+			return crow::response{ 409 };
+			});
+
 	CROW_ROUTE(m_app, "/chat")
 		.websocket()
 		.onopen([&connections](crow::websocket::connection& conn) {

@@ -9,6 +9,9 @@
 class Game : public QMainWindow {
 	Q_OBJECT
 
+signals:
+	void PlayerQuit();
+
 public:
 	explicit Game(const std::string& username, int playerIndex, bool isOwner = false, const std::string& m_roomID = "", QWidget* parent = nullptr);
 	~Game();
@@ -31,10 +34,13 @@ private slots:
 	void OnFillButtonClicked();
 	void OnSendButtonClicked();
 	void UpdatePlayerInformation();
+	void OnPlayerQuit();
+
 
 private:
 	void DisplayPlayer(const std::string& username, int index);
 	void StartTimer();
+	void closeEvent(QCloseEvent* event) override;
 
 private:
 	Ui::GameClass m_ui;
