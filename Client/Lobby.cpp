@@ -7,12 +7,6 @@
 #include <cpr/cpr.h>
 #include <QTime>
 
-/*
-TODO:
-- send a request to the server when the user presses the start game button to start the game for all the players in the room
-*/
-
-
 Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const std::string& roomID, QWidget* parent) :
 	QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(roomID)
 {
@@ -147,6 +141,8 @@ void Lobby::UpdatePlayerInformation()
 
 	if(players.size() != 1 && m_isOwner)
 		m_ui.startGame->show();
+	else
+		m_ui.startGame->hide();
 
 	switch (players.size())
 	{

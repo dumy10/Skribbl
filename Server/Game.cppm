@@ -6,6 +6,7 @@ import <vector>;
 import <string>;
 import <array>;
 import <sstream>;
+import <algorithm>;
 
 
 namespace skribbl

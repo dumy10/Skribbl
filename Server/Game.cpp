@@ -68,14 +68,11 @@ void Game::AddPlayer(const Player& player)
 
 void Game::RemovePlayer(const Player& player)
 {
-	for (size_t i = 0; i < this->m_players.size(); i++)
+	auto playerIt = std::find(this->m_players.begin(), this->m_players.end(), player);
+	if (playerIt != this->m_players.end())
 	{
-		if (this->m_players[i] == player)
-		{
-			this->m_players.erase(this->m_players.begin() + i);
-			this->m_currentPlayers--;
-			break;
-		}
+		this->m_players.erase(playerIt);
+		this->m_currentPlayers--;
 	}
 }
 
