@@ -92,7 +92,7 @@ void Menu::OnJoinGameButtonClicked()
 	{
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(exception.what());
-		WaitForSeconds(5);
+		WaitForSeconds(2);
 		m_ui.errorLabel->setText("");
 		m_ui.errorLabel->hide();
 	}

@@ -19,13 +19,14 @@ private slots:
 	void OnCreateLobbyButtonPress();
 	void OnStartGameButtonPress();
 	void OnBackButtonPress();
-	void UpdatePlayerInformation();
+	void UpdateRoomInformation();
 	void OnPlayerLeft();
 	void CheckGameStarted();
 
 private:
 	void GetRoomID();
 	void DisplayPlayer(const std::string& username, int index);
+	void DisplayPlayerCount(int count);
 	void DisplayRoomInformation();
 	void WaitForSeconds(int seconds);
 	void StartTimer();

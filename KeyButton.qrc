@@ -1,5 +1,0 @@
-<RCC>
-  <qresource prefix="KeyButton">
-    <file>Client/key.gif</file>
-  </qresource>
-</RCC>

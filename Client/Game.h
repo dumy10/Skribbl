@@ -33,24 +33,27 @@ private slots:
 	void OpenSettings();
 	void OnFillButtonClicked();
 	void OnSendButtonClicked();
-	void UpdatePlayerInformation();
+	void UpdateRoomInformation();
 	void OnPlayerQuit();
 
-
 private:
-	void DisplayPlayer(const std::string& username, int index);
+	void DisplayPlayer(const std::string& username, int index, const std::string& score);
+	void DisplayPlayerCount(int count);
+	void HidePlayers();
 	void StartTimer();
 	void closeEvent(QCloseEvent* event) override;
 
 private:
 	Ui::GameClass m_ui;
-	DrawingWidget* m_drawingArea;
 	std::string m_username;
 	std::string m_roomID;
-	bool m_isOwner;
 	int m_playerIndex;
+	bool m_isOwner;
+	bool m_isDrawing;
+	bool m_guessedWord;
 
 private:
+	std::shared_ptr<DrawingWidget> m_drawingArea;
 	std::unique_ptr<QTimer> m_updateTimer;
 };
 

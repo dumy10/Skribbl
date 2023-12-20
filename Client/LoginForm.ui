@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
     <string notr="true">QWidget{
-background:url(:/LoginForm/pattern.png);
+background:url(:/background/pattern.png);
 }</string>
    </property>
    <widget class="QFrame" name="frame">
@@ -283,7 +283,6 @@ text-align: center;
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="LoginForm.qrc"/>
   <include location="background.qrc"/>
  </resources>
  <connections/>

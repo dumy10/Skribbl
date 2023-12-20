@@ -117,13 +117,7 @@
     </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="LoginForm.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
     <QtRcc Include="background.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
-    <QtRcc Include="Lobby.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
   </ItemGroup>

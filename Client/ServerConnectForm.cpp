@@ -10,7 +10,7 @@ ServerConnectForm::ServerConnectForm(QWidget *parent)
 	: QMainWindow(parent)
 {
 	m_ui.setupUi(this);
-
+	m_ui.errorLabel->hide();
 	connect(m_ui.connectButton, SIGNAL(clicked()), this, SLOT(OnConnectButtonClicked()));
 }
 
@@ -36,6 +36,7 @@ void ServerConnectForm::OnConnectButtonClicked()
 	}
 	catch (const std::exception& e)
 	{
+		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(e.what());
 	}
 }

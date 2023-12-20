@@ -38,7 +38,7 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 	connect(m_ui.createLobby, SIGNAL(clicked()), this, SLOT(OnCreateLobbyButtonPress()));
 	connect(m_ui.startGame, SIGNAL(clicked()), this, SLOT(OnStartGameButtonPress()));
 	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(OnBackButtonPress()));
-	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdatePlayerInformation()));
+	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
 	connect(this, SIGNAL(PlayerLeft()), this, SLOT(OnPlayerLeft()));
 }
 
@@ -80,6 +80,39 @@ void Lobby::DisplayPlayer(const std::string& username, int index)
 	case 4:
 		m_ui.player4_2->show();
 		m_ui.player4_2->setText(QString::fromUtf8(username.data(), int(username.size())));
+		break;
+	default:
+		break;
+	}
+}
+
+void Lobby::DisplayPlayerCount(int count)
+{
+	switch (count)
+	{
+	case 1:
+		m_ui.player1_2->show();
+		m_ui.player2_2->hide();
+		m_ui.player3_2->hide();
+		m_ui.player4_2->hide();
+		break;
+	case 2:
+		m_ui.player1_2->show();
+		m_ui.player2_2->show();
+		m_ui.player3_2->hide();
+		m_ui.player4_2->hide();
+		break;
+	case 3:
+		m_ui.player1_2->show();
+		m_ui.player2_2->show();
+		m_ui.player3_2->show();
+		m_ui.player4_2->hide();
+		break;
+	case 4:
+		m_ui.player1_2->show();
+		m_ui.player2_2->show();
+		m_ui.player3_2->show();
+		m_ui.player4_2->show();
 		break;
 	default:
 		break;
@@ -128,7 +161,7 @@ void Lobby::closeEvent(QCloseEvent* event)
 	QMainWindow::closeEvent(event);
 }
 
-void Lobby::UpdatePlayerInformation()
+void Lobby::UpdateRoomInformation()
 {
 	auto req = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
@@ -144,35 +177,7 @@ void Lobby::UpdatePlayerInformation()
 	else
 		m_ui.startGame->hide();
 
-	switch (players.size())
-	{
-	case 1:
-		m_ui.player1_2->show();
-		m_ui.player2_2->hide();
-		m_ui.player3_2->hide();
-		m_ui.player4_2->hide();
-		break;
-	case 2:
-		m_ui.player1_2->show();
-		m_ui.player2_2->show();
-		m_ui.player3_2->hide();
-		m_ui.player4_2->hide();
-		break;
-	case 3:
-		m_ui.player1_2->show();
-		m_ui.player2_2->show();
-		m_ui.player3_2->show();
-		m_ui.player4_2->hide();
-		break;
-	case 4:
-		m_ui.player1_2->show();
-		m_ui.player2_2->show();
-		m_ui.player3_2->show();
-		m_ui.player4_2->show();
-		break;
-	default:
-		break;
-	}
+	DisplayPlayerCount(players.size());
 
 	for (int i = 0; i < players.size(); i++)
 		DisplayPlayer(players[i], i + 1);

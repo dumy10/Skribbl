@@ -58,7 +58,7 @@
      <string notr="true">QLabel
 {
 background: transparent;
-border-image: url(:/skribbl name/logo.gif);
+border-image: url(:/background/logo.png);
 }</string>
     </property>
     <property name="text">
@@ -78,10 +78,10 @@ border-image: url(:/skribbl name/logo.gif);
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string/>
+     <string notr="true"/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="topFrame">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -97,23 +97,7 @@ border-image: url(:/skribbl name/logo.gif);
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_9">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>80</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">image: url(:/clock/clock.gif);</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="roundLabel">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -122,21 +106,34 @@ border-image: url(:/skribbl name/logo.gif);
       <height>41</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel{
+background: transparent;
+}</string>
+    </property>
     <property name="text">
      <string>pus numarul rundei</string>
     </property>
    </widget>
-   <widget class="QLabel" name="CurrentAction">
+   <widget class="QLabel" name="currentWord">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>80</y>
-      <width>131</width>
+      <x>440</x>
+      <y>85</y>
+      <width>171</width>
       <height>31</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel{
+background:transparent;
+}</string>
+    </property>
     <property name="text">
      <string>ce se intampla in joc</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="chat">
@@ -235,8 +232,11 @@ QPushButton:pressed {
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image: url(:/settings/settings.gif);
-background-color: rgb(255, 255, 255);</string>
+     <string notr="true">QPushButton{
+image: url(:/background/settings.gif);
+background-color: rgb(255, 255, 255);
+background: transparent;
+}</string>
     </property>
     <property name="text">
      <string/>
@@ -759,9 +759,9 @@ QPushButton:default
     <widget class="QLabel" name="player1_3">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>10</x>
        <y>70</y>
-       <width>201</width>
+       <width>191</width>
        <height>61</height>
       </rect>
      </property>
@@ -774,19 +774,18 @@ QPushButton:default
 }</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;
-&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player2_3">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>10</x>
        <y>170</y>
-       <width>201</width>
+       <width>191</width>
        <height>61</height>
       </rect>
      </property>
@@ -802,15 +801,15 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player3_3">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>10</x>
        <y>270</y>
-       <width>201</width>
+       <width>191</width>
        <height>61</height>
       </rect>
      </property>
@@ -826,15 +825,15 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player4_3">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>10</x>
        <y>370</y>
-       <width>201</width>
+       <width>191</width>
        <height>61</height>
       </rect>
      </property>
@@ -848,6 +847,102 @@ QPushButton:default
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="player1_score">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>75</y>
+       <width>71</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="player2_score">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>175</y>
+       <width>71</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="player3_score">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>275</y>
+       <width>71</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="player4_score">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>375</y>
+       <width>71</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: rgb(255, 255, 255); /* Text alb pentru contrast maxim */
+    font-size: 18px; /* Mărimea fontului pentru lizibilitate îmbunătățită */
+    font-weight: bold; /* Font îngroșat pentru a ieși în evidență */
+  
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -983,35 +1078,28 @@ QPushButton:default
      <string>BrushSize</string>
     </property>
    </widget>
-   <zorder>background</zorder>
-   <zorder>logo</zorder>
-   <zorder>drawingArea</zorder>
-   <zorder>label_8</zorder>
-   <zorder>label_10</zorder>
-   <zorder>CurrentAction</zorder>
-   <zorder>chat</zorder>
-   <zorder>SendMesageButton</zorder>
-   <zorder>label_9</zorder>
-   <zorder>textEdit</zorder>
-   <zorder>SettingsButton</zorder>
-   <zorder>Clear</zorder>
-   <zorder>Albastru</zorder>
-   <zorder>Verde</zorder>
-   <zorder>Rosu</zorder>
-   <zorder>Orange</zorder>
-   <zorder>Purple</zorder>
-   <zorder>Brown</zorder>
-   <zorder>Pink</zorder>
-   <zorder>Yellow</zorder>
-   <zorder>Black</zorder>
-   <zorder>Turquoise</zorder>
-   <zorder>Grey</zorder>
-   <zorder>White</zorder>
-   <zorder>frame_2</zorder>
-   <zorder>fillButton</zorder>
-   <zorder>Undo</zorder>
-   <zorder>BrushSize</zorder>
-   <zorder>pushButton</zorder>
+   <widget class="QLCDNumber" name="timer">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>83</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLCDNumber{
+  background-color: rgb(0, 0, 0);
+  border: 2px solid rgb(113, 113, 113);
+  border-width: 2px;
+  border-radius: 10px;
+  color: rgb(255, 255, 255);
+}</string>
+    </property>
+    <property name="digitCount">
+     <number>2</number>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
@@ -1024,9 +1112,6 @@ QPushButton:default
  </customwidgets>
  <resources>
   <include location="background.qrc"/>
-  <include location="settings.qrc"/>
-  <include location="clock.qrc"/>
-  <include location="skribbl name.qrc"/>
  </resources>
  <connections/>
 </ui>

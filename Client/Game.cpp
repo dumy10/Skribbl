@@ -1,44 +1,24 @@
 #include "Game.h"
 #include "Settings.h"
-#include <QScrollBar>
 #include "utils.h"
 
 #include <cpr/cpr.h>
 #include <crow.h>
 
-
-/*
-TODO:
-- connect to server
-- send message to server
-- check if the message is the same as the word
-- if it is, send a message to the server that the player won and display a message in the chat that the player won
-- send the chat to the server and display it to the other players
-- display the chat from the server
-- display the word to guess from the server to the player that has to draw
-- display the word length to the other players
-- update room information ( timer, word, image that is being drawn)
-- display the image that is being drawn to the other players (the image is updated every 0.5 seconds or less)
-- display the timer to all players (the timer is updated every 0.5 seconds)
-- add the player score in the UI
-*/
+#include <QScrollBar>
 
 Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
 	: QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(m_roomID)
 {
-	m_drawingArea = new DrawingWidget(this);
+	m_drawingArea = std::make_shared<DrawingWidget>(this);
 	m_ui.setupUi(this);
 	m_ui.chat->setPlainText("Welcome to skribbl!");
-	m_ui.player1_3->hide();
-	m_ui.player2_3->hide();
-	m_ui.player3_3->hide();
-	m_ui.player4_3->hide();
 
-	DisplayPlayer(m_username, m_playerIndex);
+	HidePlayers();
+	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
 
 	StartTimer();
-
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
 	connect(m_ui.Verde, &QPushButton::clicked, this, &Game::SetPenColorGreen);
 	connect(m_ui.Rosu, &QPushButton::clicked, this, &Game::SetPenColorRed);
@@ -54,8 +34,8 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Turquoise, &QPushButton::clicked, this, &Game::SetPenColorTurquoise);
 	connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::OpenSettings);
 	connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::OnSendButtonClicked);
-	connect(m_ui.fillButton, &QPushButton::clicked, m_drawingArea, &DrawingWidget::toggleFillMode);
-	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdatePlayerInformation()));
+	connect(m_ui.fillButton, &QPushButton::clicked, m_drawingArea.get(), &DrawingWidget::ToggleFillMode);
+	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
 }
 
@@ -159,14 +139,14 @@ void Game::OnFillButtonClicked()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
-		drawingArea->toggleFillMode();
+		drawingArea->ToggleFillMode();
 }
 
 void Game::OpenSettings()
 {
 	Settings* settings = new Settings(this);
-	settings->setWindowOpacity(0.5);
 	settings->show();
+	// if the settings window is closed, the settings windows should be deleted from memory so it doesn't take up space
 }
 
 void Game::OnSendButtonClicked()
@@ -200,7 +180,17 @@ void Game::OnSendButtonClicked()
 
 }
 
-void Game::UpdatePlayerInformation()
+/*
+TODO:
+- update room information ( timer, word, image that is being drawn)
+- if the player is the one that has to draw, display the word to guess, otherwise display the word length
+- if the player is the one that has to draw, send the image that is being drawn onto to the server every 0.2 seconds, 
+otherwise pull and display the image from the server every 0.2 seconds
+- update chat for all players every 0.2 seconds
+- the player that is currently drawing shouldnt be able to send messages to the chat
+- the players that are not drawing shouldnt be able to draw
+*/
+void Game::UpdateRoomInformation()
 {
 	auto req = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
@@ -210,38 +200,29 @@ void Game::UpdatePlayerInformation()
 
 	if (players.empty())
 		return;
-	switch (players.size())
+
+	// get the drawing player name from the server
+
+
+	if (m_isDrawing)
 	{
-	case 1:
-		m_ui.player1_3->show();
-		m_ui.player2_3->hide();
-		m_ui.player3_3->hide();
-		m_ui.player4_3->hide();
-		break;
-	case 2:
-		m_ui.player1_3->show();
-		m_ui.player2_3->show();
-		m_ui.player3_3->hide();
-		m_ui.player4_3->hide();
-		break;
-	case 3:
-		m_ui.player1_3->show();
-		m_ui.player2_3->show();
-		m_ui.player3_3->show();
-		m_ui.player4_3->hide();
-		break;
-	case 4:
-		m_ui.player1_3->show();
-		m_ui.player2_3->show();
-		m_ui.player3_3->show();
-		m_ui.player4_3->show();
-		break;
-	default:
-		break;
+		//disable player from sending messages to the chat
+		m_ui.textEdit->setReadOnly(true);
+		//allow player to draw
+		m_ui.drawingArea->setEnabled(true);
+	}
+	else
+	{
+		//enable player to send messages to the chat
+		m_ui.textEdit->setReadOnly(false);
+		//disable player from drawing
+		m_ui.drawingArea->setEnabled(false);
 	}
 
+	DisplayPlayerCount(players.size());
+
 	for (int i = 0; i < players.size(); i++)
-		DisplayPlayer(players[i], i + 1);
+		DisplayPlayer(players[i], i + 1, "0");
 }
 
 void Game::OnPlayerQuit()
@@ -264,34 +245,103 @@ void Game::OnPlayerQuit()
 	);
 }
 
-void Game::DisplayPlayer(const std::string& username, int index)
+void Game::DisplayPlayer(const std::string& username, int index, const std::string& score)
 {
 	switch (index)
 	{
 	case 1:
 		m_ui.player1_3->show();
 		m_ui.player1_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+		m_ui.player1_score->show();
+		m_ui.player1_score->setText(QString::fromUtf8(score.data(), int(score.size())));
 		break;
 	case 2:
 		m_ui.player2_3->show();
 		m_ui.player2_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+		m_ui.player2_score->show();
+		m_ui.player2_score->setText(QString::fromUtf8(score.data(), int(score.size())));
 		break;
 	case 3:
 		m_ui.player3_3->show();
 		m_ui.player3_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+		m_ui.player3_score->show();
+		m_ui.player3_score->setText(QString::fromUtf8(score.data(), int(score.size())));
 		break;
 	case 4:
 		m_ui.player4_3->show();
 		m_ui.player4_3->setText(QString::fromUtf8(username.data(), int(username.size())));
+		m_ui.player4_score->show();
+		m_ui.player4_score->setText(QString::fromUtf8(score.data(), int(score.size())));
 		break;
 	default:
 		break;
 	}
 }
 
+void Game::DisplayPlayerCount(int count)
+{
+	switch (count)
+	{
+	case 1:
+		m_ui.player1_3->show();
+		m_ui.player1_score->show();
+		m_ui.player2_3->hide();
+		m_ui.player2_score->hide();
+		m_ui.player3_3->hide();
+		m_ui.player3_score->hide();
+		m_ui.player4_3->hide();
+		m_ui.player4_score->hide();
+		break;
+	case 2:
+		m_ui.player1_3->show();
+		m_ui.player1_score->show();
+		m_ui.player2_3->show();
+		m_ui.player2_score->show();
+		m_ui.player3_3->hide();
+		m_ui.player3_score->hide();
+		m_ui.player4_3->hide();
+		m_ui.player4_score->hide();
+		break;
+	case 3:
+		m_ui.player1_3->show();
+		m_ui.player1_score->show();
+		m_ui.player2_3->show();
+		m_ui.player2_score->show();
+		m_ui.player3_3->show();
+		m_ui.player3_score->show();
+		m_ui.player4_3->hide();
+		m_ui.player4_score->hide();
+		break;
+	case 4:
+		m_ui.player1_3->show();
+		m_ui.player1_score->show();
+		m_ui.player2_3->show();
+		m_ui.player2_score->show();
+		m_ui.player3_3->show();
+		m_ui.player3_score->show();
+		m_ui.player4_3->show();
+		m_ui.player4_score->show();
+		break;
+	default:
+		break;
+	}
+}
+
+void Game::HidePlayers()
+{
+	m_ui.player1_3->hide();
+	m_ui.player2_3->hide();
+	m_ui.player3_3->hide();
+	m_ui.player4_3->hide();
+	m_ui.player1_score->hide();
+	m_ui.player2_score->hide();
+	m_ui.player3_score->hide();
+	m_ui.player4_score->hide();
+}
+
 void Game::StartTimer()
 {
-	m_updateTimer->start(500);
+	m_updateTimer->start(200);
 }
 
 void Game::closeEvent(QCloseEvent* event)

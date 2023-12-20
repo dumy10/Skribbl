@@ -6,16 +6,16 @@ DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), m_isDrawing(fal
     m_image = QImage(621, 491, QImage::Format_ARGB32); // Initializare imagine
     m_image.fill(Qt::white); // Umple imaginea cu alb
     m_pen = QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // Initializare stilou
-    fillMode = false;
+    m_fillMode = false;
 }
 
 void DrawingWidget::mousePressEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton && fillMode) 
+    if (event->button() == Qt::LeftButton && m_fillMode) 
     {
         QPoint fillStartPoint = event->pos();
         QColor oldColor = m_image.pixelColor(fillStartPoint);
-        floodFill(fillStartPoint, currentFillColor, oldColor);
+        FloodFill(fillStartPoint, m_currentFillColor, oldColor);
     }
     else
     {
@@ -110,7 +110,7 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
 }
 
 
-void DrawingWidget::floodFill(const QPoint& startPoint, const QColor& fillColor, const QColor& oldColor) 
+void DrawingWidget::FloodFill(const QPoint& startPoint, const QColor& fillColor, const QColor& oldColor) 
 {
     if (!image.rect().contains(startPoint) || image.pixel(startPoint) != oldColor.rgb() || fillColor == oldColor) {
         return;
@@ -136,12 +136,17 @@ void DrawingWidget::floodFill(const QPoint& startPoint, const QColor& fillColor,
 }
 
 
-void DrawingWidget::setCurrentFillColor(const QColor& color)
+void DrawingWidget::SetCurrentFillColor(const QColor& color)
 {
-    currentFillColor = color;
+    m_currentFillColor = color;
 }
 
-void DrawingWidget::toggleFillMode()
+void DrawingWidget::ToggleFillMode()
 {
-    fillMode = !fillMode; // Inverseazã valoarea lui fillMode
+    m_fillMode = !m_fillMode; // Inverseazã valoarea lui m_fillMode
+}
+
+QImage DrawingWidget::GetImage() const noexcept
+{
+    return m_image;
 }

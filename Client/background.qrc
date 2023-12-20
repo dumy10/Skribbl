@@ -1,5 +1,13 @@
 <RCC>
-    <qresource prefix="/background">
-        <file>pattern.png</file>
-    </qresource>
+  <qresource prefix="/background">
+    <file>settings.gif</file>
+    <file>logo.png</file>
+    <file>pattern.png</file>
+  </qresource>
+  <qresource prefix="questionMark">
+    <file>questionmark.gif</file>
+  </qresource>
+  <qresource prefix="keyButton">
+    <file>key.gif</file>
+  </qresource>
 </RCC>

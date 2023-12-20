@@ -116,8 +116,6 @@
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="utils.cpp" />
     <QtRcc Include="background.qrc" />
-    <QtRcc Include="Lobby.qrc" />
-    <QtRcc Include="LoginForm.qrc" />
     <QtUic Include="Game.ui" />
     <QtUic Include="Lobby.ui" />
     <QtUic Include="LoginForm.ui" />

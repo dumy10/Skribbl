@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>502</width>
-    <height>450</height>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -214,7 +214,7 @@ font: 15pt &quot;Segoe UI&quot;;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image: url(:/KeyButton/Client/key.gif);</string>
+     <string notr="true">image: url(:/keyButton/key.gif);</string>
     </property>
     <property name="text">
      <string/>
@@ -230,7 +230,7 @@ font: 15pt &quot;Segoe UI&quot;;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image: url(:/MiscellaneousButton/Client/questionmark.gif);</string>
+     <string notr="true">image: url(:/questionMark/questionmark.gif);</string>
     </property>
     <property name="text">
      <string/>
@@ -358,30 +358,10 @@ font: 15pt &quot;Segoe UI&quot;;</string>
     </property>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>502</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../KeyButton.qrc"/>
-  <include location="../MiscellaneousButton.qrc"/>
+  <include location="background.qrc"/>
  </resources>
  <connections/>
 </ui>
