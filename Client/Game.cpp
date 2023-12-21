@@ -17,6 +17,8 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	HidePlayers();
 	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
+	
+	isDrawing();
 
 	StartTimer();
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
@@ -37,6 +39,8 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.fillButton, &QPushButton::clicked, m_drawingArea.get(), &DrawingWidget::ToggleFillMode);
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
+	
+
 }
 
 Game::~Game()
@@ -243,6 +247,56 @@ void Game::OnPlayerQuit()
 			{"username", m_username}
 		}
 	);
+}
+
+void Game::isDrawing()
+{
+	if (m_isDrawing == true)
+		showDrawingUI();
+	else
+		hideDrawingUI();
+}
+
+void Game::showDrawingUI()
+{
+	m_ui.Clear->show();
+	m_ui.Verde->show();
+	m_ui.Rosu->show();
+	m_ui.Albastru->show();
+	m_ui.Orange->show();
+	m_ui.Brown->show();
+	m_ui.Purple->show();
+	m_ui.White->show();
+	m_ui.Black->show();
+	m_ui.Grey->show();
+	m_ui.Yellow->show();
+	m_ui.Pink->show();
+	m_ui.Turquoise->show();
+	m_ui.SettingsButton->show();
+	m_ui.fillButton->show();
+	m_ui.BrushSize->show();
+	m_ui.Undo->show();
+}
+
+void Game::hideDrawingUI()
+{
+	m_ui.Clear->hide();
+	m_ui.Verde->hide();
+	m_ui.Rosu->hide();
+	m_ui.Albastru->hide();
+	m_ui.Orange->hide();
+	m_ui.Brown->hide();
+	m_ui.Purple->hide();
+	m_ui.White->hide();
+	m_ui.Black->hide();
+	m_ui.Grey->hide();
+	m_ui.Yellow->hide();
+	m_ui.Pink->hide();
+	m_ui.Turquoise->hide();
+	m_ui.SettingsButton->hide();
+	m_ui.fillButton->hide();
+	m_ui.BrushSize->hide();
+	m_ui.Undo->hide();
 }
 
 void Game::DisplayPlayer(const std::string& username, int index, const std::string& score)

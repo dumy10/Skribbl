@@ -35,6 +35,9 @@ private slots:
 	void OnSendButtonClicked();
 	void UpdateRoomInformation();
 	void OnPlayerQuit();
+	void isDrawing();
+	void showDrawingUI();
+	void hideDrawingUI();
 
 private:
 	void DisplayPlayer(const std::string& username, int index, const std::string& score);
@@ -49,7 +52,7 @@ private:
 	std::string m_roomID;
 	int m_playerIndex;
 	bool m_isOwner;
-	bool m_isDrawing;
+	bool m_isDrawing = true;
 	bool m_guessedWord;
 
 private:
