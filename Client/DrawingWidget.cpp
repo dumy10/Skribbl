@@ -189,7 +189,8 @@ QImage DrawingWidget::GetImage() const noexcept
 
 void DrawingWidget::saveCurrentState() 
 {
-    if (m_undoStack.size() > 10) { // Limit the undo stack size to avoid excessive memory use.
+    if (m_undoStack.size() > 10) 
+    { // Limit the undo stack size to avoid excessive memory use.
         m_undoStack.removeFirst(); // Remove the oldest state to maintain the stack size.
     }
     m_undoStack.push_back(m_image.copy()); // Save the current state of the image.
@@ -201,4 +202,10 @@ void DrawingWidget::Undo()
         m_image = m_undoStack.takeLast(); // Take the last saved state.
         update(); // Update the canvas to reflect the undone state.
     }
+}
+
+void DrawingWidget::setPenWidth(int newWidth) 
+{
+    m_pen.setWidth(newWidth);
+    update();
 }

@@ -39,6 +39,8 @@ private slots:
 	void isDrawing();
 	void showDrawingUI();
 	void hideDrawingUI();
+	void changeBrushSize();
+
 
 private:
 	void DisplayPlayer(const std::string& username, int index, const std::string& score);
@@ -55,6 +57,7 @@ private:
 	bool m_isOwner;
 	bool m_isDrawing = true;
 	bool m_guessedWord;
+	int m_currentBrushSizeIndex = 0;
 
 private:
 	std::shared_ptr<DrawingWidget> m_drawingArea;

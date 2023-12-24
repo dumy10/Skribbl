@@ -4,7 +4,7 @@
 
 #include <cpr/cpr.h>
 #include <crow.h>
-
+#include <QDebug>
 #include <QScrollBar>
 
 Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
@@ -40,6 +40,8 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
+	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::changeBrushSize);
+
 
 }
 
@@ -447,3 +449,19 @@ void Game::OnUndoButtonClicked()
 	if (drawingArea)
 		drawingArea->Undo();
 }
+
+void Game::changeBrushSize() 
+{
+	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+	if (drawingArea)
+	{
+		std::vector<int> brushSizes = { 3, 6, 9 };
+		if (m_currentBrushSizeIndex == 2)
+			m_currentBrushSizeIndex=0;
+		else
+			m_currentBrushSizeIndex ++;
+		int newBrushSize = brushSizes[m_currentBrushSizeIndex];
+		m_drawingArea->setPenWidth(newBrushSize);
+	}
+}
+

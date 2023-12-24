@@ -987,28 +987,7 @@ QPushButton:default
      <string>Undo</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="BrushSize">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>670</y>
-      <width>91</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QTextEdit {
-	background:transparent;
-    background-color: rgba(255, 255, 255, 0.9); /* Alb cu transparență pentru a lăsa să se întrevadă fundalul */
-    color: rgb(0, 0, 0); /* Textul în culoarea neagră pentru citire ușoară */
-    border: 1px solid rgb(255, 255, 255); /* Bordură albă clară */
-    border-radius: 5px; /* Margini rotunjite */
-    font-size: 16px; /* Mărimea fontului adecvată */
-
-}</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="BrushSize">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -1024,6 +1003,12 @@ QPushButton:default
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                       stop:0 #f6f7fa, stop:1 #dadbde);
     min-width: 80px;
+}
+
+QPushButton:pressed 
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
 }
 
 QPushButton:flat 

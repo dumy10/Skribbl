@@ -23,6 +23,7 @@ public:
     QImage GetImage() const noexcept;
     void SetCurrentFillColor(const QColor& color);
     void Undo();
+    void setPenWidth(int newWidth);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
@@ -39,7 +40,6 @@ private:
     bool m_fillMode=false;//indica daca se umple
     QColor m_currentFillColor;
     QVector<QImage> m_undoStack;
-
 
 private:
     void DrawLineTo(const QPoint& endPoint); // Traseaza o linie pana la punctul dat
