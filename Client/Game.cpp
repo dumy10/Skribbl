@@ -36,7 +36,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Turquoise, &QPushButton::clicked, this, &Game::SetPenColorTurquoise);
 	connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::OpenSettings);
 	connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::OnSendButtonClicked);
-	connect(m_ui.fillButton, &QPushButton::clicked, m_drawingArea.get(), &DrawingWidget::ToggleFillMode);
+	connect(m_ui.Bucket, &QPushButton::clicked, this, &Game::OnFillButtonClicked);
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
 	
@@ -59,91 +59,120 @@ void Game::SetPenColorGreen()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(Qt::green);
+		drawingArea->SetCurrentFillColor(Qt::green);
+	}
 }
 
 void Game::SetPenColorRed()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(Qt::red);
+		drawingArea->SetCurrentFillColor(Qt::red);
+	}
 }
 
 void Game::SetPenColorBlue()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(Qt::blue);
+		drawingArea->SetCurrentFillColor(Qt::blue);
+	}
 }
 
 void Game::SetPenColorOrange()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(255, 165, 0)); // RGB for orange
+		drawingArea->SetCurrentFillColor(QColor(255,165,0));
+	}
 }
 
 void Game::SetPenColorPurple()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(128, 0, 128)); // RGB for purple
+		drawingArea->SetCurrentFillColor(QColor(128,0,128));
+	}
 }
 
 void Game::SetPenColorBrown()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(165, 42, 42)); // RGB for brown
+		drawingArea->SetCurrentFillColor(QColor(165,42,42));
+	}
 }
 
 void Game::SetPenColorBlack()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(0, 0, 0)); // RGB for black
+		drawingArea->SetCurrentFillColor(QColor(0, 0, 0));
+	}
 }
 
 void Game::SetPenColorWhite()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(255, 255, 255)); // RGB for white
+		drawingArea->SetCurrentFillColor(QColor(255, 255, 255));
+	}
 }
 
 void Game::SetPenColorYellow()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(255, 255, 0)); // RGB for yellow
+		drawingArea->SetCurrentFillColor(QColor(255, 255, 0));
+	}
 }
 
 void Game::SetPenColorGrey()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(128, 128, 128)); // RGB for grey
+		drawingArea->SetCurrentFillColor(QColor(128,128,128));
+	}
 }
 
 void Game::SetPenColorTurquoise()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(64, 224, 208)); // RGB for turquoise
+		drawingArea->SetCurrentFillColor(QColor(64, 224, 208));
+	}
 }
 
 void Game::SetPenColorPink()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
+	{
 		drawingArea->SetPenColor(QColor(255, 192, 203)); // RGB for pink
-}
-
-void Game::OnFillButtonClicked()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea)
-		drawingArea->ToggleFillMode();
+		drawingArea->SetCurrentFillColor(QColor(255, 192, 203));
+	}
 }
 
 void Game::OpenSettings()
@@ -273,7 +302,7 @@ void Game::showDrawingUI()
 	m_ui.Pink->show();
 	m_ui.Turquoise->show();
 	m_ui.SettingsButton->show();
-	m_ui.fillButton->show();
+	m_ui.Bucket->show();
 	m_ui.BrushSize->show();
 	m_ui.Undo->show();
 }
@@ -294,7 +323,7 @@ void Game::hideDrawingUI()
 	m_ui.Pink->hide();
 	m_ui.Turquoise->hide();
 	m_ui.SettingsButton->hide();
-	m_ui.fillButton->hide();
+	m_ui.Bucket->hide();
 	m_ui.BrushSize->hide();
 	m_ui.Undo->hide();
 }
@@ -403,4 +432,11 @@ void Game::closeEvent(QCloseEvent* event)
 	emit PlayerQuit();
 
 	QMainWindow::closeEvent(event);
+}
+
+void Game::OnFillButtonClicked()
+{
+	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+	if(drawingArea)
+		drawingArea->ToggleFillMode();
 }

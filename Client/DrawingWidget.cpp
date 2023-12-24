@@ -1,4 +1,5 @@
 #include "DrawingWidget.h"
+#include <QQueue>
 
 DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), m_isDrawing(false), m_isErasing(false)
 {
@@ -68,6 +69,7 @@ void DrawingWidget::SetEraser()
     m_isErasing = true;
 }
 
+
 void DrawingWidget::ClearDrawing()
 {
     m_image.fill(Qt::white);
@@ -110,30 +112,61 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
 }
 
 
-void DrawingWidget::FloodFill(const QPoint& startPoint, const QColor& fillColor, const QColor& oldColor) 
-{
-    if (!image.rect().contains(startPoint) || image.pixel(startPoint) != oldColor.rgb() || fillColor == oldColor) {
+/*void DrawingWidget::FloodFill(const QPoint& startPoint, const QColor& fillColor, const QColor& oldColor) {
+    if (!m_image.rect().contains(startPoint) || m_image.pixelColor(startPoint) != oldColor || fillColor == oldColor) {
         return;
     }
 
-    QStack<QPoint> stack;
-    stack.push(startPoint);
+    // Create an auxiliary image to keep track of visited pixels.
+    QImage visited(m_image.size(), QImage::Format_ARGB32_Premultiplied);
+    visited.fill(Qt::black); // Black pixels are unvisited.
 
-    while (!stack.isEmpty()) {
-        QPoint p = stack.pop();
-        if (image.pixel(p) == oldColor.rgb()) {
-            QPainter painter(&image);
-            painter.setPen(fillColor);
-            painter.drawPoint(p);
-            stack.push(QPoint(p.x() + 1, p.y()));
-            stack.push(QPoint(p.x() - 1, p.y()));
-            stack.push(QPoint(p.x(), p.y() + 1));
-            stack.push(QPoint(p.x(), p.y() - 1));
+    QQueue<QPoint> queue;
+    queue.enqueue(startPoint);
+    visited.setPixelColor(startPoint, Qt::white); // Mark the start point as visited.
+
+    while (!queue.isEmpty()) {
+        if (queue.size() > 10000) { // Limit the queue size to prevent memory overflow.
+            qDebug() << "Flood fill operation aborted: too many pixels to process.";
+            return;
+        }
+
+        QPoint p = queue.dequeue();
+        if (m_image.pixelColor(p) == oldColor) {
+            m_image.setPixelColor(p, fillColor);
+
+            QPoint points[4] = {
+                {p.x() + 1, p.y()},
+                {p.x() - 1, p.y()},
+                {p.x(), p.y() + 1},
+                {p.x(), p.y() - 1}
+            };
+
+            for (const QPoint& newP : points) {
+                if (m_image.rect().contains(newP) && visited.pixelColor(newP) != Qt::white && m_image.pixelColor(newP) == oldColor) {
+                    queue.enqueue(newP);
+                    visited.setPixelColor(newP, Qt::white); // Mark this pixel as visited.
+                }
+            }
         }
     }
 
+    // Trigger an update for the widget to repaint itself.
+    update(m_image.rect());
+}*/
+
+
+
+void DrawingWidget::FloodFill(const QPoint&, const QColor& fillColor, const QColor&) {
+    // Fill the entire image with the selected fill color.
+    m_image.fill(fillColor);
+
+    // Trigger an update for the widget to repaint itself with the new fill color.
     update();
 }
+
+
+
 
 
 void DrawingWidget::SetCurrentFillColor(const QColor& color)
