@@ -14,6 +14,7 @@ void DrawingWidget::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton && m_fillMode) 
     {
+        saveCurrentState();
         QPoint fillStartPoint = event->pos();
         QColor oldColor = m_image.pixelColor(fillStartPoint);
         FloodFill(fillStartPoint, m_currentFillColor, oldColor);
@@ -22,6 +23,7 @@ void DrawingWidget::mousePressEvent(QMouseEvent* event)
     {
         if (event->button() == Qt::LeftButton)
         {
+            saveCurrentState();
             m_lastPoint = event->pos();
             m_isDrawing = true;
             if (m_isErasing)
@@ -33,6 +35,7 @@ void DrawingWidget::mousePressEvent(QMouseEvent* event)
         }
         else if (event->button() == Qt::RightButton)
         {
+            saveCurrentState();
             m_lastPoint = event->pos();
             m_isDrawing = true;
             SetEraser(); // Seteaza modul de stergere
@@ -182,4 +185,20 @@ void DrawingWidget::ToggleFillMode()
 QImage DrawingWidget::GetImage() const noexcept
 {
     return m_image;
+}
+
+void DrawingWidget::saveCurrentState() 
+{
+    if (m_undoStack.size() > 10) { // Limit the undo stack size to avoid excessive memory use.
+        m_undoStack.removeFirst(); // Remove the oldest state to maintain the stack size.
+    }
+    m_undoStack.push_back(m_image.copy()); // Save the current state of the image.
+}
+
+void DrawingWidget::Undo() 
+{
+    if (!m_undoStack.isEmpty()) {
+        m_image = m_undoStack.takeLast(); // Take the last saved state.
+        update(); // Update the canvas to reflect the undone state.
+    }
 }

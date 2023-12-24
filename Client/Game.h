@@ -33,6 +33,7 @@ private slots:
 	void OpenSettings();
 	void OnFillButtonClicked();
 	void OnSendButtonClicked();
+	void OnUndoButtonClicked();
 	void UpdateRoomInformation();
 	void OnPlayerQuit();
 	void isDrawing();

@@ -39,7 +39,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Bucket, &QPushButton::clicked, this, &Game::OnFillButtonClicked);
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
-	
+	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
 
 }
 
@@ -439,4 +439,11 @@ void Game::OnFillButtonClicked()
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if(drawingArea)
 		drawingArea->ToggleFillMode();
+}
+
+void Game::OnUndoButtonClicked()
+{
+	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+	if (drawingArea)
+		drawingArea->Undo();
 }

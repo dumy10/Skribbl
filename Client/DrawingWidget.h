@@ -22,6 +22,7 @@ public:
     void ToggleFillMode();
     QImage GetImage() const noexcept;
     void SetCurrentFillColor(const QColor& color);
+    void Undo();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
@@ -37,11 +38,14 @@ private:
     QPen m_pen; // Stiloul folosit pentru desenare si stergere
     bool m_fillMode=false;//indica daca se umple
     QColor m_currentFillColor;
+    QVector<QImage> m_undoStack;
+
 
 private:
     void DrawLineTo(const QPoint& endPoint); // Traseaza o linie pana la punctul dat
     void SetEraser(); // Pregateste stiloul pentru stergere
     void FloodFill(const QPoint& startpoint, const QColor& fillColor, const QColor& oldColor);//Functia de umplere
+    void saveCurrentState();
 };
 
 #endif // DRAWINGWIDGET_H
