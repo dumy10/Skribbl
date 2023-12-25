@@ -197,7 +197,6 @@ void Routing::Run(Database& storage)
 		std::string roomID=x["roomID"];
 		std::string username=x["username"];
 		Player player=storage.GetPlayer(username);
-		word=storage.GetGame(roomID).GetWord();
 		//if (word == storage.GetGame(roomID).GetWord())
 		//{
 		//	//add points to the player

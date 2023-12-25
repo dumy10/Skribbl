@@ -20,6 +20,7 @@ namespace skribbl
 
 		const bool GuessWord(const std::string& word) const;
 		const int GetRound() const noexcept;
+		const std::string GetWord() const noexcept;
 
 		void ModifyRound();
 		void SetTurn(const Player& player, const std::string& word);
@@ -28,7 +29,7 @@ namespace skribbl
 		// Use a reference to the player instead of copying it
 		std::vector<Player> m_players;
 		Turn m_turn;
-		std::string m_word;
+		std::string m_word; // turn should have the word , not round
 		uint8_t m_roundNumber;
 	};
 

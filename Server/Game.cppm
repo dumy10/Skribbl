@@ -56,14 +56,17 @@ namespace skribbl
 		void SubstractPointsForTheDrawer(Player& player);
 		void AverageTime(const int& timeLeft);
 
+		const std::string GetWord() const noexcept;
+
 	private:
 		int m_id;
 		static const size_t kNoOfRounds{ 4 };
 		size_t m_currentPlayers;
 		size_t m_maxPlayers;
 		std::string m_gameCode;
-		std::vector<Player> m_players; // map with players and their scores to iterate more easily in order to change the scores / check winner / check if player is in game??
+		std::vector<Player> m_players; // we need to sort the players by their points and the map would not be a good choice
 		std::vector<Round> m_rounds; // is a vector needed? maybe a single round is enough and change/modify round after each round ends
+		//we should not remember the round at all.It will be created when the game starts.
 		GameStatus m_gameStatus{ GameStatus::UNKNOWN };
 
 		float m_averageTime = 0;

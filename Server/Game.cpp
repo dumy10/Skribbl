@@ -37,8 +37,17 @@ void Game::StartGame()
 		m_gameStatus = GameStatus::INPROGRESS;
 	}
 	//the next part depends on how we remember the rounds , or if we remember them at all in game class.
-	//round and turn constructor ask for a word, we would need to include the database here to get it.
+	
+	for (int i = 0; i < kNoOfRounds; i++)
+	{
+		//Round round{ turn, word, i, m_players };
+		//round.StartRound();
+		//wait for the round to finish
+		//the players that guess the word will not be handled by start game. They will be handled by the server.
+		//sort the player vector and this will be the leaderboard
+	}
 
+	EndGame();
 }
 
 void Game::EndGame()
@@ -207,3 +216,10 @@ void skribbl::Game::AverageTime(const int& timeLeft)
 	this->m_averageTime += 60 - timeLeft;
 	this->m_averageTime /= 2;
 }
+
+const std::string skribbl::Game::GetWord() const noexcept
+{
+	//return this->round.GetWord(); depends on how we remember the rounds
+	return "";
+}
+

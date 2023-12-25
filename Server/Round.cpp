@@ -56,6 +56,12 @@ const int Round::GetRound() const noexcept
 	return m_roundNumber;
 }
 
+const std::string skribbl::Round::GetWord() const noexcept
+{
+	//return turn.GetCurrentWord();
+	return "";
+}
+
 void Round::ModifyRound()
 {
 	/*
