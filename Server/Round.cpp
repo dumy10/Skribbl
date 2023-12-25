@@ -22,6 +22,13 @@ void Round::StartRound()
 		- Display who's turn is
 		- Display timer
 	*/
+	for (const auto& player : m_players)
+	{
+		//turn.SetPlayerTurn(player, m_word);
+		//turn.StartTimer();
+		//wait for the turn to end
+	}
+
 }
 
 void Round::EndRound()

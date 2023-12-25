@@ -190,6 +190,24 @@ void Routing::Run(Database& storage)
 
 		return crow::response{ 200 };
 			});
+	CROW_ROUTE(m_app,"/checkWord")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x=parseUrlArgs(req.body);
+		std::string word=x["word"];
+		std::string roomID=x["roomID"];
+		std::string username=x["username"];
+		Player player=storage.GetPlayer(username);
+		word=storage.GetGame(roomID).GetWord();
+		//if (word == storage.GetGame(roomID).GetWord())
+		//{
+		//	//add points to the player
+		//  player.AddPoints(100);
+		//  return crow::response{ 200 };
+		//}
+		//else send the word to the other players
+
+		return crow::response{ 202 };
+			});
 
 	CROW_ROUTE(m_app, "/gameEnded")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
@@ -201,6 +219,6 @@ void Routing::Run(Database& storage)
 
 		return crow::response{ 409 };
 			});
-
+	
 	m_app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }
