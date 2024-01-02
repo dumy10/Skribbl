@@ -42,7 +42,18 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
 	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::changeBrushSize);
 
-
+	if (m_isDrawing)
+	{
+		std::string wordToDraw = "cuvant";
+		m_ui.labelWordToDraw->setText(QString::fromStdString(wordToDraw));
+		m_ui.labelWordLength->clear();
+	}
+	else
+	{
+		int wordLength = 5;
+		m_ui.labelWordLength->setText(QString(wordLength, '_').replace("", " ").trimmed());
+		m_ui.labelWordToDraw->clear();
+	}
 }
 
 Game::~Game()
@@ -461,7 +472,7 @@ void Game::changeBrushSize()
 		else
 			m_currentBrushSizeIndex ++;
 		int newBrushSize = brushSizes[m_currentBrushSizeIndex];
-		m_drawingArea->setPenWidth(newBrushSize);
+		drawingArea->setPenWidth(newBrushSize);
 	}
 }
 

@@ -115,27 +115,6 @@ background: transparent;
      <string>pus numarul rundei</string>
     </property>
    </widget>
-   <widget class="QLabel" name="currentWord">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>85</y>
-      <width>171</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QLabel{
-background:transparent;
-}</string>
-    </property>
-    <property name="text">
-     <string>ce se intampla in joc</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
    <widget class="QPlainTextEdit" name="chat">
     <property name="geometry">
      <rect>
@@ -1083,6 +1062,32 @@ QPushButton:default
     </property>
     <property name="text">
      <string>Bucket</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelWordToDraw">
+    <property name="geometry">
+     <rect>
+      <x>238</x>
+      <y>80</y>
+      <width>611</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelWordLength">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>80</y>
+      <width>611</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

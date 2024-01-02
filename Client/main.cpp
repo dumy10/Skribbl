@@ -18,16 +18,16 @@ int main(int argc, char* argv[])
     return a.exec();
 }*/
 #include <QtWidgets/QApplication>
-#include "Game.h" // Include the header for your game window class
+#include "Game.h" 
 
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
-    std::string username = "exampleUsername"; // Replace with actual username
-    int playerIndex = 1; // Replace with the actual player index
-    bool isOwner = false; // Set based on whether the player is the owner
+    std::string username = "exampleUsername";
+    int playerIndex = 1; 
+    bool isOwner = false;
 
-    Game w(username, playerIndex, isOwner); // Create an instance of your game window class with parameters
-    w.show(); // Show the game window
-    return a.exec(); // Start the event loop
+    Game w(username, playerIndex, isOwner);
+    w.show();
+    return a.exec();
 }
