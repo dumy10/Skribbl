@@ -38,16 +38,25 @@ void Game::StartGame()
 	}
 	//the next part depends on how we remember the rounds , or if we remember them at all in game class.
 	
-	for (int i = 0; i < kNoOfRounds; i++)
+	for (int m_currentRound = 1; m_currentRound < kNoOfRounds; m_currentRound++)
 	{
-		//Round round{ turn, word, i, m_players };
+		//show the players the current round in qt
+		
+		//Round round{ turn, word, m_currentRound, m_players };
 		//round.StartRound();
 		//wait for the round to finish
 		//the players that guess the word will not be handled by start game. They will be handled by the server.
 		//sort the player vector and this will be the leaderboard
-	}
 
+		
+		
+		//display next round starts in 5 seconds
+		//in this time the client will ask the server for the leaderboard and display it
+		//a map would not be good for the leaderboard because we need to sort the players by their points .We don't search for a player by name , we just need to sort them.
+		
+	}
 	EndGame();
+
 }
 
 void Game::EndGame()
@@ -160,6 +169,18 @@ std::string Game::SerializePlayers() const
 	return serializedPlayers;
 }
 
+std::string skribbl::Game::SerializePlayersForLeaderboard() const
+{
+	std::string serializedPlayers;
+	for (const auto& player : m_players)
+		serializedPlayers += player.GetName() + "," + std::to_string(player.GetPoints()) + ",";
+
+	if (!serializedPlayers.empty())
+		serializedPlayers.pop_back();
+
+	return serializedPlayers;
+}
+
 const size_t Game::GetMaxPlayers() const noexcept
 {
 	return this->m_maxPlayers;
@@ -215,6 +236,11 @@ void skribbl::Game::AverageTime(const int& timeLeft)
 {
 	this->m_averageTime += 60 - timeLeft;
 	this->m_averageTime /= 2;
+}
+
+uint8_t skribbl::Game::GetCurrentRound() const
+{
+	return m_currentRound;
 }
 
 const std::string skribbl::Game::GetWord() const noexcept

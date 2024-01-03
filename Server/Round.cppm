@@ -31,7 +31,7 @@ namespace skribbl
 		std::vector<Player> m_players;
 		Turn m_turn;
 		std::string m_word; // turn should have the word , not round
-		uint8_t m_roundNumber;
+		uint8_t m_roundNumber; //game should have it
 	};
 
 }

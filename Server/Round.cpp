@@ -28,17 +28,16 @@ void Round::StartRound()
 		//turn.StartTimer();
 		//wait for the turn to end
 	}
-
+	EndRound();
 }
 
 void Round::EndRound()
 {
 	/*
 	End round:
-		- Display leaderboard
 		- Display word
-		- Display next round start in 5 seconds
 	*/
+
 }
 
 void Round::SetWord(const std::string& word)

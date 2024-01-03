@@ -35,6 +35,7 @@ namespace skribbl
 		int GetCurrentPlayers() const;
 		int GetGameStatusAsInt() const;
 		std::string SerializePlayers() const;
+		std::string SerializePlayersForLeaderboard() const;
 		std::string GetGameCode() const noexcept;
 		const GameStatus GetGameStatus() const noexcept;
 		const size_t GetMaxPlayers() const noexcept;
@@ -55,6 +56,7 @@ namespace skribbl
 		void AddPointsForTheDrawer(Player& player);
 		void SubstractPointsForTheDrawer(Player& player);
 		void AverageTime(const int& timeLeft);
+		uint8_t GetCurrentRound() const;
 
 		const std::string GetWord() const noexcept;
 		std::string GetDrawer() const;
@@ -69,6 +71,8 @@ namespace skribbl
 		std::vector<Round> m_rounds; // is a vector needed? maybe a single round is enough and change/modify round after each round ends
 		//we should not remember the round at all.It will be created when the game starts.
 		GameStatus m_gameStatus{ GameStatus::UNKNOWN };
+
+		uint8_t m_currentRound{ 0 };
 
 		float m_averageTime = 0;
 	};
