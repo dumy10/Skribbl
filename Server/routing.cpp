@@ -208,6 +208,14 @@ void Routing::Run(Database& storage)
 		return crow::response{ 202 };
 			});
 
+	CROW_ROUTE(m_app, "/getDrawer")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x=parseUrlArgs(req.body);
+		std::string roomID=x["roomID"];
+		std::string drawer=storage.GetGame(roomID).GetDrawer();
+		return crow::response{ drawer };
+			});
+
 	CROW_ROUTE(m_app, "/gameEnded")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);

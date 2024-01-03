@@ -24,6 +24,7 @@ namespace skribbl
 
 		void ModifyRound();
 		void SetTurn(const Player& player, const std::string& word);
+		std::string GetDrawer();
 
 	private:
 		// Use a reference to the player instead of copying it

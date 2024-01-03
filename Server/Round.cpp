@@ -80,3 +80,8 @@ void Round::SetTurn(const Player& player, const std::string& word)
 	this->m_turn.SetPlayerTurn(player, word);
 }
 
+std::string skribbl::Round::GetDrawer()
+{
+	return m_turn.GetCurrentPlayer().GetName();
+}
+

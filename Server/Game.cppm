@@ -57,6 +57,7 @@ namespace skribbl
 		void AverageTime(const int& timeLeft);
 
 		const std::string GetWord() const noexcept;
+		std::string GetDrawer() const;
 
 	private:
 		int m_id;

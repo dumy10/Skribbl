@@ -223,3 +223,10 @@ const std::string skribbl::Game::GetWord() const noexcept
 	return "";
 }
 
+std::string skribbl::Game::GetDrawer() const
+{
+	std::string drawer;
+	//drawer = depends on how we remember the rounds
+	return drawer;
+}
+
