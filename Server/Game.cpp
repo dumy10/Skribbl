@@ -37,23 +37,23 @@ void Game::StartGame()
 		m_gameStatus = GameStatus::INPROGRESS;
 	}
 	//the next part depends on how we remember the rounds , or if we remember them at all in game class.
-	
+
 	for (int m_currentRound = 1; m_currentRound < kNoOfRounds; m_currentRound++)
 	{
 		//show the players the current round in qt
-		
+
 		//Round round{ turn, word, m_currentRound, m_players };
 		//round.StartRound();
 		//wait for the round to finish
 		//the players that guess the word will not be handled by start game. They will be handled by the server.
 		//sort the player vector and this will be the leaderboard
 
-		
-		
+
+
 		//display next round starts in 5 seconds
 		//in this time the client will ask the server for the leaderboard and display it
 		//a map would not be good for the leaderboard because we need to sort the players by their points .We don't search for a player by name , we just need to sort them.
-		
+
 	}
 	EndGame();
 
@@ -69,14 +69,14 @@ void Game::EndGame()
 	if (m_gameStatus == GameStatus::INPROGRESS)
 	{
 		m_gameStatus = GameStatus::FINISHED;
-	    // display winner and leaderboard
+		// display winner and leaderboard
 	}
 	else
 	{
 		// game is not in progress
 		return;
 	}
-	
+
 }
 
 void Game::AddPlayer(const Player& player)
@@ -144,6 +144,10 @@ int Game::GetGameStatusAsInt() const
 	return static_cast<int>(m_gameStatus);
 }
 
+/*
+We need to get the real player score when we deserialize the players, otherwise it will be 0 always.
+*/
+
 void Game::DeserializePlayers(const std::string& serializedPlayers) {
 	m_players.clear();
 	std::istringstream iss(serializedPlayers);
@@ -169,7 +173,7 @@ std::string Game::SerializePlayers() const
 	return serializedPlayers;
 }
 
-std::string skribbl::Game::SerializePlayersForLeaderboard() const
+std::string Game::SerializePlayersForLeaderboard() const
 {
 	std::string serializedPlayers;
 	for (const auto& player : m_players)
@@ -195,8 +199,15 @@ int Game::GetId() const noexcept
 {
 	return this->m_id;
 }
+int Game::GetPlayerScore(const std::string& username) const noexcept
+{
+	for (const auto& player : m_players)
+		if (player.GetName() == username)
+			return player.GetPoints();
+	return 0;
+}
 
-void skribbl::Game::AddPoints(Player& player, const int& timeLeft)
+void Game::AddPoints(Player& player, const int& timeLeft)
 {
 	int points = 0;
 	if (timeLeft > 30)
@@ -216,43 +227,50 @@ void skribbl::Game::AddPoints(Player& player, const int& timeLeft)
 	}
 }
 
-void skribbl::Game::SubstractPoints(Player& player)
+void Game::SubstractPoints(Player& player)
 {
 	player.SubstractPoints(50);
 }
 
-void skribbl::Game::AddPointsForTheDrawer(Player& player)
+void Game::AddPointsForTheDrawer(Player& player)
 {
 	int points = int((60 - m_averageTime) * 100 / 60);
 	player.AddPoints(points);
 }
 
-void skribbl::Game::SubstractPointsForTheDrawer(Player& player)
+void Game::SubstractPointsForTheDrawer(Player& player)
 {
 	player.SubstractPoints(100);
 }
 
-void skribbl::Game::AverageTime(const int& timeLeft)
+void Game::AverageTime(const int& timeLeft)
 {
 	this->m_averageTime += 60 - timeLeft;
 	this->m_averageTime /= 2;
 }
 
-uint8_t skribbl::Game::GetCurrentRound() const
+uint8_t Game::GetCurrentRound() const
 {
 	return m_currentRound;
 }
 
-const std::string skribbl::Game::GetWord() const noexcept
+const std::string Game::GetWord() const noexcept
 {
 	//return this->round.GetWord(); depends on how we remember the rounds
 	return "";
 }
 
-std::string skribbl::Game::GetDrawer() const
+std::string Game::GetDrawer() const
 {
 	std::string drawer;
 	//drawer = depends on how we remember the rounds
 	return drawer;
+}
+
+void Game::SetPlayerScore(const std::string& username, int score)
+{
+	for (auto& player : m_players)
+		if (player.GetName() == username)
+			player.SetPoints(score);
 }
 

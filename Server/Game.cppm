@@ -41,6 +41,7 @@ namespace skribbl
 		const size_t GetMaxPlayers() const noexcept;
 		const std::vector<Player>& GetPlayers() const noexcept;
 		int GetId() const noexcept;
+		int GetPlayerScore(const std::string& username) const noexcept;
 
 		void SetGameCode(const std::string& gameCode);
 		void SetGameStatus(GameStatus status);
@@ -60,6 +61,8 @@ namespace skribbl
 
 		const std::string GetWord() const noexcept;
 		std::string GetDrawer() const;
+
+		void SetPlayerScore(const std::string& username, int score);
 
 	private:
 		int m_id;

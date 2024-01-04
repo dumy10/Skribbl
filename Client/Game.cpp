@@ -18,7 +18,6 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
 	
-	isDrawing();
 
 	StartTimer();
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
@@ -40,20 +39,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
-	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::changeBrushSize);
-
-	if (m_isDrawing)
-	{
-		std::string wordToDraw = "cuvant";
-		m_ui.labelWordToDraw->setText(QString::fromStdString(wordToDraw));
-		m_ui.labelWordLength->clear();
-	}
-	else
-	{
-		int wordLength = 5;
-		m_ui.labelWordLength->setText(QString(wordLength, '_').replace("", " ").trimmed());
-		m_ui.labelWordToDraw->clear();
-	}
+	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
 }
 
 Game::~Game()
@@ -233,8 +219,6 @@ TODO:
 - if the player is the one that has to draw, send the image that is being drawn onto to the server every 0.2 seconds, 
 otherwise pull and display the image from the server every 0.2 seconds
 - update chat for all players every 0.2 seconds
-- the player that is currently drawing shouldnt be able to send messages to the chat
-- the players that are not drawing shouldnt be able to draw
 */
 void Game::UpdateRoomInformation()
 {
@@ -242,6 +226,10 @@ void Game::UpdateRoomInformation()
 		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
 		cpr::Payload{ {"roomID", m_roomID} }
 	);
+
+	if (req.status_code != 200)
+		return;
+
 	std::vector<std::string> players = split(req.text, ",");
 
 	if (players.empty())
@@ -250,12 +238,17 @@ void Game::UpdateRoomInformation()
 	// get the drawing player name from the server
 
 
-	if (m_isDrawing)
+	if (m_playerIndex == 1) // leave it like this for now, later will be changed when we get the drawing player name
 	{
 		//disable player from sending messages to the chat
 		m_ui.textEdit->setReadOnly(true);
 		//allow player to draw
 		m_ui.drawingArea->setEnabled(true);
+		ShowDrawingUI();
+
+		/*
+		Need to send the image to the server
+		*/
 	}
 	else
 	{
@@ -263,12 +256,27 @@ void Game::UpdateRoomInformation()
 		m_ui.textEdit->setReadOnly(false);
 		//disable player from drawing
 		m_ui.drawingArea->setEnabled(false);
+		HideDrawingUI();
+
+		/*
+		Need to pull the image from the server and set it to the drawing area
+		*/
 	}
 
 	DisplayPlayerCount(players.size());
 
 	for (int i = 0; i < players.size(); i++)
-		DisplayPlayer(players[i], i + 1, "0");
+	{
+		auto request = cpr::Get(
+			cpr::Url{ Server::GetUrl() + "/playerScore" },
+			cpr::Payload{ {"roomID", m_roomID}, {"username", players[i]}}
+		);
+
+		if (request.status_code != 200)
+			return;
+
+		DisplayPlayer(players[i], i + 1, request.text);
+	}
 }
 
 void Game::OnPlayerQuit()
@@ -291,15 +299,7 @@ void Game::OnPlayerQuit()
 	);
 }
 
-void Game::isDrawing()
-{
-	if (m_isDrawing == true)
-		showDrawingUI();
-	else
-		hideDrawingUI();
-}
-
-void Game::showDrawingUI()
+void Game::ShowDrawingUI()
 {
 	m_ui.Clear->show();
 	m_ui.Verde->show();
@@ -320,7 +320,7 @@ void Game::showDrawingUI()
 	m_ui.Undo->show();
 }
 
-void Game::hideDrawingUI()
+void Game::HideDrawingUI()
 {
 	m_ui.Clear->hide();
 	m_ui.Verde->hide();
@@ -461,7 +461,7 @@ void Game::OnUndoButtonClicked()
 		drawingArea->Undo();
 }
 
-void Game::changeBrushSize() 
+void Game::ChangeBrushSize() 
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)

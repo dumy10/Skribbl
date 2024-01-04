@@ -188,8 +188,22 @@ void Routing::Run(Database& storage)
 		if (!storage.SetGameStatus(roomID, 2))
 			return crow::response{ 409, "Error starting the game." };
 
+		storage.GetGame(roomID).SetPlayerScore(storage.GetGame(roomID).GetPlayers()[1].GetName(), 100);
+
 		return crow::response{ 200 };
 			});
+	CROW_ROUTE(m_app, "/playerScore")
+		.methods("GET"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			std::string username = x["username"];
+			std::string roomID = x["roomID"];
+			std::string score = std::to_string(storage.GetGame(roomID).GetPlayerScore(username));
+
+			return crow::response{ score };
+			});
+
+
+
 	CROW_ROUTE(m_app,"/checkWord")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x=parseUrlArgs(req.body);

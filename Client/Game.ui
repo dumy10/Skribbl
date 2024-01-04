@@ -1064,7 +1064,7 @@ QPushButton:default
      <string>Bucket</string>
     </property>
    </widget>
-   <widget class="QLabel" name="labelWordToDraw">
+   <widget class="QLabel" name="wordLabel">
     <property name="geometry">
      <rect>
       <x>238</x>
@@ -1073,21 +1073,22 @@ QPushButton:default
       <height>41</height>
      </rect>
     </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelWordLength">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>80</y>
-      <width>611</width>
-      <height>41</height>
-     </rect>
+    <property name="styleSheet">
+     <string notr="true">QLabel{
+color:black;
+font-size:18px;
+font-weight:bold;
+letter-spacing: 1px;
+}</string>
     </property>
     <property name="text">
-     <string/>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="textInteractionFlags">
+     <set>Qt::NoTextInteraction</set>
     </property>
    </widget>
   </widget>

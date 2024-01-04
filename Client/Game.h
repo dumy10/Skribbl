@@ -5,6 +5,7 @@
 #include "ui_Game.h"
 #include "DrawingWidget.h"
 #include <QTimer>
+#include <algorithm>
 
 class Game : public QMainWindow {
 	Q_OBJECT
@@ -36,16 +37,14 @@ private slots:
 	void OnUndoButtonClicked();
 	void UpdateRoomInformation();
 	void OnPlayerQuit();
-	void isDrawing();
-	void showDrawingUI();
-	void hideDrawingUI();
-	void changeBrushSize();
-
+	void ChangeBrushSize();
 
 private:
 	void DisplayPlayer(const std::string& username, int index, const std::string& score);
 	void DisplayPlayerCount(int count);
 	void HidePlayers();
+	void ShowDrawingUI();
+	void HideDrawingUI();
 	void StartTimer();
 	void closeEvent(QCloseEvent* event) override;
 
@@ -55,7 +54,7 @@ private:
 	std::string m_roomID;
 	int m_playerIndex;
 	bool m_isOwner;
-	bool m_isDrawing = true;
+	bool m_isDrawing;
 	bool m_guessedWord;
 	int m_currentBrushSizeIndex = 0;
 
