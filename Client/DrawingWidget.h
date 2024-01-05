@@ -16,14 +16,17 @@ class DrawingWidget : public QWidget {
 
 public:
     explicit DrawingWidget(QWidget* parent = nullptr);
+
     void ClearDrawing();
-    void SetPenColor(const QColor& newColor);
     void setText(const QString& text);
     void ToggleFillMode();
     QImage GetImage() const noexcept;
-    void SetCurrentFillColor(const QColor& color);
+    void SetImage(const QImage& image);
+
     void Undo();
-    void setPenWidth(int newWidth);
+    void SetPenColor(const QColor& newColor);
+    void SetCurrentFillColor(const QColor& color);
+    void SetPenWidth(int newWidth);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;

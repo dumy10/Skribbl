@@ -17,7 +17,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	HidePlayers();
 	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
-	
+
 
 	StartTimer();
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
@@ -90,7 +90,7 @@ void Game::SetPenColorOrange()
 	if (drawingArea)
 	{
 		drawingArea->SetPenColor(QColor(255, 165, 0)); // RGB for orange
-		drawingArea->SetCurrentFillColor(QColor(255,165,0));
+		drawingArea->SetCurrentFillColor(QColor(255, 165, 0));
 	}
 }
 
@@ -100,7 +100,7 @@ void Game::SetPenColorPurple()
 	if (drawingArea)
 	{
 		drawingArea->SetPenColor(QColor(128, 0, 128)); // RGB for purple
-		drawingArea->SetCurrentFillColor(QColor(128,0,128));
+		drawingArea->SetCurrentFillColor(QColor(128, 0, 128));
 	}
 }
 
@@ -110,7 +110,7 @@ void Game::SetPenColorBrown()
 	if (drawingArea)
 	{
 		drawingArea->SetPenColor(QColor(165, 42, 42)); // RGB for brown
-		drawingArea->SetCurrentFillColor(QColor(165,42,42));
+		drawingArea->SetCurrentFillColor(QColor(165, 42, 42));
 	}
 }
 
@@ -150,7 +150,7 @@ void Game::SetPenColorGrey()
 	if (drawingArea)
 	{
 		drawingArea->SetPenColor(QColor(128, 128, 128)); // RGB for grey
-		drawingArea->SetCurrentFillColor(QColor(128,128,128));
+		drawingArea->SetCurrentFillColor(QColor(128, 128, 128));
 	}
 }
 
@@ -187,28 +187,19 @@ void Game::OnSendButtonClicked()
 	if (text == "" || text.size() < 3)
 		return;
 
-	/*
-	TODO:
-	needs to send the text to the server
-	check if the text is the same as the word
-	if it is, send a message to the server that the player won and display a message in the chat that the player won
-	send the chat to the server and display it to the other players
-	display the chat from the server
-	*/
+	auto request = cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/addChat" },
+		cpr::Payload{ {"roomID", m_roomID}, {"username", m_username}, {"text", text.toUtf8().constData()}}
+	);
+	
+	m_ui.chat->ensureCursorVisible();
+	m_ui.textEdit->clear();
 
-	if (text == "word")
-	{
-		m_ui.chat->setPlainText(m_ui.chat->toPlainText() + "\n" + QString::fromUtf8(m_username.data(), int(m_username.size())) + " guessed the word");
-		m_ui.textEdit->clear();
-		m_ui.textEdit->setReadOnly(true);
-	}
-	else
-	{
-		m_ui.chat->setPlainText(m_ui.chat->toPlainText() + "\n" + QString::fromUtf8(m_username.data(), int(m_username.size())) + ": " + text);
-		m_ui.chat->ensureCursorVisible();
-		m_ui.textEdit->clear();
-	}
-	m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
+	if(request.status_code != 200)
+		return;
+	/*
+	- need to check if the player guessed the word
+	*/
 
 }
 
@@ -216,9 +207,8 @@ void Game::OnSendButtonClicked()
 TODO:
 - update room information ( timer, word, image that is being drawn)
 - if the player is the one that has to draw, display the word to guess, otherwise display the word length
-- if the player is the one that has to draw, send the image that is being drawn onto to the server every 0.2 seconds, 
+- if the player is the one that has to draw, send the image that is being drawn onto to the server every 0.2 seconds,
 otherwise pull and display the image from the server every 0.2 seconds
-- update chat for all players every 0.2 seconds
 */
 void Game::UpdateRoomInformation()
 {
@@ -235,47 +225,68 @@ void Game::UpdateRoomInformation()
 	if (players.empty())
 		return;
 
-	// get the drawing player name from the server
-
-
-	if (m_playerIndex == 1) // leave it like this for now, later will be changed when we get the drawing player name
-	{
-		//disable player from sending messages to the chat
-		m_ui.textEdit->setReadOnly(true);
-		//allow player to draw
-		m_ui.drawingArea->setEnabled(true);
-		ShowDrawingUI();
-
-		/*
-		Need to send the image to the server
-		*/
-	}
-	else
-	{
-		//enable player to send messages to the chat
-		m_ui.textEdit->setReadOnly(false);
-		//disable player from drawing
-		m_ui.drawingArea->setEnabled(false);
-		HideDrawingUI();
-
-		/*
-		Need to pull the image from the server and set it to the drawing area
-		*/
-	}
-
 	DisplayPlayerCount(players.size());
 
 	for (int i = 0; i < players.size(); i++)
 	{
 		auto request = cpr::Get(
 			cpr::Url{ Server::GetUrl() + "/playerScore" },
-			cpr::Payload{ {"roomID", m_roomID}, {"username", players[i]}}
+			cpr::Payload{ {"roomID", m_roomID}, {"username", players[i]} }
 		);
 
 		if (request.status_code != 200)
 			return;
 
 		DisplayPlayer(players[i], i + 1, request.text);
+	}
+
+	auto chatRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/getChat" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (chatRequest.status_code != 200)
+		return;
+
+	m_ui.chat->setPlainText(QString::fromUtf8(chatRequest.text.data(), int(chatRequest.text.size())));
+	m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
+
+	/* not functional from the server side yet
+	// get the drawing player name from the server
+	auto drawingPlayerRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/drawingPlayer" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (drawingPlayerRequest.status_code != 200)
+		return;
+
+	if(m_username == drawingPlayerRequest.text)
+		m_isDrawing = true;
+	*/
+
+	if (m_playerIndex == 1) // leave it like this for now, later will be changed when we get the drawing player name
+	{
+		m_ui.textEdit->setReadOnly(true); //disable player from sending messages to the chat
+		m_ui.drawingArea->setEnabled(true); //allow player to draw
+		ShowDrawingUI();
+
+		/*
+		Need to send the image to the server
+		*/
+
+		QImage image = m_drawingArea->GetImage();
+
+	}
+	else
+	{
+		m_ui.textEdit->setReadOnly(false); //enable player to send messages to the chat
+		m_ui.drawingArea->setEnabled(false); //disable player from drawing
+		HideDrawingUI();
+
+		/*
+		Need to pull the image from the server and set it to the drawing area
+		*/
 	}
 }
 
@@ -450,7 +461,7 @@ void Game::closeEvent(QCloseEvent* event)
 void Game::OnFillButtonClicked()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if(drawingArea)
+	if (drawingArea)
 		drawingArea->ToggleFillMode();
 }
 
@@ -461,18 +472,18 @@ void Game::OnUndoButtonClicked()
 		drawingArea->Undo();
 }
 
-void Game::ChangeBrushSize() 
+void Game::ChangeBrushSize()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
 	{
 		std::vector<int> brushSizes = { 3, 6, 9 };
 		if (m_currentBrushSizeIndex == 2)
-			m_currentBrushSizeIndex=0;
+			m_currentBrushSizeIndex = 0;
 		else
-			m_currentBrushSizeIndex ++;
+			m_currentBrushSizeIndex++;
 		int newBrushSize = brushSizes[m_currentBrushSizeIndex];
-		drawingArea->setPenWidth(newBrushSize);
+		drawingArea->SetPenWidth(newBrushSize);
 	}
 }
 

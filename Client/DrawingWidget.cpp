@@ -187,6 +187,12 @@ QImage DrawingWidget::GetImage() const noexcept
     return m_image;
 }
 
+void DrawingWidget::SetImage(const QImage& image)
+{
+	m_image = image;
+	update();
+}
+
 void DrawingWidget::saveCurrentState() 
 {
     if (m_undoStack.size() > 10) 
@@ -204,7 +210,7 @@ void DrawingWidget::Undo()
     }
 }
 
-void DrawingWidget::setPenWidth(int newWidth) 
+void DrawingWidget::SetPenWidth(int newWidth) 
 {
     m_pen.setWidth(newWidth);
     update();
