@@ -10,6 +10,7 @@ Game::Game(int id, const Player& player, const std::string& gameCode, size_t max
 {
 	this->m_players.push_back(player);
 	m_gameStatus = GameStatus::WAITING;
+	m_chat = "Welcome to skribbl!\n";
 }
 
 void Game::StartGame()
@@ -139,14 +140,15 @@ void Game::SetGameStatusInt(int status)
 	this->m_gameStatus = static_cast<GameStatus>(status);
 }
 
+void Game::SetChat(const std::string& chat)
+{
+	this->m_chat = chat;
+}
+
 int Game::GetGameStatusAsInt() const
 {
 	return static_cast<int>(m_gameStatus);
 }
-
-/*
-We need to get the real player score when we deserialize the players, otherwise it will be 0 always.
-*/
 
 void Game::DeserializePlayers(const std::string& serializedPlayers) {
 	m_players.clear();
@@ -199,12 +201,18 @@ int Game::GetId() const noexcept
 {
 	return this->m_id;
 }
+
 int Game::GetPlayerScore(const std::string& username) const noexcept
 {
 	for (const auto& player : m_players)
 		if (player.GetName() == username)
 			return player.GetPoints();
 	return 0;
+}
+
+std::string Game::GetChat() const noexcept
+{
+	return m_chat;
 }
 
 void Game::AddPoints(Player& player, const int& timeLeft)
@@ -273,4 +281,3 @@ void Game::SetPlayerScore(const std::string& username, int score)
 		if (player.GetName() == username)
 			player.SetPoints(score);
 }
-

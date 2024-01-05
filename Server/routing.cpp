@@ -151,7 +151,6 @@ void Routing::Run(Database& storage)
 		return crow::response{ currentNumberOfPlayers };
 			});
 
-
 	CROW_ROUTE(m_app, "/leaveRoom")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
@@ -185,57 +184,73 @@ void Routing::Run(Database& storage)
 		This route should be modified later when StartGame() will be implemented.
 		*/
 
+		// Set the players score to 0 at the start of the game
+		auto players = storage.GetGame(roomID).GetPlayers();
+		for (auto& player : players)
+			storage.SetPlayerScore(player.GetName(), 0);
+
+		// Set the game status to 2 (in progress)
 		if (!storage.SetGameStatus(roomID, 2))
 			return crow::response{ 409, "Error starting the game." };
 
-		storage.GetGame(roomID).SetPlayerScore(storage.GetGame(roomID).GetPlayers()[1].GetName(), 100);
+		return crow::response{ 200 };
+			});
+
+	CROW_ROUTE(m_app, "/playerScore")
+		.methods("GET"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string username = x["username"];
+		std::string roomID = x["roomID"];
+		std::string score = std::to_string(storage.GetPlayerScore(username));
+
+		return crow::response{ score };
+			});
+
+	/*
+	Test route to add points to a player
+	*/
+	CROW_ROUTE(m_app, "/addScore")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string username = x["username"];
+		std::string roomID = x["roomID"];
+		storage.SetPlayerScore(username, 100);
 
 		return crow::response{ 200 };
 			});
-	CROW_ROUTE(m_app, "/playerScore")
-		.methods("GET"_method)([&](const crow::request& req) {
-			auto x = parseUrlArgs(req.body);
-			std::string username = x["username"];
-			std::string roomID = x["roomID"];
-			std::string score = std::to_string(storage.GetGame(roomID).GetPlayerScore(username));
 
-			return crow::response{ score };
+	CROW_ROUTE(m_app, "/addChat")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+		std::string username = x["username"];
+		std::string text = x["text"];
+		/*need to check if the text is the current word*/
+		std::string currentChat = storage.GetGame(roomID).GetChat();
+		currentChat += username + ": " + text + "\n";
+
+		if (!storage.SetGameChat(roomID, currentChat))
+			return crow::response{ 409, "Error adding the chat." };
+
+		return crow::response{ 200 };
 			});
 
-
-
-	CROW_ROUTE(m_app,"/checkWord")
+	CROW_ROUTE(m_app, "/getChat")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-		auto x=parseUrlArgs(req.body);
-		std::string word=x["word"];
-		std::string roomID=x["roomID"];
-		std::string username=x["username"];
-		Player player=storage.GetPlayer(username);
-		//if (word == storage.GetGame(roomID).GetWord())
-		//{
-		//	//add points to the player
-		//  player.AddPoints(100);
-		//  return crow::response{ 200 };
-		//}
-		//else send the word to the other players
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+		std::string chat = storage.GetGame(roomID).GetChat();
 
-		return crow::response{ 202 };
+		return crow::response{ chat };
 			});
 
-	CROW_ROUTE(m_app, "/getDrawer")
+	CROW_ROUTE(m_app, "/drawingPlayer")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-		auto x=parseUrlArgs(req.body);
-		std::string roomID=x["roomID"];
-		std::string drawer=storage.GetGame(roomID).GetDrawer();
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+		std::string drawer = storage.GetGame(roomID).GetDrawer();
+
 		return crow::response{ drawer };
-			});
-
-	CROW_ROUTE(m_app, "/getLeaderboard")
-		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-		auto x=parseUrlArgs(req.body);
-		std::string roomID=x["roomID"];
-		std::string leaderboard=storage.GetGame(roomID).SerializePlayersForLeaderboard();
-		return crow::response{ leaderboard };
 			});
 
 	CROW_ROUTE(m_app, "/gameEnded")
@@ -248,6 +263,6 @@ void Routing::Run(Database& storage)
 
 		return crow::response{ 409 };
 			});
-	
+
 	m_app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }

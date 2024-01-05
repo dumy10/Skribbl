@@ -39,7 +39,8 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("gamecode", &Game::SetGameCode, &Game::GetGameCode),
 			sql::make_column("maxplayers", &Game::SetMaxPlayers, &Game::GetMaxPlayers),
 			sql::make_column("currentplayers", &Game::SetCurrentPlayers, &Game::GetCurrentPlayers),
-			sql::make_column("status", &Game::SetGameStatusInt, &Game::GetGameStatusAsInt)
+			sql::make_column("status", &Game::SetGameStatusInt, &Game::GetGameStatusAsInt),
+			sql::make_column("chat", &Game::SetChat, &Game::GetChat)
 		)
 
 	);
@@ -72,6 +73,15 @@ public:
 
 	// Gets a game from the database based on the roomID
 	Game GetGame(const std::string& roomID);
+
+	// Sets the game chat in the database based on the roomID
+	bool SetGameChat(const std::string& roomID, const std::string& chat);
+
+	// Gets the players score from the database based on the username
+	int GetPlayerScore(const std::string& username);
+	
+	// Sets the players score in the database based on the username
+	void SetPlayerScore(const std::string& username, int score);
 
 	// Adds a player to an existing game based on the roomID in the database and updates the currentPlayers count
 	bool AddPlayerToGame(const Player& player, const std::string& roomID, int currentPlayers);

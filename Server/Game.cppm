@@ -42,6 +42,8 @@ namespace skribbl
 		const std::vector<Player>& GetPlayers() const noexcept;
 		int GetId() const noexcept;
 		int GetPlayerScore(const std::string& username) const noexcept;
+		std::string GetChat() const noexcept;
+
 
 		void SetGameCode(const std::string& gameCode);
 		void SetGameStatus(GameStatus status);
@@ -51,6 +53,7 @@ namespace skribbl
 		void SetPlayers(const std::vector<Player>& players);
 		void SetGameStatusInt(int status);
 		//const Player& getWinner() const;
+		void SetChat(const std::string& chat);
 
 		void AddPoints(Player& player, const int& timeLeft);
 		void SubstractPoints(Player& player);
@@ -78,5 +81,7 @@ namespace skribbl
 		uint8_t m_currentRound{ 0 };
 
 		float m_averageTime = 0;
+
+		std::string m_chat;
 	};
 }

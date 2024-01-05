@@ -23,8 +23,16 @@ int main()
 	std::vector<Player> players = storage.GetPlayers(); // leave this for debugging
 	std::vector<Game> games = storage.GetGames(); // leave this for debugging
 
-	Routing router;
-	router.Run(storage);
+	try 
+	{
+		Routing router;
+		router.Run(storage);
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	
 
 	return 0;
 }

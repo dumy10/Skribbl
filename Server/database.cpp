@@ -123,6 +123,61 @@ Game Database::GetGame(const std::string& roomID)
 	return existingGames[0];
 }
 
+bool Database::SetGameChat(const std::string& roomID, const std::string& chat)
+{
+	try
+	{
+		auto existingGames = m_db.get_all<Game>(
+			sql::where(sql::c(&Game::GetGameCode) == roomID)
+		);
+
+		if (existingGames.empty())
+			return false;
+
+		auto game = existingGames[0];
+		game.SetChat(chat);
+		m_db.update(game);
+		return true;
+	}
+	catch (const std::exception& exception)
+	{
+		std::cerr << "Exception occurred while setting game chat: " << exception.what() << "\n";
+		return false;
+	}
+}
+
+int Database::GetPlayerScore(const std::string& username)
+{
+	auto existingPlayers = m_db.get_all<Player>(
+		sql::where(sql::c(&Player::GetName) == username)
+	);
+
+	if (existingPlayers.empty())
+		return 0;
+
+	return existingPlayers[0].GetPoints();
+}
+
+void Database::SetPlayerScore(const std::string& username, int score)
+{
+	try
+	{
+		auto existingPlayers = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::GetName) == username)
+		);
+
+		if (existingPlayers.empty())
+			return;
+
+		auto player = existingPlayers[0];
+		player.SetPoints(score);
+		m_db.update(player);
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while setting player score: " << e.what() << "\n";
+	}
+}
+
 bool Database::AddPlayerToGame(const Player& player, const std::string& roomID, int currentPlayers)
 {
 	try
