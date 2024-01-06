@@ -40,6 +40,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
 	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
+	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnPlayerQuit);
 }
 
 Game::~Game()
@@ -308,6 +309,7 @@ void Game::OnPlayerQuit()
 			{"username", m_username}
 		}
 	);
+	this->close();
 }
 
 void Game::ShowDrawingUI()
