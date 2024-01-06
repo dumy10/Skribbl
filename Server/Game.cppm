@@ -7,6 +7,7 @@ import <string>;
 import <array>;
 import <sstream>;
 import <algorithm>;
+import <set>;
 
 
 namespace skribbl
@@ -25,7 +26,7 @@ namespace skribbl
 		Game() = default;
 		Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers, size_t currentPlayers);
 
-		void StartGame();
+		void StartGame(std::set<std::string> words);
 		void EndGame();
 
 		void AddPlayer(const Player& player);
@@ -42,6 +43,7 @@ namespace skribbl
 		const std::vector<Player>& GetPlayers() const noexcept;
 		int GetId() const noexcept;
 		int GetPlayerScore(const std::string& username) const noexcept;
+		int GetNoOfRounds() const noexcept;
 		std::string GetChat() const noexcept;
 
 

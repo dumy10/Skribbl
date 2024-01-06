@@ -13,14 +13,10 @@ Game::Game(int id, const Player& player, const std::string& gameCode, size_t max
 	m_chat = "Welcome to skribbl!\n";
 }
 
-void Game::StartGame()
+void Game::StartGame(std::set<std::string> words)
 {
 	/*
-	- check if there are enough players
-	- check if game state is waiting, switch to INPROGRESS
-	- need to create a round (4 rounds in total)
 	- need to set the first player to draw
-	- need to set the first word
 	- provide the word to the player who draws and start the timer, provide the length of the word to the other players
 	- set a timer for the round (60 seconds)
 	- while the timer is running, players can guess the word
@@ -28,6 +24,8 @@ void Game::StartGame()
 	- after the timer runs out need to switch to the next player and set a new word
 	- after 4 rounds, the game ends and the player with the most points wins
 	*/
+
+	
 	if (m_currentPlayers < 2)
 	{
 		// not enough players
@@ -37,23 +35,25 @@ void Game::StartGame()
 	{
 		m_gameStatus = GameStatus::INPROGRESS;
 	}
-	//the next part depends on how we remember the rounds , or if we remember them at all in game class.
 
-	for (int m_currentRound = 1; m_currentRound < kNoOfRounds; m_currentRound++)
+	for (uint8_t m_currentRound = 1; m_currentRound < kNoOfRounds; m_currentRound++)
 	{
 		//show the players the current round in qt
-
-		//Round round{ turn, word, m_currentRound, m_players };
-		//round.StartRound();
+		int playerDrawing = 0;
+		while (playerDrawing < m_players.size())
+		{
+			Round round{ m_currentRound, m_players, playerDrawing,words };
+			round.StartRound();
+			playerDrawing++;
+			words.erase(words.begin());
+		}
+		
 		//wait for the round to finish
 		//the players that guess the word will not be handled by start game. They will be handled by the server.
 		//sort the player vector and this will be the leaderboard
 
-
-
 		//display next round starts in 5 seconds
 		//in this time the client will ask the server for the leaderboard and display it
-		//a map would not be good for the leaderboard because we need to sort the players by their points .We don't search for a player by name , we just need to sort them.
 
 	}
 	EndGame();
@@ -208,6 +208,11 @@ int Game::GetPlayerScore(const std::string& username) const noexcept
 		if (player.GetName() == username)
 			return player.GetPoints();
 	return 0;
+}
+
+int Game::GetNoOfRounds() const noexcept
+{
+	return kNoOfRounds;
 }
 
 std::string Game::GetChat() const noexcept

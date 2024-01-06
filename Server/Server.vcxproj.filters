@@ -19,9 +19,6 @@
     <ClCompile Include="player.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="turn.cppm">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="utils.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
@@ -32,9 +29,6 @@
       <Filter>Class Files</Filter>
     </ClCompile>
     <ClCompile Include="round.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="turn.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
     <ClCompile Include="routing.cpp">

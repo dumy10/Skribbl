@@ -188,10 +188,20 @@ void Routing::Run(Database& storage)
 		auto players = storage.GetGame(roomID).GetPlayers();
 		for (auto& player : players)
 			storage.SetPlayerScore(player.GetName(), 0);
+		
+		auto currentGame = storage.GetGame(roomID);
+		auto noOfWords=currentGame.GetPlayers().size()*currentGame.GetNoOfRounds();
+		
+		std::set<std::string> words;
+		while(words.size()<noOfWords)
+			storage.GetRandomWord();
 
+		storage.GetGame(roomID).StartGame(words);
 		// Set the game status to 2 (in progress)
 		if (!storage.SetGameStatus(roomID, 2))
 			return crow::response{ 409, "Error starting the game." };
+
+
 
 		return crow::response{ 200 };
 			});
