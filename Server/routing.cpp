@@ -183,9 +183,9 @@ void Routing::Run(Database& storage)
 		/*
 		This route should be modified later when StartGame() will be implemented.
 		*/
-
+		std::vector<Player> players = storage.GetGame(roomID).GetPlayers();
 		// Set the players score to 0 at the start of the game
-		for (auto& player : storage.GetGame(roomID).GetPlayers())
+		for (auto& player : players)
 			storage.SetPlayerScore(player.GetName(), 0);
 
 		Game currentGame = storage.GetGame(roomID);
@@ -215,19 +215,6 @@ void Routing::Run(Database& storage)
 		return crow::response{ score };
 			});
 
-	/*
-	Test route to add points to a player
-	*/
-	CROW_ROUTE(m_app, "/addScore")
-		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-		auto x = parseUrlArgs(req.body);
-		std::string username = x["username"];
-		std::string roomID = x["roomID"];
-		storage.SetPlayerScore(username, 100);
-
-		return crow::response{ 200 };
-			});
-
 	CROW_ROUTE(m_app, "/addChat")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
@@ -236,12 +223,23 @@ void Routing::Run(Database& storage)
 		std::string text = x["text"];
 		/*need to check if the text is the current word*/
 		std::string currentChat = storage.GetGame(roomID).GetChat();
-		currentChat += username + ": " + text + "\n";
+		if (text == "word") // get the current word
+		{
+			storage.SetPlayerScore(username, 100); // calculate the points to be added based on the time left
+			currentChat += username + " guessed the word!\n";
+			if (!storage.SetGameChat(roomID, currentChat))
+				return crow::response{ 409, "Error adding the chat." };
+			return crow::response{ 200 };
+		}
+		else
+		{
+			currentChat += username + ": " + text + "\n";
 
-		if (!storage.SetGameChat(roomID, currentChat))
-			return crow::response{ 409, "Error adding the chat." };
+			if (!storage.SetGameChat(roomID, currentChat))
+				return crow::response{ 409, "Error adding the chat." };
 
-		return crow::response{ 200 };
+			return crow::response{ 200 };
+		}
 			});
 
 	CROW_ROUTE(m_app, "/getChat")

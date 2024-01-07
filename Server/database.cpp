@@ -67,6 +67,11 @@ std::vector<Player> Database::GetPlayers()
 	return m_db.get_all<Player>();
 }
 
+std::vector<Round> Database::GetRounds()
+{
+	return m_db.get_all<Round>();
+}
+
 bool Database::AddUser(const std::string& username, const std::string& password, const std::string& email)
 {
 	try

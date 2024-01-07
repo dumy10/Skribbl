@@ -73,6 +73,7 @@ public:
 	//Gets all the stored games in the database *debugging purposes, will be removed later*
 	std::vector<Game> GetGames();
 	std::vector<Player> GetPlayers();
+	std::vector<Round> GetRounds();
 
 	// Adds a player to the database
 	bool AddUser(const std::string& username, const std::string& password, const std::string& email);
