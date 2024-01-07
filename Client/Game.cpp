@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Settings.h"
+#include "Menu.h"
 #include "utils.h"
 
 #include <cpr/cpr.h>
@@ -241,6 +242,27 @@ void Game::UpdateRoomInformation()
 		DisplayPlayer(players[i], i + 1, request.text);
 	}
 
+	auto roundNumberRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/roundNumber" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (roundNumberRequest.status_code != 200)
+		return;
+
+	QString roundNumber = "Round: " + QString::fromUtf8(roundNumberRequest.text.data(), int(roundNumberRequest.text.size()));
+	m_ui.roundLabel->setText(roundNumber);
+
+	auto timerRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/timeLeft" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (timerRequest.status_code != 200)
+		return;
+
+	m_ui.timer->display(QString::fromUtf8(timerRequest.text.data(), int(timerRequest.text.size())));
+
 	auto chatRequest = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/getChat" },
 		cpr::Payload{ {"roomID", m_roomID} }
@@ -248,11 +270,19 @@ void Game::UpdateRoomInformation()
 
 	if (chatRequest.status_code != 200)
 		return;
+	/*
+	%20 = " "
+	%0A = "\n"
+	*/
 
-	m_ui.chat->setPlainText(QString::fromUtf8(chatRequest.text.data(), int(chatRequest.text.size())));
+	QString chat = QString::fromUtf8(chatRequest.text.data(), int(chatRequest.text.size()));
+	chat.replace("%20", " ");
+	chat.replace("%0A", "\n");
+
+	m_ui.chat->setPlainText(chat);
 	m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
 
-	/* not functional from the server side yet
+	
 	// get the drawing player name from the server
 	auto drawingPlayerRequest = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/drawingPlayer" },
@@ -264,7 +294,7 @@ void Game::UpdateRoomInformation()
 
 	if(m_username == drawingPlayerRequest.text)
 		m_isDrawing = true;
-	*/
+	
 
 	if (m_playerIndex == 1) // leave it like this for now, later will be changed when we get the drawing player name
 	{
@@ -299,7 +329,13 @@ void Game::OnPlayerQuit()
 	);
 
 	if (request.status_code == 200)
+	{
+		Menu* menu = new Menu(std::move(m_username));
+		menu->show();
+		this->close();
+		this->deleteLater();
 		return;
+	}
 
 	// send request to server to remove the player from the room (game)
 	auto req = cpr::Post(

@@ -7,30 +7,44 @@ import <string>;
 import <set>;
 import <chrono>;
 import <thread>;
+import <sstream>;
 
 namespace skribbl
 {
 	export class Round {
 	public:
 
-		Round(uint8_t roundNumber,const std::vector<Player>& players,int playerDrawing, std::set<std::string> words);
+		Round() = default;
+		Round(int id, const std::string& gameId);
+		Round(int id, const std::string& gameId, const std::string& drawingPlayerName, const std::string& currentWord, const std::set<std::string>& words, uint8_t roundNumber);
 
-		void StartRound();
-		void EndRound();
+		void SetId(int id);
+		void SetGameId(std::string gameId);
+		void SetDrawingPlayer(const std::string& drawingPlayerName);
+		void SetCurrentWord(const std::string& currentWord);
 		void SetWords(const std::set<std::string>& words);
+		void SetRoundNumber(uint8_t roundNumber);
 
-		const bool GuessWord(const std::string& word) const;
-		const int GetRound() const noexcept;
-		const std::set<std::string> GetWords() const noexcept;
+		int GetId() const noexcept;
+		std::string GetGameId() const noexcept;
+		std::string GetDrawingPlayer() const noexcept;
+		std::string GetCurrentWord() const noexcept;
+		uint8_t GetRoundNumber() const noexcept;
+		std::string SerializeWords() const noexcept;
+		void DeserializeWords(const std::string& serializedWords);
 
-		void ModifyRound();
+		void SetTimeLeft(int timeLeft);
+		int GetTimeLeft() const noexcept;
+
+		void StartTimer();
 
 	private:
-		// Use a reference to the player instead of copying it
-		int m_playerDrawing;
-		std::vector<Player> m_players;
-		std::set<std::string> m_words; // turn should have the word , not round
-		uint8_t m_roundNumber; //game should have it
+		int m_id;
+		std::string m_gameId;
+		std::string m_drawingPlayerName;
+		std::string m_currentWord;
+		std::set<std::string> m_words;
+		uint8_t m_roundNumber;
+		int m_timeLeft;
 	};
-
 }

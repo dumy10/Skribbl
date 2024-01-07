@@ -40,9 +40,20 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("maxplayers", &Game::SetMaxPlayers, &Game::GetMaxPlayers),
 			sql::make_column("currentplayers", &Game::SetCurrentPlayers, &Game::GetCurrentPlayers),
 			sql::make_column("status", &Game::SetGameStatusInt, &Game::GetGameStatusAsInt),
-			sql::make_column("chat", &Game::SetChat, &Game::GetChat)
+			sql::make_column("chat", &Game::SetChat, &Game::GetChat),
+			// foreign key for round table to reference the round with the same gameid
+			sql::foreign_key(&Game::GetId).references(&Round::GetGameId)
+		),
+		sql::make_table(
+			"Rounds",
+			sql::make_column("id", &Round::SetId, &Round::GetId, sql::primary_key().autoincrement()),
+			sql::make_column("gameid", &Round::SetGameId, &Round::GetGameId),
+			sql::make_column("word", &Round::SetCurrentWord, &Round::GetCurrentWord),
+			sql::make_column("drawingplayer", &Round::SetDrawingPlayer, &Round::GetDrawingPlayer),
+			sql::make_column("roundnumber", &Round::SetRoundNumber, &Round::GetRoundNumber),
+			sql::make_column("words", &Round::SerializeWords, &Round::DeserializeWords),
+			sql::make_column("timeleft", &Round::SetTimeLeft, &Round::GetTimeLeft)
 		)
-
 	);
 }
 
@@ -73,6 +84,8 @@ public:
 
 	// Gets a game from the database based on the roomID
 	Game GetGame(const std::string& roomID);
+
+	Round GetRound(const std::string& roomID);
 
 	// Sets the game chat in the database based on the roomID
 	bool SetGameChat(const std::string& roomID, const std::string& chat);

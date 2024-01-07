@@ -185,18 +185,17 @@ void Routing::Run(Database& storage)
 		*/
 
 		// Set the players score to 0 at the start of the game
-		auto players = storage.GetGame(roomID).GetPlayers();
-		for (auto& player : players)
+		for (auto& player : storage.GetGame(roomID).GetPlayers())
 			storage.SetPlayerScore(player.GetName(), 0);
-		
-		auto currentGame = storage.GetGame(roomID);
-		auto noOfWords=currentGame.GetPlayers().size()*currentGame.GetNoOfRounds();
-		
-		std::set<std::string> words;
-		while(words.size()<noOfWords)
-			storage.GetRandomWord();
 
-		storage.GetGame(roomID).StartGame(words);
+		Game currentGame = storage.GetGame(roomID);
+		int noOfWords = currentGame.GetPlayers().size() * currentGame.GetNoOfRounds();
+
+		std::set<std::string> words;
+		while (words.size() < noOfWords)
+			words.insert(storage.GetRandomWord());
+
+
 		// Set the game status to 2 (in progress)
 		if (!storage.SetGameStatus(roomID, 2))
 			return crow::response{ 409, "Error starting the game." };
@@ -258,9 +257,28 @@ void Routing::Run(Database& storage)
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
 		std::string roomID = x["roomID"];
-		std::string drawer = storage.GetGame(roomID).GetDrawer();
+		std::string drawer = storage.GetGame(roomID).GetDrawingPlayer();
 
 		return crow::response{ drawer };
+			});
+
+	CROW_ROUTE(m_app, "/roundNumber")
+		.methods("GET"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+		std::string roundNumber = std::to_string(storage.GetRound(roomID).GetRoundNumber()) + "/" + std::to_string(storage.GetGame(roomID).GetNoOfRounds());
+
+		return crow::response{ roundNumber };
+			});
+
+	CROW_ROUTE(m_app, "/timeLeft")
+		.methods("GET"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+
+		std::string timeLeft = std::to_string(storage.GetRound(roomID).GetTimeLeft());
+
+		return crow::response{ timeLeft };
 			});
 
 	CROW_ROUTE(m_app, "/gameEnded")

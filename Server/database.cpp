@@ -85,6 +85,7 @@ bool Database::AddGame(const Player& player, const std::string& gameCode, size_t
 	try
 	{
 		m_db.insert(Game{ -1, player, gameCode, maxPlayers, 1 });
+		m_db.insert(Round{ -1, gameCode });
 		return true;
 	}
 	catch (const std::exception& e) {
@@ -121,6 +122,14 @@ Game Database::GetGame(const std::string& roomID)
 		sql::where(sql::c(&Game::GetGameCode) == roomID)
 	);
 	return existingGames[0];
+}
+
+Round Database::GetRound(const std::string& roomID)
+{
+	auto existingRounds = m_db.get_all<Round>(
+		sql::where(sql::c(&Round::GetGameId) == roomID)
+	);
+	return existingRounds[0];
 }
 
 bool Database::SetGameChat(const std::string& roomID, const std::string& chat)

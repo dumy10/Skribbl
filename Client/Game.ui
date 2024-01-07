@@ -108,11 +108,14 @@ border-image: url(:/background/logo.png);
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel{
-background: transparent;
+color:black;
+font-size:18px;
+font-weight:bold;
+letter-spacing: 1px;
 }</string>
     </property>
     <property name="text">
-     <string>pus numarul rundei</string>
+     <string/>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="chat">

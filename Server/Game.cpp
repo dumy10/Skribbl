@@ -25,58 +25,13 @@ void Game::StartGame(std::set<std::string> words)
 	- after 4 rounds, the game ends and the player with the most points wins
 	*/
 
-	
-	if (m_currentPlayers < 2)
-	{
-		// not enough players
-		return;
-	}
-	if (m_gameStatus == GameStatus::WAITING)
-	{
-		m_gameStatus = GameStatus::INPROGRESS;
-	}
 
-	for (uint8_t m_currentRound = 1; m_currentRound < kNoOfRounds; m_currentRound++)
-	{
-		//show the players the current round in qt
-		int playerDrawing = 0;
-		while (playerDrawing < m_players.size())
-		{
-			Round round{ m_currentRound, m_players, playerDrawing,words };
-			round.StartRound();
-			playerDrawing++;
-			words.erase(words.begin());
-		}
-		
-		//wait for the round to finish
-		//the players that guess the word will not be handled by start game. They will be handled by the server.
-		//sort the player vector and this will be the leaderboard
-
-		//display next round starts in 5 seconds
-		//in this time the client will ask the server for the leaderboard and display it
-
-	}
-	EndGame();
 
 }
 
 void Game::EndGame()
 {
-	/*
-		- check if game state is in progress, switch to FINISHED
-		- display winner
-		- display leaderboard
-						*/
-	if (m_gameStatus == GameStatus::INPROGRESS)
-	{
-		m_gameStatus = GameStatus::FINISHED;
-		// display winner and leaderboard
-	}
-	else
-	{
-		// game is not in progress
-		return;
-	}
+
 
 }
 
@@ -175,18 +130,6 @@ std::string Game::SerializePlayers() const
 	return serializedPlayers;
 }
 
-std::string Game::SerializePlayersForLeaderboard() const
-{
-	std::string serializedPlayers;
-	for (const auto& player : m_players)
-		serializedPlayers += player.GetName() + "," + std::to_string(player.GetPoints()) + ",";
-
-	if (!serializedPlayers.empty())
-		serializedPlayers.pop_back();
-
-	return serializedPlayers;
-}
-
 const size_t Game::GetMaxPlayers() const noexcept
 {
 	return this->m_maxPlayers;
@@ -218,6 +161,16 @@ int Game::GetNoOfRounds() const noexcept
 std::string Game::GetChat() const noexcept
 {
 	return m_chat;
+}
+
+std::string Game::GetDrawingPlayer() const noexcept
+{
+	return m_round.GetDrawingPlayer();
+}
+
+uint8_t Game::GetRoundNumber() const noexcept
+{
+	return m_round.GetRoundNumber();
 }
 
 void Game::AddPoints(Player& player, const int& timeLeft)
@@ -260,24 +213,6 @@ void Game::AverageTime(const int& timeLeft)
 {
 	this->m_averageTime += 60 - timeLeft;
 	this->m_averageTime /= 2;
-}
-
-uint8_t Game::GetCurrentRound() const
-{
-	return m_currentRound;
-}
-
-const std::string Game::GetWord() const noexcept
-{
-	//return this->round.GetWord(); depends on how we remember the rounds
-	return "";
-}
-
-std::string Game::GetDrawer() const
-{
-	std::string drawer;
-	//drawer = depends on how we remember the rounds
-	return drawer;
 }
 
 void Game::SetPlayerScore(const std::string& username, int score)
