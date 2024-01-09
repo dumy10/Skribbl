@@ -97,6 +97,12 @@ public:
 	// Sets the players score in the database based on the username
 	void SetPlayerScore(const std::string& username, int score);
 
+	// Adds points to the players score in the database based on the username
+	void AddPointsToPlayer(const std::string& username, int points);
+
+	// Substracts points from the players score in the database based on the username
+	void SubstractPointsFromPlayer(const std::string& username, int points);
+
 	// Adds a player to an existing game based on the roomID in the database and updates the currentPlayers count
 	bool AddPlayerToGame(const Player& player, const std::string& roomID, int currentPlayers);
 
@@ -118,6 +124,9 @@ public:
 	//Gets a random ID for game
 	std::string GetRandomID();
 
+	template<typename T>
+	void Update(T object);
+
 private:
 	void PopulateStorage();
 	int GenerateRandomNumber(int min, int max);
@@ -126,3 +135,9 @@ private:
 private:
 	Storage m_db = CreateStorage(kDbFile);
 };
+
+template<typename T>
+inline void Database::Update(T object)
+{
+	m_db.update(object);
+}

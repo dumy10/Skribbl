@@ -47,29 +47,9 @@ void Player::SubstractPoints(int points)
 	this->m_points -= points;
 }
 
-void Player::SetDrawing(bool IsDrawing)
-{
-	this->m_isDrawing = IsDrawing;
-}
-
-void Player::SetGuessedTheWord(bool guessed)
-{
-	this->m_guessedTheWord = guessed;
-}
-
 int Player::GetId() const
 {
 	return this->m_id;
-}
-
-bool Player::IsDrawing() const
-{
-	return this->m_isDrawing;
-}
-
-bool Player::HasGuessedTheWord() const
-{
-	return this->m_guessedTheWord;
 }
 
 int Player::GetPoints() const

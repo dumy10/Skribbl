@@ -110,7 +110,7 @@ bool Database::SetGameStatus(const std::string& roomID, int status)
 		if (existingGames.empty())
 			return false;
 
-		auto game = existingGames[0];
+		auto& game = existingGames[0];
 		game.SetGameStatusInt(status);
 		m_db.update(game);
 		return true;
@@ -148,7 +148,7 @@ bool Database::SetGameChat(const std::string& roomID, const std::string& chat)
 		if (existingGames.empty())
 			return false;
 
-		auto game = existingGames[0];
+		auto& game = existingGames[0];
 		game.SetChat(chat);
 		m_db.update(game);
 		return true;
@@ -183,12 +183,52 @@ void Database::SetPlayerScore(const std::string& username, int score)
 		if (existingPlayers.empty())
 			return;
 
-		auto player = existingPlayers[0];
+		auto& player = existingPlayers[0];
 		player.SetPoints(score);
 		m_db.update(player);
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Exception occurred while setting player score: " << e.what() << "\n";
+	}
+}
+
+void Database::AddPointsToPlayer(const std::string& username, int points)
+{
+	try
+	{
+		auto existingPlayers = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::GetName) == username)
+		);
+
+		if (existingPlayers.empty())
+			return;
+
+		auto& player = existingPlayers[0];
+		player.AddPoints(points);
+		m_db.update(player);
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while adding points to player: " << e.what() << "\n";
+	}
+}
+
+void Database::SubstractPointsFromPlayer(const std::string& username, int points)
+{
+	try
+	{
+		auto existingPlayers = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::GetName) == username)
+		);
+
+		if (existingPlayers.empty())
+			return;
+
+		auto& player = existingPlayers[0];
+		player.SubstractPoints(points);
+		m_db.update(player);
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while substracting points from player: " << e.what() << "\n";
 	}
 }
 
@@ -203,7 +243,7 @@ bool Database::AddPlayerToGame(const Player& player, const std::string& roomID, 
 		if (existingGames.empty())
 			return false;
 
-		auto game = existingGames[0];
+		auto& game = existingGames[0];
 		game.AddPlayer(player);
 		game.SetCurrentPlayers(currentPlayers);
 		m_db.update(game);
@@ -226,7 +266,7 @@ bool Database::RemovePlayerFromGame(const Player& player, const std::string& roo
 		if (existingGames.empty())
 			return false;
 
-		auto game = existingGames[0];
+		auto& game = existingGames[0];
 		game.RemovePlayer(player);
 		m_db.update(game);
 		return true;

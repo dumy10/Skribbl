@@ -13,12 +13,11 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 {
 	m_drawingArea = std::make_shared<DrawingWidget>(this);
 	m_ui.setupUi(this);
-	m_ui.chat->setPlainText("Welcome to skribbl!");
 
 	HidePlayers();
 	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
-
+	m_guessedWord = false;
 
 	StartTimer();
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
@@ -191,18 +190,20 @@ void Game::OnSendButtonClicked()
 
 	auto request = cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/addChat" },
-		cpr::Payload{ {"roomID", m_roomID}, {"username", m_username}, {"text", text.toUtf8().constData()}}
+		cpr::Payload{ {"roomID", m_roomID}, {"username", m_username}, {"text", text.toUtf8().constData()} }
 	);
-	
+
 	m_ui.chat->ensureCursorVisible();
 	m_ui.textEdit->clear();
 
-	if(request.status_code != 200)
+	if (request.status_code != 200)
 		return;
-	/*
-	- need to check if the player guessed the word
-	*/
 
+	if (request.text == "TRUE")
+	{
+		m_guessedWord = true;
+		m_ui.textEdit->setReadOnly(true);
+	}
 }
 
 /*
@@ -282,7 +283,7 @@ void Game::UpdateRoomInformation()
 	m_ui.chat->setPlainText(chat);
 	m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
 
-	
+
 	// get the drawing player name from the server
 	auto drawingPlayerRequest = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/drawingPlayer" },
@@ -292,15 +293,26 @@ void Game::UpdateRoomInformation()
 	if (drawingPlayerRequest.status_code != 200)
 		return;
 
-	if(m_username == drawingPlayerRequest.text)
+	if (m_username == drawingPlayerRequest.text)
 		m_isDrawing = true;
-	
+	else
+		m_isDrawing = false;
 
-	if (m_playerIndex == 1) // leave it like this for now, later will be changed when we get the drawing player name
+	auto wordRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/currentWord" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (wordRequest.status_code != 200)
+		return;
+
+	if (m_isDrawing) // leave it like this for now, later will be changed when we get the drawing player name
 	{
 		m_ui.textEdit->setReadOnly(true); //disable player from sending messages to the chat
 		m_ui.drawingArea->setEnabled(true); //allow player to draw
 		ShowDrawingUI();
+
+		m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
 
 		/*
 		Need to send the image to the server
@@ -314,6 +326,20 @@ void Game::UpdateRoomInformation()
 		m_ui.textEdit->setReadOnly(false); //enable player to send messages to the chat
 		m_ui.drawingArea->setEnabled(false); //disable player from drawing
 		HideDrawingUI();
+
+		if (!m_guessedWord)
+		{
+			int wordLength = wordRequest.text.size();
+			QString currentWord = "";
+			for (int i = 0; i < wordLength; i++)
+				currentWord += "_ ";
+			m_ui.wordLabel->setText(currentWord);
+		}
+		else
+		{
+			m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
+			m_ui.textEdit->setReadOnly(true);
+		}
 
 		/*
 		Need to pull the image from the server and set it to the drawing area

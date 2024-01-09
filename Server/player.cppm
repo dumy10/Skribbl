@@ -14,8 +14,6 @@ namespace skribbl
 		const std::string GetEmail() const noexcept;
 		int GetPoints() const;
 		int GetId() const;
-		bool IsDrawing() const;
-		bool HasGuessedTheWord() const;
 
 		void SetId(int id);
 		void SetName(const std::string& name);
@@ -24,8 +22,6 @@ namespace skribbl
 		void SetPoints(int points);
 		void AddPoints(int points);
 		void SubstractPoints(int points);
-		void SetDrawing(bool IsDrawing);
-		void SetGuessedTheWord(bool guessed);
 
 		bool operator<(const Player& player);
 		bool operator>(const Player& player);
@@ -36,8 +32,6 @@ namespace skribbl
 		std::string m_password;
 		std::string m_email;
 		int m_points;
-		bool m_guessedTheWord{ false };
-		bool m_isDrawing{ false };
 	};
 }
 

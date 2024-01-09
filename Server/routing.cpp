@@ -189,12 +189,20 @@ void Routing::Run(Database& storage)
 			storage.SetPlayerScore(player.GetName(), 0);
 
 		Game currentGame = storage.GetGame(roomID);
+		Round currentRound = storage.GetRound(roomID);
 		int noOfWords = currentGame.GetPlayers().size() * currentGame.GetNoOfRounds();
 
 		std::set<std::string> words;
 		while (words.size() < noOfWords)
 			words.insert(storage.GetRandomWord());
 
+		currentRound.SetCurrentWord(*words.begin());
+		words.erase(words.begin());
+		currentRound.SetWords(words);
+		currentRound.SetRoundNumber(1);
+		currentRound.SetTimeLeft(60);
+		currentRound.SetDrawingPlayer(currentGame.GetPlayers()[0].GetName());
+		storage.Update(currentRound);
 
 		// Set the game status to 2 (in progress)
 		if (!storage.SetGameStatus(roomID, 2))
@@ -221,15 +229,26 @@ void Routing::Run(Database& storage)
 		std::string roomID = x["roomID"];
 		std::string username = x["username"];
 		std::string text = x["text"];
-		/*need to check if the text is the current word*/
+		
 		std::string currentChat = storage.GetGame(roomID).GetChat();
-		if (text == "word") // get the current word
+		std::string currentWord = storage.GetRound(roomID).GetCurrentWord();
+		std::transform(text.begin(), text.end(), text.begin(), ::tolower);
+		std::transform(currentWord.begin(), currentWord.end(), currentWord.begin(), ::tolower);
+
+		int timeLeft = storage.GetRound(roomID).GetTimeLeft(); // will need to remember the timeLeft if the player guessed the word in order to calculate the score for the drawer
+		int score{ 0 };
+		if (timeLeft >= 30)
+			score = 100;
+		else if (timeLeft > 0)
+			score = ((60 - timeLeft) * 100) / 30;
+
+		if (text == currentWord ) 
 		{
-			storage.SetPlayerScore(username, 100); // calculate the points to be added based on the time left
+			storage.AddPointsToPlayer(username, score);
 			currentChat += username + " guessed the word!\n";
 			if (!storage.SetGameChat(roomID, currentChat))
 				return crow::response{ 409, "Error adding the chat." };
-			return crow::response{ 200 };
+			return crow::response{ 200 , "TRUE"};
 		}
 		else
 		{
@@ -255,7 +274,7 @@ void Routing::Run(Database& storage)
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
 		std::string roomID = x["roomID"];
-		std::string drawer = storage.GetGame(roomID).GetDrawingPlayer();
+		std::string drawer = storage.GetRound(roomID).GetDrawingPlayer();
 
 		return crow::response{ drawer };
 			});
@@ -267,6 +286,15 @@ void Routing::Run(Database& storage)
 		std::string roundNumber = std::to_string(storage.GetRound(roomID).GetRoundNumber()) + "/" + std::to_string(storage.GetGame(roomID).GetNoOfRounds());
 
 		return crow::response{ roundNumber };
+			});
+
+	CROW_ROUTE(m_app, "/currentWord")
+		.methods("GET"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+		std::string currentWord = storage.GetRound(roomID).GetCurrentWord();
+
+		return crow::response{ currentWord };
 			});
 
 	CROW_ROUTE(m_app, "/timeLeft")
