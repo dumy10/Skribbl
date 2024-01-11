@@ -371,6 +371,17 @@ void Game::OnPlayerQuit()
 			{"username", m_username}
 		}
 	);
+
+	/*if (m_isDrawing == true)
+		auto requ = cpr::Post(
+			cpr::Url{ Server::GetUrl() + "/drawerLeft" },
+			cpr::Payload{
+				{"roomID",m_roomID},
+				{"username",m_username}
+			}
+	);*/
+	//the server should start a new round now
+
 	this->close();
 }
 
