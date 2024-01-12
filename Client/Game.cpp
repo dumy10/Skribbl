@@ -24,7 +24,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	if (m_isOwner)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(700));
-		m_roundTimer->start(10000);
+		m_roundTimer->start(63000);
 	}
 	else
 		m_roundTimer->stop();
