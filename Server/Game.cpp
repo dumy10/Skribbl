@@ -13,28 +13,6 @@ Game::Game(int id, const Player& player, const std::string& gameCode, size_t max
 	m_chat = "Welcome to skribbl!\n";
 }
 
-void Game::StartGame(std::set<std::string> words)
-{
-	/*
-	- need to set the first player to draw
-	- provide the word to the player who draws and start the timer, provide the length of the word to the other players
-	- set a timer for the round (60 seconds)
-	- while the timer is running, players can guess the word
-	- if the word is guessed, the player who guessed it gets points based on the time left
-	- after the timer runs out need to switch to the next player and set a new word
-	- after 4 rounds, the game ends and the player with the most points wins
-	*/
-
-
-
-}
-
-void Game::EndGame()
-{
-
-
-}
-
 void Game::AddPlayer(const Player& player)
 {
 	this->m_players.push_back(player);
@@ -173,51 +151,10 @@ uint8_t Game::GetRoundNumber() const noexcept
 	return m_round.GetRoundNumber();
 }
 
-void Game::AddPoints(Player& player, const int& timeLeft)
+int Game::GetPlayerIndex(const std::string& username) const noexcept
 {
-	int points = 0;
-	if (timeLeft > 30)
-	{
-		points = 100;
-		player.AddPoints(points);
-	}
-	else {
-		if (timeLeft > 0)
-		{
-			points = int((60 - timeLeft) * 100 / 30);
-			player.AddPoints(points);
-		}
-		else {
-			SubstractPoints(player);
-		}
-	}
-}
-
-void Game::SubstractPoints(Player& player)
-{
-	player.SubstractPoints(50);
-}
-
-void Game::AddPointsForTheDrawer(Player& player)
-{
-	int points = int((60 - m_averageTime) * 100 / 60);
-	player.AddPoints(points);
-}
-
-void Game::SubstractPointsForTheDrawer(Player& player)
-{
-	player.SubstractPoints(100);
-}
-
-void Game::AverageTime(const int& timeLeft)
-{
-	this->m_averageTime += 60 - timeLeft;
-	this->m_averageTime /= 2;
-}
-
-void Game::SetPlayerScore(const std::string& username, int score)
-{
-	for (auto& player : m_players)
-		if (player.GetName() == username)
-			player.SetPoints(score);
+	for (uint8_t i = 0; i < m_players.size(); i++)
+		if (m_players[i].GetName() == username)
+			return i;
+	return -1;
 }

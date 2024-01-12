@@ -5,7 +5,6 @@
 
 #include <cpr/cpr.h>
 #include <crow.h>
-#include <QDebug>
 #include <QScrollBar>
 
 Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
@@ -26,8 +25,6 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 		std::this_thread::sleep_for(std::chrono::milliseconds(700));
 		m_roundTimer->start(63000);
 	}
-	else
-		m_roundTimer->stop();
 
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
 	connect(m_ui.Verde, &QPushButton::clicked, this, &Game::SetPenColorGreen);
@@ -223,7 +220,6 @@ otherwise pull and display the image from the server every 0.2 seconds
 */
 void Game::UpdateRoomInformation()
 {
-	qDebug() << m_username.c_str() << " is updating room information " << m_roundTimer->remainingTime() / 1000 << " seconds left " << "isOwner: " << m_isOwner;
 	CheckGameEnded();
 	GamePlayers();
 	CheckRoundNumber();
@@ -480,6 +476,8 @@ void Game::UpdateTimeLeft()
 	{
 		int timeLeft = m_roundTimer->remainingTime() / 1000;
 		m_ui.timer->display(timeLeft);
+		if(timeLeft == 1)
+			m_guessedWord = false;
 		auto timeLeftRequest = cpr::Post(
 			cpr::Url{ Server::GetUrl() + "/timeLeft" },
 			cpr::Payload{ {"roomID", m_roomID}, {"timer", std::to_string(timeLeft) } }
@@ -498,6 +496,8 @@ void Game::UpdateTimeLeft()
 			return;
 
 		m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
+		if(std::stoi(timeLeftRequest.text) == 1)
+			m_guessedWord = false;
 	}
 }
 
@@ -550,7 +550,7 @@ void Game::UpdateDrawingPlayerAndWord()
 	if (wordRequest.status_code != 200)
 		return;
 
-	if (m_isDrawing) 
+	if (m_isDrawing)
 	{
 		m_ui.textEdit->setReadOnly(true); //disable player from sending messages to the chat
 		m_ui.drawingArea->setEnabled(true); //allow player to draw
@@ -632,19 +632,20 @@ void Game::ChangeBrushSize()
 	}
 }
 
-void Game::OnTimeEnd() 
+void Game::OnTimeEnd()
 {
-	if (m_isOwner)
-	{
-		auto request = cpr::Post(
-			cpr::Url{ Server::GetUrl() + "/nextRound" },
-			cpr::Payload{ {"roomID", m_roomID} }
-		);
-		DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-		if (drawingArea)
-			drawingArea->ClearDrawing();
-		/* Send the image to the server */
-	}
+	if (!m_isOwner)
+		return;
+
+	auto request = cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/nextRound" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+	if (drawingArea)
+		drawingArea->ClearDrawing();
+	/* Send the image to the server */
+
 
 }
 

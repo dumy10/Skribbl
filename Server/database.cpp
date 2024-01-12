@@ -90,7 +90,7 @@ bool Database::AddGame(const Player& player, const std::string& gameCode, size_t
 	try
 	{
 		m_db.insert(Game{ -1, player, gameCode, maxPlayers, 1 });
-		m_db.insert(Round{ -1, gameCode });
+		m_db.insert(Round{ -1, gameCode, maxPlayers });
 		return true;
 	}
 	catch (const std::exception& e) {
@@ -279,10 +279,21 @@ bool Database::RemovePlayerFromGame(const Player& player, const std::string& roo
 
 Player Database::GetPlayer(const std::string& username)
 {
-	auto existingPlayers = m_db.get_all<Player>(
-		sql::where(sql::c(&Player::GetName) == username)
-	);
-	return existingPlayers[0];
+	try
+	{
+		auto existingPlayers = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::GetName) == username)
+		);
+
+		if (existingPlayers.empty())
+			return Player{};
+
+		return existingPlayers[0];
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while getting player: " << e.what() << "\n";
+		return Player{};
+	}
 }
 
 bool Database::CheckUsername(const std::string& username)

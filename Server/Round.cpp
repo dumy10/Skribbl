@@ -3,7 +3,7 @@ module round;
 using namespace skribbl;
 
 
-Round::Round(int id, const std::string& gameId)
+Round::Round(int id, const std::string& gameId, size_t maxPlayers)
 	:
 	m_id{ id },
 	m_gameId{ gameId },
@@ -12,20 +12,9 @@ Round::Round(int id, const std::string& gameId)
 	m_roundNumber{ 1 },
 	m_timeLeft{ 60 }
 {
-	// Empty
-}
-
-Round::Round(int id, const std::string& gameId, const std::string& drawingPlayerName, const std::string& currentWord, const std::set<std::string>& words, uint8_t roundNumber)
-	:
-	m_id{ id },
-	m_gameId{ gameId },
-	m_drawingPlayerName{ drawingPlayerName },
-	m_currentWord{ currentWord },
-	m_words{ words },
-	m_roundNumber{ roundNumber },
-	m_timeLeft{ 62 }
-{
-	// Empty
+	m_times.resize(maxPlayers);
+	for (auto& time : m_times)
+		time = 0;
 }
 
 void Round::SetId(int id)
@@ -56,6 +45,14 @@ void Round::SetWords(const std::set<std::string>& words)
 void Round::SetRoundNumber(uint8_t roundNumber)
 {
 	m_roundNumber = roundNumber;
+}
+
+void Round::DeserializeTimes(const std::string& serializedTimes)
+{
+	std::stringstream ss{ serializedTimes };
+	std::string point;
+	while (std::getline(ss, point, ','))
+		m_times.push_back(std::stoi(point));
 }
 
 int Round::GetId() const noexcept
@@ -106,6 +103,26 @@ void Round::DeserializeWords(const std::string& serializedWords)
 std::set<std::string> skribbl::Round::GetWords() const noexcept
 {
 	return m_words;
+}
+
+std::string Round::SerializeTimes() const noexcept
+{
+	std::string serializedTimes;
+	for (const auto& time : m_times)
+		serializedTimes += std::to_string(time) + ",";
+	if (!serializedTimes.empty())
+		serializedTimes.pop_back();
+	return serializedTimes;
+}
+
+std::vector<int> Round::GetTimes() const noexcept
+{
+	return m_times;
+}
+
+void Round::UpdateTimes(int index, int value) noexcept
+{
+	m_times[index] = value;
 }
 
 void Round::SetTimeLeft(int timeLeft)

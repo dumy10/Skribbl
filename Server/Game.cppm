@@ -9,7 +9,6 @@ import <sstream>;
 import <algorithm>;
 import <set>;
 
-
 namespace skribbl
 {
 	export class Game {
@@ -25,9 +24,6 @@ namespace skribbl
 	public:
 		Game() = default;
 		Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers, size_t currentPlayers);
-
-		void StartGame(std::set<std::string> words);
-		void EndGame();
 
 		void AddPlayer(const Player& player);
 		void RemovePlayer(const Player& player);
@@ -46,6 +42,7 @@ namespace skribbl
 		std::string GetChat() const noexcept;
 		std::string GetDrawingPlayer() const noexcept;
 		uint8_t GetRoundNumber() const noexcept;
+		int GetPlayerIndex(const std::string& username) const noexcept;
 
 		void SetGameCode(const std::string& gameCode);
 		void SetGameStatus(GameStatus status);
@@ -56,25 +53,15 @@ namespace skribbl
 		void SetGameStatusInt(int status);
 		void SetChat(const std::string& chat);
 
-		void AddPoints(Player& player, const int& timeLeft);
-		void SubstractPoints(Player& player);
-		void AddPointsForTheDrawer(Player& player);
-		void SubstractPointsForTheDrawer(Player& player);
-		void AverageTime(const int& timeLeft);
-		void SetPlayerScore(const std::string& username, int score);
-
 	private:
 		int m_id;
 		static const size_t kNoOfRounds{ 4 };
 		size_t m_currentPlayers;
 		size_t m_maxPlayers;
+		std::string m_chat;
 		std::string m_gameCode;
-		std::vector<Player> m_players; // we need to sort the players by their points and the map would not be a good choice
+		std::vector<Player> m_players;
 		Round m_round;
 		GameStatus m_gameStatus{ GameStatus::UNKNOWN };
-
-		float m_averageTime = 0;
-
-		std::string m_chat;
 	};
 }
