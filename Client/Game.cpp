@@ -41,6 +41,8 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
 	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
 	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnPlayerQuit);
+	m_countdownTimer = new QTimer(this);
+	connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(UpdateCountdown()));
 }
 
 Game::~Game()
@@ -562,3 +564,28 @@ void Game::ChangeBrushSize()
 	}
 }
 
+void Game::UpdateCountdown() 
+{
+	if (m_timeLeft > 0) 
+	{
+		m_timeLeft--; 
+		m_ui.timer->display(m_timeLeft);
+	}
+	else 
+	{
+		endRound();
+	}
+}
+
+
+void Game::startTimer() 
+{
+	m_timeLeft = 60; 
+	m_ui.timer->display(m_timeLeft);
+	m_countdownTimer->start(1000);
+}
+
+void Game::endRound() 
+{
+	m_countdownTimer->stop(); 
+}

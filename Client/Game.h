@@ -47,6 +47,9 @@ private:
 	void HideDrawingUI();
 	void StartTimer();
 	void closeEvent(QCloseEvent* event) override;
+	void UpdateCountdown();
+	void startTimer();
+	void endRound();
 
 private:
 	Ui::GameClass m_ui;
@@ -57,6 +60,8 @@ private:
 	bool m_isDrawing;
 	bool m_guessedWord;
 	int m_currentBrushSizeIndex = 0;
+	QTimer* m_countdownTimer;
+	int m_timeLeft;
 
 private:
 	std::shared_ptr<DrawingWidget> m_drawingArea;
