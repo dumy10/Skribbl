@@ -17,7 +17,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	HidePlayers();
 	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
-	m_roundTimer = std::make_unique<QTimer>(this);
+	m_roundTimer = std::make_shared<QTimer>(this);
 
 	m_guessedWord = false;
 	StartTimer();
@@ -212,10 +212,7 @@ void Game::OnSendButtonClicked()
 		return;
 
 	if (request.text == "TRUE")
-	{
 		m_guessedWord = true;
-		m_ui.textEdit->setReadOnly(true);
-	}
 }
 
 /*
@@ -226,7 +223,7 @@ otherwise pull and display the image from the server every 0.2 seconds
 */
 void Game::UpdateRoomInformation()
 {
-
+	qDebug() << m_username.c_str() << " is updating room information " << m_roundTimer->remainingTime() / 1000 << " seconds left " << "isOwner: " << m_isOwner;
 	CheckGameEnded();
 	GamePlayers();
 	CheckRoundNumber();
@@ -635,7 +632,7 @@ void Game::ChangeBrushSize()
 	}
 }
 
-void Game::OnTimeEnd() const
+void Game::OnTimeEnd() 
 {
 	if (m_isOwner)
 	{

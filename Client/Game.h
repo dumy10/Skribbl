@@ -38,7 +38,7 @@ private slots:
 	void UpdateRoomInformation();
 	void OnPlayerQuit();
 	void ChangeBrushSize();
-	void OnTimeEnd() const;
+	void OnTimeEnd();
 
 private:
 	void DisplayPlayer(const std::string& username, int index, const std::string& score);
@@ -65,11 +65,11 @@ private:
 	bool m_isDrawing;
 	bool m_guessedWord;
 	int m_currentBrushSizeIndex{ 0 };
-
+	
 private:
 	std::shared_ptr<DrawingWidget> m_drawingArea;
 	std::unique_ptr<QTimer> m_updateTimer;
-	std::unique_ptr<QTimer> m_roundTimer;
+	std::shared_ptr<QTimer> m_roundTimer;
 };
 
 #endif // GAME_H

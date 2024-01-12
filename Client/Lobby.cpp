@@ -205,7 +205,7 @@ void Lobby::CheckGameStarted()
 	if (request.status_code != 200)
 		return;
 
-	Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex, m_roomID);
+	Game* game = new Game(std::move(m_username), m_playerIndex, m_isOwner, m_roomID);
 	game->show();
 	this->hide();
 	this->deleteLater();
