@@ -18,8 +18,6 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
 	m_guessedWord = false;
-	m_timeLeft = 60;
-
 	StartTimer();
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
 	connect(m_ui.Verde, &QPushButton::clicked, this, &Game::SetPenColorGreen);
@@ -42,8 +40,14 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
 	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
 	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnPlayerQuit);
-	m_countdownTimer = new QTimer(this);
-	connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(UpdateCountdown()));
+	if (m_isOwner)
+	{
+		m_roundTimer = std::make_unique<QTimer>(this);
+		m_roundTimer->start(63000);
+		// asta porneste timerul de la server, incepe jocul si serverul trimite celorlalti timpul ramas din runda
+		// in updateroominformation verifici daca isowner si trimiti timeleft la server, alfel primesti timeleft de la server
+		connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(OnTimeEnd()));
+	}
 }
 
 Game::~Game()
@@ -257,15 +261,31 @@ void Game::UpdateRoomInformation()
 	QString roundNumber = "Round: " + QString::fromUtf8(roundNumberRequest.text.data(), int(roundNumberRequest.text.size()));
 	m_ui.roundLabel->setText(roundNumber);
 
-	auto timerRequest = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/timeLeft" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
+	if (m_isOwner)
+	{
+		int timeLeft = m_roundTimer->remainingTime() / 1000;
+		m_ui.timer->display(timeLeft);
+		auto timeLeftRequest = cpr::Post(
+			cpr::Url{ Server::GetUrl() + "/timeLeft" },
+			cpr::Payload{ {"roomID", m_roomID}, {"timer", std::to_string(timeLeft) } }
+		);
 
-	if (timerRequest.status_code != 200)
-		return;
+		if (timeLeftRequest.status_code != 200)
+			return;
 
-	m_ui.timer->display(QString::fromUtf8(timerRequest.text.data(), int(timerRequest.text.size())));
+	}
+	else
+	{
+		auto timeLeftRequest = cpr::Get(
+			cpr::Url{ Server::GetUrl() + "/timeLeft" },
+			cpr::Payload{ {"roomID", m_roomID} }
+		);
+
+		if (timeLeftRequest.status_code != 200)
+			return;
+
+		m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
+	}
 
 	auto chatRequest = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/getChat" },
@@ -282,6 +302,7 @@ void Game::UpdateRoomInformation()
 	QString chat = QString::fromUtf8(chatRequest.text.data(), int(chatRequest.text.size()));
 	chat.replace("%20", " ");
 	chat.replace("%0A", "\n");
+	chat.replace("%0a", "\n");
 
 	m_ui.chat->setPlainText(chat);
 	m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
@@ -309,6 +330,8 @@ void Game::UpdateRoomInformation()
 	if (wordRequest.status_code != 200)
 		return;
 
+
+
 	if (m_isDrawing) // leave it like this for now, later will be changed when we get the drawing player name
 	{
 		m_ui.textEdit->setReadOnly(true); //disable player from sending messages to the chat
@@ -318,7 +341,7 @@ void Game::UpdateRoomInformation()
 		m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
 
 
-		serializeImageToRGBMatrix(m_drawingArea->GetImage());
+		//serializeImageToRGBMatrix(m_drawingArea->GetImage());
 		//matricea de pixeli din qimage , iar pentru fiecare pixel preluam valorile pentru rosu, verde si albastru
 		//aceasta matrice trebuie trimisa la server , ca mai apoi sa fie preluata de playerii care nu deseneaza
 
@@ -538,6 +561,7 @@ void Game::closeEvent(QCloseEvent* event)
 	QMainWindow::closeEvent(event);
 }
 
+
 void Game::OnFillButtonClicked()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
@@ -567,44 +591,24 @@ void Game::ChangeBrushSize()
 	}
 }
 
-void Game::UpdateCountdown() 
+void Game::OnTimeEnd()
 {
-	if (m_timeLeft > 0) 
-	{
-		--m_timeLeft;
-		m_ui.timer->display(m_timeLeft);
-	}
-	else 
-	{
-		endRound();
-	}
 }
 
 
-void Game::startTimer() 
-{
-	m_timeLeft = 60; 
-	m_ui.timer->display(m_timeLeft);
-	m_countdownTimer->start(1000);
-}
 
-void Game::endRound() 
-{
-	m_countdownTimer->stop(); 
-}
-
-QByteArray serializeImageToRGBMatrix(const QImage& image) 
-{
-	QByteArray matrixData;
-	
-	for (int y = 0; y < image.height(); y++) {
-		for (int x = 0; x < image.width(); x++) {
-			QRgb pixel = image.pixel(x, y);
-			matrixData.append(qRed(pixel));
-			matrixData.append(qGreen(pixel));
-			matrixData.append(qBlue(pixel));
-
-		}
-	}
-	return matrixData;
-}
+//QByteArray SerializeImageToRGBMatrix(const QImage& image) 
+//{
+//	QByteArray matrixData;
+//	
+//	for (int y = 0; y < image.height(); y++) {
+//		for (int x = 0; x < image.width(); x++) {
+//			QRgb pixel = image.pixel(x, y);
+//			matrixData.append(qRed(pixel));
+//			matrixData.append(qGreen(pixel));
+//			matrixData.append(qBlue(pixel));
+//
+//		}
+//	}
+//	return matrixData;
+//}

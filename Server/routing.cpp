@@ -223,13 +223,23 @@ void Routing::Run(Database& storage)
 		return crow::response{ score };
 			});
 
+	CROW_ROUTE(m_app, "/startTimer")
+		.methods("GET"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+
+		storage.GetRound(roomID).StartTimer();
+
+		return crow::response{ 200 };
+			});
+
 	CROW_ROUTE(m_app, "/addChat")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
 		std::string roomID = x["roomID"];
 		std::string username = x["username"];
 		std::string text = x["text"];
-		
+
 		std::string currentChat = storage.GetGame(roomID).GetChat();
 		std::string currentWord = storage.GetRound(roomID).GetCurrentWord();
 		std::transform(text.begin(), text.end(), text.begin(), ::tolower);
@@ -242,13 +252,13 @@ void Routing::Run(Database& storage)
 		else if (timeLeft > 0)
 			score = ((60 - timeLeft) * 100) / 30;
 
-		if (text == currentWord ) 
+		if (text == currentWord)
 		{
 			storage.AddPointsToPlayer(username, score);
 			currentChat += username + " guessed the word!\n";
 			if (!storage.SetGameChat(roomID, currentChat))
 				return crow::response{ 409, "Error adding the chat." };
-			return crow::response{ 200 , "TRUE"};
+			return crow::response{ 200 , "TRUE" };
 		}
 		else
 		{
@@ -298,13 +308,26 @@ void Routing::Run(Database& storage)
 			});
 
 	CROW_ROUTE(m_app, "/timeLeft")
-		.methods("GET"_method)([&](const crow::request& req) {
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
 		std::string roomID = x["roomID"];
 
-		std::string timeLeft = std::to_string(storage.GetRound(roomID).GetTimeLeft());
+		if (req.method == crow::HTTPMethod::POST)
+		{
+			std::string timeLeft = x["timer"];
+			Round currentRound = storage.GetRound(roomID);
+			currentRound.SetTimeLeft(std::stoi(timeLeft));
+			storage.Update(currentRound);
+			return crow::response{ 200 };
+		}
+		else if (req.method == crow::HTTPMethod::GET)
+		{
+			std::string timeLeft = std::to_string(storage.GetRound(roomID).GetTimeLeft());
+			return crow::response{ timeLeft };
+		}
+		else
+			return crow::response{ 404 };
 
-		return crow::response{ timeLeft };
 			});
 
 	CROW_ROUTE(m_app, "/gameEnded")

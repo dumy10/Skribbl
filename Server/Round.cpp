@@ -23,7 +23,7 @@ Round::Round(int id, const std::string& gameId, const std::string& drawingPlayer
 	m_currentWord{ currentWord },
 	m_words{ words },
 	m_roundNumber{ roundNumber },
-	m_timeLeft{ 60 }
+	m_timeLeft{ 62 }
 {
 	// Empty
 }
