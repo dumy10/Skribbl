@@ -32,11 +32,10 @@ namespace skribbl
 		uint8_t GetRoundNumber() const noexcept;
 		std::string SerializeWords() const noexcept;
 		void DeserializeWords(const std::string& serializedWords);
+		std::set<std::string> GetWords() const noexcept;
 
 		void SetTimeLeft(int timeLeft);
 		int GetTimeLeft() const noexcept;
-
-		void StartTimer();
 
 	private:
 		int m_id;

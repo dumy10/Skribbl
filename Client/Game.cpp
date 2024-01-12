@@ -17,8 +17,18 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	HidePlayers();
 	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
+	m_roundTimer = std::make_unique<QTimer>(this);
+
 	m_guessedWord = false;
 	StartTimer();
+	if (m_isOwner)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(700));
+		m_roundTimer->start(10000);
+	}
+	else
+		m_roundTimer->stop();
+
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
 	connect(m_ui.Verde, &QPushButton::clicked, this, &Game::SetPenColorGreen);
 	connect(m_ui.Rosu, &QPushButton::clicked, this, &Game::SetPenColorRed);
@@ -40,19 +50,14 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
 	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
 	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnPlayerQuit);
-	if (m_isOwner)
-	{
-		m_roundTimer = std::make_unique<QTimer>(this);
-		m_roundTimer->start(63000);
-		// asta porneste timerul de la server, incepe jocul si serverul trimite celorlalti timpul ramas din runda
-		// in updateroominformation verifici daca isowner si trimiti timeleft la server, alfel primesti timeleft de la server
-		connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(OnTimeEnd()));
-	}
+	connect(m_roundTimer.get(), SIGNAL(timeout()), this, SLOT(OnTimeEnd()));
+
 }
 
 Game::~Game()
 {
 	m_updateTimer->stop();
+	m_roundTimer->stop();
 }
 
 void Game::ClearDrawingArea()
@@ -215,164 +220,20 @@ void Game::OnSendButtonClicked()
 
 /*
 TODO:
-- update room information ( timer, word, image that is being drawn)
-- if the player is the one that has to draw, display the word to guess, otherwise display the word length
+- update room information (image that is being drawn)
 - if the player is the one that has to draw, send the image that is being drawn onto to the server every 0.2 seconds,
 otherwise pull and display the image from the server every 0.2 seconds
 */
 void Game::UpdateRoomInformation()
 {
-	auto req = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
 
-	if (req.status_code != 200)
-		return;
-
-	std::vector<std::string> players = split(req.text, ",");
-
-	if (players.empty())
-		return;
-
-	DisplayPlayerCount(players.size());
-
-	for (int i = 0; i < players.size(); i++)
-	{
-		auto request = cpr::Get(
-			cpr::Url{ Server::GetUrl() + "/playerScore" },
-			cpr::Payload{ {"roomID", m_roomID}, {"username", players[i]} }
-		);
-
-		if (request.status_code != 200)
-			return;
-
-		DisplayPlayer(players[i], i + 1, request.text);
-	}
-
-	auto roundNumberRequest = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/roundNumber" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
-
-	if (roundNumberRequest.status_code != 200)
-		return;
-
-	QString roundNumber = "Round: " + QString::fromUtf8(roundNumberRequest.text.data(), int(roundNumberRequest.text.size()));
-	m_ui.roundLabel->setText(roundNumber);
-
-	if (m_isOwner)
-	{
-		int timeLeft = m_roundTimer->remainingTime() / 1000;
-		m_ui.timer->display(timeLeft);
-		auto timeLeftRequest = cpr::Post(
-			cpr::Url{ Server::GetUrl() + "/timeLeft" },
-			cpr::Payload{ {"roomID", m_roomID}, {"timer", std::to_string(timeLeft) } }
-		);
-
-		if (timeLeftRequest.status_code != 200)
-			return;
-
-	}
-	else
-	{
-		auto timeLeftRequest = cpr::Get(
-			cpr::Url{ Server::GetUrl() + "/timeLeft" },
-			cpr::Payload{ {"roomID", m_roomID} }
-		);
-
-		if (timeLeftRequest.status_code != 200)
-			return;
-
-		m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
-	}
-
-	auto chatRequest = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/getChat" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
-
-	if (chatRequest.status_code != 200)
-		return;
-	/*
-	%20 = " "
-	%0A = "\n"
-	*/
-
-	QString chat = QString::fromUtf8(chatRequest.text.data(), int(chatRequest.text.size()));
-	chat.replace("%20", " ");
-	chat.replace("%0A", "\n");
-	chat.replace("%0a", "\n");
-
-	m_ui.chat->setPlainText(chat);
-	m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
-
-
-	// get the drawing player name from the server
-	auto drawingPlayerRequest = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/drawingPlayer" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
-
-	if (drawingPlayerRequest.status_code != 200)
-		return;
-
-	if (m_username == drawingPlayerRequest.text)
-		m_isDrawing = true;
-	else
-		m_isDrawing = false;
-
-	auto wordRequest = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/currentWord" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
-
-	if (wordRequest.status_code != 200)
-		return;
-
-
-
-	if (m_isDrawing) // leave it like this for now, later will be changed when we get the drawing player name
-	{
-		m_ui.textEdit->setReadOnly(true); //disable player from sending messages to the chat
-		m_ui.drawingArea->setEnabled(true); //allow player to draw
-		ShowDrawingUI();
-
-		m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
-
-
-		//serializeImageToRGBMatrix(m_drawingArea->GetImage());
-		//matricea de pixeli din qimage , iar pentru fiecare pixel preluam valorile pentru rosu, verde si albastru
-		//aceasta matrice trebuie trimisa la server , ca mai apoi sa fie preluata de playerii care nu deseneaza
-
-
-		QImage image = m_drawingArea->GetImage();
-
-	}
-	else
-	{
-		m_ui.textEdit->setReadOnly(false); //enable player to send messages to the chat
-		m_ui.drawingArea->setEnabled(false); //disable player from drawing
-		HideDrawingUI();
-
-		if (!m_guessedWord)
-		{
-			int wordLength = wordRequest.text.size();
-			QString currentWord = "";
-			for (int i = 0; i < wordLength; i++)
-				currentWord += "_ ";
-			m_ui.wordLabel->setText(currentWord);
-		}
-		else
-		{
-			m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
-			m_ui.textEdit->setReadOnly(true);
-		}
-
-		/*
-		Need to pull the image from the server and set it to the drawing area
-		*/
-	}
+	CheckGameEnded();
+	GamePlayers();
+	CheckRoundNumber();
+	UpdateTimeLeft();
+	UpdateChat();
+	UpdateDrawingPlayerAndWord();
+	UpdateDrawingImage();
 }
 
 void Game::OnPlayerQuit()
@@ -554,13 +415,196 @@ void Game::StartTimer()
 	m_updateTimer->start(200);
 }
 
+void Game::CheckGameEnded()
+{
+	auto gameEndedRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/gameEnded" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (gameEndedRequest.status_code == 200)
+	{
+		Menu* menu = new Menu(std::move(m_username));
+		menu->show();
+		this->close();
+		this->deleteLater();
+		return;
+	}
+}
+
+void Game::GamePlayers()
+{
+	auto req = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (req.status_code != 200)
+		return;
+
+	std::vector<std::string> players = split(req.text, ",");
+
+	if (players.empty())
+		return;
+
+	DisplayPlayerCount(players.size());
+
+	for (int i = 0; i < players.size(); i++)
+	{
+		auto request = cpr::Get(
+			cpr::Url{ Server::GetUrl() + "/playerScore" },
+			cpr::Payload{ {"roomID", m_roomID}, {"username", players[i]} }
+		);
+
+		if (request.status_code != 200)
+			return;
+
+		DisplayPlayer(players[i], i + 1, request.text);
+	}
+}
+
+void Game::CheckRoundNumber()
+{
+	auto roundNumberRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/roundNumber" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (roundNumberRequest.status_code != 200)
+		return;
+
+	QString roundNumber = "Round: " + QString::fromUtf8(roundNumberRequest.text.data(), int(roundNumberRequest.text.size()));
+	m_ui.roundLabel->setText(roundNumber);
+}
+
+void Game::UpdateTimeLeft()
+{
+	if (m_isOwner)
+	{
+		int timeLeft = m_roundTimer->remainingTime() / 1000;
+		m_ui.timer->display(timeLeft);
+		auto timeLeftRequest = cpr::Post(
+			cpr::Url{ Server::GetUrl() + "/timeLeft" },
+			cpr::Payload{ {"roomID", m_roomID}, {"timer", std::to_string(timeLeft) } }
+		);
+		if (timeLeftRequest.status_code != 200)
+			return;
+	}
+	else
+	{
+		auto timeLeftRequest = cpr::Get(
+			cpr::Url{ Server::GetUrl() + "/timeLeft" },
+			cpr::Payload{ {"roomID", m_roomID} }
+		);
+
+		if (timeLeftRequest.status_code != 200)
+			return;
+
+		m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
+	}
+}
+
+void Game::UpdateChat()
+{
+	auto chatRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/getChat" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (chatRequest.status_code != 200)
+		return;
+	/*
+	%20 = " "
+	%0A = "\n"
+	%0a = "\n"
+	*/
+
+	QString chat = QString::fromUtf8(chatRequest.text.data(), int(chatRequest.text.size()));
+	chat.replace("%20", " ");
+	chat.replace("%0A", "\n");
+	chat.replace("%0a", "\n");
+
+	m_ui.chat->setPlainText(chat);
+	m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
+}
+
+void Game::UpdateDrawingPlayerAndWord()
+{
+
+	// get the drawing player name from the server
+	auto drawingPlayerRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/drawingPlayer" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (drawingPlayerRequest.status_code != 200)
+		return;
+
+	if (m_username == drawingPlayerRequest.text)
+		m_isDrawing = true;
+	else
+		m_isDrawing = false;
+
+	auto wordRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/currentWord" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (wordRequest.status_code != 200)
+		return;
+
+	if (m_isDrawing) 
+	{
+		m_ui.textEdit->setReadOnly(true); //disable player from sending messages to the chat
+		m_ui.drawingArea->setEnabled(true); //allow player to draw
+		ShowDrawingUI();
+		m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
+	}
+	else
+	{
+		m_ui.textEdit->setReadOnly(false); //enable player to send messages to the chat
+		m_ui.drawingArea->setEnabled(false); //disable player from drawing
+		HideDrawingUI();
+		if (!m_guessedWord)
+		{
+			std::string currentWordString = wordRequest.text;
+			QString currentWord = "";
+			for (uint i = 0; i < currentWordString.size(); i++)
+			{
+				if (currentWordString[i] == ' ')
+					currentWord += " ";
+				else
+					currentWord += "_ ";
+			}
+			m_ui.wordLabel->setText(currentWord);
+		}
+		else
+		{
+			m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
+			m_ui.textEdit->setReadOnly(true);
+		}
+	}
+}
+
+void Game::UpdateDrawingImage()
+{
+	if (m_isDrawing)
+	{
+		QImage image = m_drawingArea->GetImage();
+		/* Send the image to the server */
+	}
+	else
+	{
+		/* Get the image from the server and display it */
+	}
+}
+
 void Game::closeEvent(QCloseEvent* event)
 {
 	emit PlayerQuit();
 
 	QMainWindow::closeEvent(event);
 }
-
 
 void Game::OnFillButtonClicked()
 {
@@ -591,8 +635,20 @@ void Game::ChangeBrushSize()
 	}
 }
 
-void Game::OnTimeEnd()
+void Game::OnTimeEnd() const
 {
+	if (m_isOwner)
+	{
+		auto request = cpr::Post(
+			cpr::Url{ Server::GetUrl() + "/nextRound" },
+			cpr::Payload{ {"roomID", m_roomID} }
+		);
+		DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+		if (drawingArea)
+			drawingArea->ClearDrawing();
+		/* Send the image to the server */
+	}
+
 }
 
 

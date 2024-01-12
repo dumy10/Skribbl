@@ -103,6 +103,11 @@ void Round::DeserializeWords(const std::string& serializedWords)
 		m_words.insert(word);
 }
 
+std::set<std::string> skribbl::Round::GetWords() const noexcept
+{
+	return m_words;
+}
+
 void Round::SetTimeLeft(int timeLeft)
 {
 	m_timeLeft = timeLeft;
@@ -113,11 +118,3 @@ int Round::GetTimeLeft() const noexcept
 	return m_timeLeft;
 }
 
-void Round::StartTimer()
-{
-	while (m_timeLeft > 0)
-	{
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		m_timeLeft--;
-	}
-}

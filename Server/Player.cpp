@@ -84,5 +84,5 @@ bool Player::operator>(const Player& player)
 
 bool Player::operator==(const Player& player)
 {
-	return this->m_name == player.m_name && this->m_points == player.m_points;
+	return this->m_name == player.m_name;
 }

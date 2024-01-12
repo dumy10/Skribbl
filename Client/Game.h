@@ -38,7 +38,7 @@ private slots:
 	void UpdateRoomInformation();
 	void OnPlayerQuit();
 	void ChangeBrushSize();
-	void OnTimeEnd();
+	void OnTimeEnd() const;
 
 private:
 	void DisplayPlayer(const std::string& username, int index, const std::string& score);
@@ -48,6 +48,13 @@ private:
 	void HideDrawingUI();
 	void closeEvent(QCloseEvent* event) override;
 	void StartTimer();
+	void CheckGameEnded();
+	void GamePlayers();
+	void CheckRoundNumber();
+	void UpdateTimeLeft();
+	void UpdateChat();
+	void UpdateDrawingPlayerAndWord();
+	void UpdateDrawingImage();
 
 private:
 	Ui::GameClass m_ui;
@@ -58,7 +65,6 @@ private:
 	bool m_isDrawing;
 	bool m_guessedWord;
 	int m_currentBrushSizeIndex{ 0 };
-	int m_timeLeft;
 
 private:
 	std::shared_ptr<DrawingWidget> m_drawingArea;

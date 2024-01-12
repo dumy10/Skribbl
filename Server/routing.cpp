@@ -21,7 +21,7 @@ void Routing::Run(Database& storage)
 
 		if (username == "")
 			return crow::response{ 404, "Username not found." };
-
+		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		if (storage.CheckUsername(username))
 			return crow::response{ "true" };
 
@@ -37,7 +37,7 @@ void Routing::Run(Database& storage)
 
 		if (username == "" || password == "" || email == "")
 			return crow::response{ 404, "Username, password or email not found." };
-
+		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		if (storage.AddUser(username, password, email))
 			return crow::response{ "true" };
 
@@ -52,7 +52,7 @@ void Routing::Run(Database& storage)
 
 		if (username == "" || password == "")
 			return crow::response{ 404, "Username or password not found." };
-
+		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		if (!storage.CheckUsername(username))
 			return crow::response{ 409, "Username does not exist!" };
 
@@ -81,6 +81,7 @@ void Routing::Run(Database& storage)
 		std::string username = x["username"];
 		int maxPlayers = std::stoi(x["maxPlayers"]);
 		int currentPlayers = std::stoi(x["currentPlayers"]);
+		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		Player player = storage.GetPlayer(username);
 
 		if (!storage.AddGame(player, roomID, maxPlayers))
@@ -112,6 +113,7 @@ void Routing::Run(Database& storage)
 		auto x = parseUrlArgs(req.body);
 		std::string roomID = x["roomID"];
 		std::string username = x["username"];
+		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		Player player = storage.GetPlayer(username);
 		int currentPlayers = std::stoi(x["currentPlayers"]);
 
@@ -156,7 +158,7 @@ void Routing::Run(Database& storage)
 		auto x = parseUrlArgs(req.body);
 		std::string roomID = x["roomID"];
 		std::string username = x["username"];
-
+		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		Player player = storage.GetPlayer(username);
 
 		if (!storage.RemovePlayerFromGame(player, roomID))
@@ -200,7 +202,6 @@ void Routing::Run(Database& storage)
 		words.erase(words.begin());
 		currentRound.SetWords(words);
 		currentRound.SetRoundNumber(1);
-		currentRound.SetTimeLeft(60);
 		currentRound.SetDrawingPlayer(currentGame.GetPlayers()[0].GetName());
 		storage.Update(currentRound);
 
@@ -218,19 +219,10 @@ void Routing::Run(Database& storage)
 		auto x = parseUrlArgs(req.body);
 		std::string username = x["username"];
 		std::string roomID = x["roomID"];
+		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		std::string score = std::to_string(storage.GetPlayerScore(username));
 
 		return crow::response{ score };
-			});
-
-	CROW_ROUTE(m_app, "/startTimer")
-		.methods("GET"_method)([&](const crow::request& req) {
-		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
-
-		storage.GetRound(roomID).StartTimer();
-
-		return crow::response{ 200 };
 			});
 
 	CROW_ROUTE(m_app, "/addChat")
@@ -251,7 +243,7 @@ void Routing::Run(Database& storage)
 			score = 100;
 		else if (timeLeft > 0)
 			score = ((60 - timeLeft) * 100) / 30;
-
+		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		if (text == currentWord)
 		{
 			storage.AddPointsToPlayer(username, score);
@@ -328,6 +320,53 @@ void Routing::Run(Database& storage)
 		else
 			return crow::response{ 404 };
 
+			});
+
+	CROW_ROUTE(m_app, "/nextRound")
+		.methods("POST"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		std::string roomID = x["roomID"];
+
+		Round currentRound = storage.GetRound(roomID);
+		std::set<std::string> words = currentRound.GetWords();
+		std::vector<Player> players = storage.GetGame(roomID).GetPlayers();
+		std::string currentDrawingPlayer = currentRound.GetDrawingPlayer();
+
+		if (currentRound.GetRoundNumber() == storage.GetGame(roomID).GetNoOfRounds() && players[players.size() - 1].GetName() == currentDrawingPlayer)
+		{
+			storage.SetGameStatus(roomID, 3);
+			return crow::response{ 200 };
+		}
+
+		for (uint8_t index = 0; index < players.size(); index++)
+		{
+			if (players[index].GetName() == currentDrawingPlayer)
+			{
+				if (index == players.size() - 1)
+				{
+					uint8_t roundNumber = currentRound.GetRoundNumber();
+					roundNumber++;
+					currentRound.SetRoundNumber(roundNumber);
+					currentRound.SetDrawingPlayer(players[0].GetName());
+					currentRound.SetCurrentWord(*words.begin());
+					words.erase(words.begin());
+					currentRound.SetWords(words);
+					storage.Update(currentRound);
+					return crow::response{ 200 };
+				}
+				else if (index < players.size() - 1)
+				{
+					currentRound.SetDrawingPlayer(players[index + 1].GetName());
+					currentRound.SetCurrentWord(*words.begin());
+					words.erase(words.begin());
+					currentRound.SetWords(words);
+					storage.Update(currentRound);
+					return crow::response{ 200 };
+				}
+			}
+		}
+
+		return crow::response{ 409 };
 			});
 
 	CROW_ROUTE(m_app, "/gameEnded")
