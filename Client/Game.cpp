@@ -18,6 +18,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	DisplayPlayer(m_username, m_playerIndex, "0");
 	m_updateTimer = std::make_unique<QTimer>(this);
 	m_guessedWord = false;
+	m_timeLeft = 60;
 
 	StartTimer();
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
@@ -316,9 +317,11 @@ void Game::UpdateRoomInformation()
 
 		m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
 
-		/*
-		Need to send the image to the server
-		*/
+
+		serializeImageToRGBMatrix(m_drawingArea->GetImage());
+		//matricea de pixeli din qimage , iar pentru fiecare pixel preluam valorile pentru rosu, verde si albastru
+		//aceasta matrice trebuie trimisa la server , ca mai apoi sa fie preluata de playerii care nu deseneaza
+
 
 		QImage image = m_drawingArea->GetImage();
 
@@ -568,7 +571,7 @@ void Game::UpdateCountdown()
 {
 	if (m_timeLeft > 0) 
 	{
-		m_timeLeft--; 
+		--m_timeLeft;
 		m_ui.timer->display(m_timeLeft);
 	}
 	else 
@@ -588,4 +591,20 @@ void Game::startTimer()
 void Game::endRound() 
 {
 	m_countdownTimer->stop(); 
+}
+
+QByteArray serializeImageToRGBMatrix(const QImage& image) 
+{
+	QByteArray matrixData;
+	
+	for (int y = 0; y < image.height(); y++) {
+		for (int x = 0; x < image.width(); x++) {
+			QRgb pixel = image.pixel(x, y);
+			matrixData.append(qRed(pixel));
+			matrixData.append(qGreen(pixel));
+			matrixData.append(qBlue(pixel));
+
+		}
+	}
+	return matrixData;
 }

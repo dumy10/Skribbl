@@ -215,3 +215,9 @@ void DrawingWidget::SetPenWidth(int newWidth)
     m_pen.setWidth(newWidth);
     update();
 }
+
+
+QImage DrawingWidget::GetImage()
+{
+    return m_image;
+}
