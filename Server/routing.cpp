@@ -244,7 +244,7 @@ void Routing::Run(Database& storage)
 		if (timeLeft >= 30)
 			score = 100;
 		else if (timeLeft > 0 && timeLeft < 30)
-			score = (((60 - timeLeft) * 100) / 30);
+			score = (((60 - timeLeft) * 100) / 60);
 
 		Player player = storage.GetPlayer(std::move(username));
 		if (text == currentWord)
@@ -366,7 +366,7 @@ void Routing::Run(Database& storage)
 		if (averageTime == ((players.size() - 1) * 60))
 		{
 			std::ranges::for_each(players, [&](const Player& player) {
-				if (player.GetName() != currentDrawingPlayer && times[storage.GetGame(std::move(roomID)).GetPlayerIndex(std::move(player.GetName()))] != 0)
+				if (player.GetName() != currentDrawingPlayer )
 					storage.SetPlayerScore(std::move(player.GetName()), storage.GetPlayerScore(std::move(player.GetName())) + points);
 				});
 			points = -100;
