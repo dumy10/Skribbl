@@ -10,16 +10,24 @@ int main()
 {
 	Database storage;
 
-	if (!storage.Initialize())
+	try
 	{
-		std::cerr << "Failed to initialize database" << std::endl;
-		return -1;
-	}
+		if (!storage.Initialize())
+		{
+			std::cerr << "Failed to initialize database" << std::endl;
+			return -1;
+		}
 
-	try 
-	{
-		Routing router;
-		router.Run(storage);
+		try
+		{
+			Routing router;
+			router.Run(storage);
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << e.what() << std::endl;
+			return -1;
+		}
 	}
 	catch (const std::exception& e)
 	{

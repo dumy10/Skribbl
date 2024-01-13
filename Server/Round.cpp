@@ -12,6 +12,7 @@ Round::Round(int id, const std::string& gameId, size_t maxPlayers)
 	m_roundNumber{ 1 },
 	m_timeLeft{ 60 }
 {
+	m_imageData = std::string();
 	m_times.resize(maxPlayers);
 	std::ranges::for_each(m_times, [](auto& time) { time = 0; });
 }
@@ -57,6 +58,11 @@ void Round::DeserializeTimes(const std::string& serializedTimes)
 void Round::SetTimes(const std::vector<int>& times)
 {
 	m_times = times;
+}
+
+void Round::SetImageData(const std::string& imageData)
+{
+	m_imageData = imageData;
 }
 
 int Round::GetId() const noexcept
@@ -127,6 +133,11 @@ std::vector<int> Round::GetTimes() const noexcept
 void Round::UpdateTimes(int index, int value) noexcept
 {
 	m_times[index] = value;
+}
+
+std::string Round::GetImageData() const noexcept
+{
+	return m_imageData;
 }
 
 void Round::SetTimeLeft(int timeLeft)

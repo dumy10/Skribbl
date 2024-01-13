@@ -51,7 +51,8 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("roundnumber", &Round::SetRoundNumber, &Round::GetRoundNumber),
 			sql::make_column("words", &Round::SerializeWords, &Round::DeserializeWords),
 			sql::make_column("timeleft", &Round::SetTimeLeft, &Round::GetTimeLeft),
-			sql::make_column("times", &Round::SerializeTimes, &Round::DeserializeTimes)
+			sql::make_column("times", &Round::SerializeTimes, &Round::DeserializeTimes),
+			sql::make_column("imagedata", &Round::SetImageData, &Round::GetImageData)
 		)
 	);
 }

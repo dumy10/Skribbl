@@ -19,7 +19,7 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/checkUsername")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string username = x["username"];
+		const std::string& username = x["username"];
 
 		if (username == "")
 			return crow::response{ 404, "Username not found." };
@@ -34,14 +34,14 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/addUser")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string username = x["username"];
-		std::string password = x["password"];
-		std::string email = x["email"];
+		const std::string& username = x["username"];
+		const std::string& password = x["password"];
+		const std::string& email = x["email"];
 
 		if (username == "" || password == "" || email == "")
 			return crow::response{ 404, "Username, password or email not found." };
 
-		if (storage.AddUser(username, password, email))
+		if (storage.AddUser(std::move(username), std::move(password), std::move(email)))
 			return crow::response{ "true" };
 
 		return crow::response{ "false" };
@@ -51,16 +51,16 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/loginUser")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string username = x["username"];
-		std::string password = x["password"];
+		const std::string& username = x["username"];
+		const std::string& password = x["password"];
 
 		if (username == "" || password == "")
 			return crow::response{ 404, "Username or password not found." };
 
-		if (!storage.CheckUsername(username))
+		if (!storage.CheckUsername(std::move(username)))
 			return crow::response{ 409, "Username does not exist!" };
 
-		if (!storage.CheckPassword(username, password))
+		if (!storage.CheckPassword(std::move(username), std::move(password)))
 			return crow::response{ 409, "Wrong password!" };
 
 		return crow::response{ 200 };
@@ -82,14 +82,14 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/createRoom")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["gameCode"];
-		std::string username = x["username"];
+		const std::string& roomID = x["gameCode"];
+		const std::string& username = x["username"];
 		int maxPlayers = std::stoi(x["maxPlayers"]);
 		int currentPlayers = std::stoi(x["currentPlayers"]);
 
-		Player player = storage.GetPlayer(username);
+		Player player = storage.GetPlayer(std::move(username));
 
-		if (!storage.AddGame(player, roomID, maxPlayers))
+		if (!storage.AddGame(std::move(player), std::move(roomID), maxPlayers))
 			return crow::response{ 409, "Error creating the game." };
 		return crow::response{ 200 };
 			});
@@ -98,18 +98,18 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/checkRoomID")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
-		if (!storage.CheckRoomID(roomID))
+		if (!storage.CheckRoomID(std::move(roomID)))
 			return crow::response{ 409, "Game not found" };
 
-		if (storage.GetGame(roomID).GetGameStatusAsInt() != 1)
+		if (storage.GetGame(std::move(roomID)).GetGameStatusAsInt() != 1)
 			return crow::response{ 409, "Game already started" };
 
-		if (storage.GetGame(roomID).GetCurrentPlayers() >= storage.GetGame(roomID).GetMaxPlayers())
+		if (storage.GetGame(std::move(roomID)).GetCurrentPlayers() >= storage.GetGame(std::move(roomID)).GetMaxPlayers())
 			return crow::response{ 409, "Game is full" };
 
-		std::string currentPlayers = std::to_string(storage.GetGame(roomID).GetCurrentPlayers());
+		const std::string& currentPlayers = std::to_string(storage.GetGame(std::move(roomID)).GetCurrentPlayers());
 		return crow::response{ 200 , currentPlayers };
 			});
 
@@ -117,13 +117,13 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/joinRoom")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
-		std::string username = x["username"];
+		const std::string& roomID = x["roomID"];
+		const std::string& username = x["username"];
 
-		Player player = storage.GetPlayer(username);
+		Player player = storage.GetPlayer(std::move(username));
 		int currentPlayers = std::stoi(x["currentPlayers"]);
 
-		if (!storage.AddPlayerToGame(player, roomID, currentPlayers))
+		if (!storage.AddPlayerToGame(std::move(player), std::move(roomID), currentPlayers))
 			return crow::response{ 409, "Error joining the game." };
 
 		return crow::response{ 200 };
@@ -133,45 +133,39 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/roomPlayers")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
-		std::string players = storage.GetGame(roomID).SerializePlayers();
-
-		return crow::response{ players };
+		return crow::response{ storage.GetGame(roomID).SerializePlayers() };
 			});
 
 	// Gets the max number of players from the game in the database
 	CROW_ROUTE(m_app, "/numberOfPlayers")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
-		std::string numberOfPlayers = std::to_string(storage.GetGame(roomID).GetMaxPlayers());
-
-		return crow::response{ numberOfPlayers };
+		return crow::response{ std::to_string(storage.GetGame(std::move(roomID)).GetMaxPlayers()) };
 			});
 
 	// Gets the current number of players from the game in the database
 	CROW_ROUTE(m_app, "/currentNumberOfPlayers")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
-		std::string currentNumberOfPlayers = std::to_string(storage.GetGame(roomID).GetCurrentPlayers());
-
-		return crow::response{ currentNumberOfPlayers };
+		return crow::response{ std::to_string(storage.GetGame(std::move(roomID)).GetCurrentPlayers()) };
 			});
 
 	// Removes a player from the game in the database
 	CROW_ROUTE(m_app, "/leaveRoom")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
-		std::string username = x["username"];
+		const std::string& roomID = x["roomID"];
+		const std::string& username = x["username"];
 
-		Player player = storage.GetPlayer(username);
+		Player player = storage.GetPlayer(std::move(username));
 
-		if (!storage.RemovePlayerFromGame(player, roomID))
+		if (!storage.RemovePlayerFromGame(std::move(player), std::move(roomID)))
 			return crow::response{ 409, "Error leaving the game." };
 		return crow::response{ 200 };
 			});
@@ -180,9 +174,9 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/gameStarted")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
-		if (storage.GetGame(roomID).GetGameStatusAsInt() == 2)
+		if (storage.GetGame(std::move(roomID)).GetGameStatusAsInt() == 2)
 			return crow::response{ 200 };
 
 		return crow::response{ 409 };
@@ -192,15 +186,15 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/startGame")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
-		std::vector<Player> players = storage.GetGame(roomID).GetPlayers();
+		std::vector<Player> players = storage.GetGame(std::move(roomID)).GetPlayers();
 
 		// Set the players score to 0 at the start of the game
-		std::ranges::for_each(players, [&](Player& player) { player.SetPoints(0); storage.Update(player); });
+		std::ranges::for_each(players, [&](Player& player) { storage.SetPlayerScore(player.GetName(), 0); });
 
-		Game currentGame = storage.GetGame(roomID);
-		Round currentRound = storage.GetRound(roomID);
+		Game currentGame = storage.GetGame(std::move(roomID));
+		Round currentRound = storage.GetRound(std::move(roomID));
 		int noOfWords = currentGame.GetPlayers().size() * currentGame.GetNoOfRounds(); // Calculate the number of words based on the number of players and the number of rounds
 
 		std::set<std::string> words;
@@ -216,7 +210,7 @@ void Routing::Run(Database& storage)
 		storage.Update(currentRound);
 
 		// Set the game status to 2 (in progress)
-		if (!storage.SetGameStatus(roomID, 2))
+		if (!storage.SetGameStatus(std::move(roomID), 2))
 			return crow::response{ 409, "Error starting the game." };
 
 		return crow::response{ 200 };
@@ -226,28 +220,25 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/playerScore")
 		.methods("GET"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string username = x["username"];
-		std::string roomID = x["roomID"];
+		const std::string& username = x["username"];
 
-		std::string score = std::to_string(storage.GetPlayerScore(username));
-
-		return crow::response{ score };
+		return crow::response{ std::to_string(storage.GetPlayerScore(std::move(username))) };
 			});
 
 	// Adds the text that the player wrote to the current chat in the database
 	CROW_ROUTE(m_app, "/addChat")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
-		std::string username = x["username"];
+		const std::string& roomID = x["roomID"];
+		const std::string& username = x["username"];
 		std::string text = x["text"];
 
-		std::string currentChat = storage.GetGame(roomID).GetChat();
-		std::string currentWord = storage.GetRound(roomID).GetCurrentWord();
+		std::string currentChat = storage.GetGame(std::move(roomID)).GetChat();
+		std::string currentWord = storage.GetRound(std::move(roomID)).GetCurrentWord();
 		std::transform(text.begin(), text.end(), text.begin(), ::tolower);
 		std::transform(currentWord.begin(), currentWord.end(), currentWord.begin(), ::tolower);
 		
-		int timeLeft = storage.GetRound(roomID).GetTimeLeft();
+		int timeLeft = storage.GetRound(std::move(roomID)).GetTimeLeft();
 		int score{ 0 };
 
 		if (timeLeft >= 30)
@@ -255,12 +246,12 @@ void Routing::Run(Database& storage)
 		else if (timeLeft > 0 && timeLeft < 30)
 			score = ((60 - timeLeft) * 100) / 30;
 
-		Player player = storage.GetPlayer(username);
+		Player player = storage.GetPlayer(std::move(username));
 		if (text == currentWord)
 		{
 			// Add the timelft in an array in order to calculate the average time
 			Round currentRound = storage.GetRound(roomID);
-			int index = storage.GetGame(roomID).GetPlayerIndex(username);
+			int index = storage.GetGame(std::move(roomID)).GetPlayerIndex(std::move(username));
 			
 			if(index == -1)
 				return crow::response{ 409, "Error adding the chat." };
@@ -279,9 +270,9 @@ void Routing::Run(Database& storage)
 		}
 		else
 		{
-			currentChat += username + ": " + text + "\n";
+			currentChat += username + ": " + std::move(text) + "\n";
 
-			if (!storage.SetGameChat(roomID, currentChat))
+			if (!storage.SetGameChat(std::move(roomID), std::move(currentChat)))
 				return crow::response{ 409, "Error adding the chat." };
 
 			return crow::response{ 200 };
@@ -292,20 +283,18 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/getChat")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
-		std::string chat = storage.GetGame(roomID).GetChat();
+		const std::string& roomID = x["roomID"];
 
-		return crow::response{ chat };
+		return crow::response{ storage.GetGame(std::move(roomID)).GetChat() };
 			});
 
 	// Gets the current drawing player name from the database
 	CROW_ROUTE(m_app, "/drawingPlayer")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
-		std::string drawer = storage.GetRound(roomID).GetDrawingPlayer();
+		const std::string& roomID = x["roomID"];
 
-		return crow::response{ drawer };
+		return crow::response{ storage.GetRound(std::move(roomID)).GetDrawingPlayer() };
 			});
 
 	// Gets the current round number from the database
@@ -313,39 +302,36 @@ void Routing::Run(Database& storage)
 		.methods("GET"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
 		std::string roomID = x["roomID"];
-		std::string roundNumber = std::to_string(storage.GetRound(roomID).GetRoundNumber()) + "/" + std::to_string(storage.GetGame(roomID).GetNoOfRounds());
 
-		return crow::response{ roundNumber };
+		return crow::response{ std::to_string(storage.GetRound(std::move(roomID)).GetRoundNumber()) + "/" + std::to_string(storage.GetGame(std::move(roomID)).GetNoOfRounds()) };
 			});
 
 	// Gets the current word that needs to be drawn from the database
 	CROW_ROUTE(m_app, "/currentWord")
 		.methods("GET"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
-		std::string currentWord = storage.GetRound(roomID).GetCurrentWord();
+		const std::string& roomID = x["roomID"];
 
-		return crow::response{ currentWord };
+		return crow::response{ storage.GetRound(std::move(roomID)).GetCurrentWord() };
 			});
 
 	// Updates the time left from the owner of the game and gets the time left from the database
 	CROW_ROUTE(m_app, "/timeLeft")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
 		if (req.method == crow::HTTPMethod::POST)
 		{
-			std::string timeLeft = x["timer"];
-			Round currentRound = storage.GetRound(roomID);
-			currentRound.SetTimeLeft(std::stoi(timeLeft));
+			const std::string& timeLeft = x["timer"];
+			Round currentRound = storage.GetRound(std::move(roomID));
+			currentRound.SetTimeLeft(std::stoi(std::move(timeLeft)));
 			storage.Update(currentRound);
 			return crow::response{ 200 };
 		}
 		else if (req.method == crow::HTTPMethod::GET)
 		{
-			std::string timeLeft = std::to_string(storage.GetRound(roomID).GetTimeLeft());
-			return crow::response{ timeLeft };
+			return crow::response{ std::to_string(storage.GetRound(std::move(roomID)).GetTimeLeft()) };
 		}
 		else
 			return crow::response{ 404 };
@@ -356,17 +342,17 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/nextRound")
 		.methods("POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
-		Round currentRound = storage.GetRound(roomID);
+		Round currentRound = storage.GetRound(std::move(roomID));
 		std::set<std::string> words = currentRound.GetWords();
-		std::vector<Player> players = storage.GetGame(roomID).GetPlayers();
+		std::vector<Player> players = storage.GetGame(std::move(roomID)).GetPlayers();
 		std::string currentDrawingPlayer = currentRound.GetDrawingPlayer();
 
 		// Calculate the average time on the current round in order to calculate the points to the drawer
 		int averageTime{ 0 };
 		int points{ 0 };
-		int currentDrawingPlayerIndex = storage.GetGame(roomID).GetPlayerIndex(currentDrawingPlayer);
+		int currentDrawingPlayerIndex = storage.GetGame(std::move(roomID)).GetPlayerIndex(std::move(currentDrawingPlayer));
 
 		for (uint8_t index = 0; index < currentRound.GetTimes().size(); index++)
 			if (index != currentDrawingPlayerIndex)
@@ -379,15 +365,16 @@ void Routing::Run(Database& storage)
 		else
 			points = ((60 - averageTime) * 100) / 60;
 
-		Player drawer = storage.GetPlayer(currentDrawingPlayer);
+		Player drawer = storage.GetPlayer(std::move(currentDrawingPlayer));
 
 		drawer.AddPoints(points); // Add the points to the drawer
 		storage.Update(drawer);
 
 		// If it is the last round and the last player is the drawer, the timer ended so the game ends
-		if (currentRound.GetRoundNumber() == storage.GetGame(roomID).GetNoOfRounds() && players[players.size() - 1].GetName() == currentDrawingPlayer)
+		if (currentRound.GetRoundNumber() == storage.GetGame(std::move(roomID)).GetNoOfRounds() && players[players.size() - 1].GetName() == currentDrawingPlayer)
 		{
 			storage.SetGameStatus(roomID, 3);
+			currentRound.SetImageData("");
 			return crow::response{ 200 };
 		}
 
@@ -434,32 +421,35 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/gameEnded")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
 		auto x = parseUrlArgs(req.body);
-		std::string roomID = x["roomID"];
+		const std::string& roomID = x["roomID"];
 
-		if (storage.GetGame(roomID).GetGameStatusAsInt() == 3)
+		if (storage.GetGame(std::move(roomID)).GetGameStatusAsInt() == 3)
 			return crow::response{ 200 };
 
 		return crow::response{ 409 };
 			});
 
-	CROW_ROUTE(m_app, "/startTurn/SendDrawing")
-		.methods("POST"_method)
-		([this](const crow::request& req) {
-		auto jsonData = crow::json::load(req.body);
-		if (!jsonData)
-			return crow::response(400);
+	CROW_ROUTE(m_app, "/drawingImage")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			const std::string& roomID = x["roomID"];
 
-		m_gameHandlers.SetDrawing(jsonData["DrawingData"].s());
-		return crow::response(200, "OK");
+			if (req.method == crow::HTTPMethod::POST)
+			{
+				const std::string& imageData = x["imageData"];
+				Round currentRound = storage.GetRound(std::move(roomID));
+				currentRound.SetImageData(std::move(imageData));
+				storage.Update(currentRound);
+				return crow::response{ 200 };
+			}
+			else if (req.method == crow::HTTPMethod::GET)
+			{
+				return crow::response{ storage.GetRound(std::move(roomID)).GetImageData() };
+			}
+			else
+				return crow::response{ 404 };
+
 			});
-
-	CROW_ROUTE(m_app, "/startTurn/Return_DrawingData")
-		.methods("POST"_method)
-		([this]() {
-		auto drawingData = m_gameHandlers.GetDrawing();
-		return crow::json::wvalue{ {"DrawingData", drawingData} };
-			});
-
 
 
 	m_app.bindaddr("127.0.0.1").port(18080).multithreaded().run();

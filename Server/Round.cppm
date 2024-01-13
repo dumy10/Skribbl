@@ -23,6 +23,7 @@ namespace skribbl
 		void SetRoundNumber(uint8_t roundNumber);
 		void DeserializeTimes(const std::string& serializedPoints);
 		void SetTimes(const std::vector<int>& times);
+		void SetImageData(const std::string& imageData);
 
 		int GetId() const noexcept;
 		std::string GetGameId() const noexcept;
@@ -35,6 +36,7 @@ namespace skribbl
 		std::string SerializeTimes() const noexcept;
 		std::vector<int> GetTimes() const noexcept;
 		void UpdateTimes(int index, int value) noexcept;
+		std::string GetImageData() const noexcept;
 
 		void SetTimeLeft(int timeLeft);
 		int GetTimeLeft() const noexcept;
@@ -44,6 +46,7 @@ namespace skribbl
 		std::string m_gameId;
 		std::string m_drawingPlayerName;
 		std::string m_currentWord;
+		std::string m_imageData;
 		std::set<std::string> m_words;
 		std::vector<int> m_times;
 		uint8_t m_roundNumber;

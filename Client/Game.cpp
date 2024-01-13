@@ -388,12 +388,12 @@ void Game::CheckGameEnded()
 
 	if (gameEndedRequest.status_code == 200)
 	{
-		
+
 		m_updateTimer->stop();
 		int time = 10;
 
 		QTimer* timer = new QTimer(this);
-		
+
 		connect(timer, &QTimer::timeout, [=]() mutable {
 			m_ui.timer->display(time);
 			time--;
@@ -589,28 +589,28 @@ TODO:
 */
 void Game::UpdateDrawingImage()
 {
-	if (m_isDrawing)
-	{
-		QImage image = m_drawingArea->GetImage();
+	//if (m_isDrawing)
+	//{
+	//	QImage image = m_drawingArea->GetImage();
 
-		QByteArray matrixData = SerializeImageToRGBMatrix(image);
+	//	QByteArray matrixData = SerializeImageToRGBMatrix(image);
 
-		QString qstring = convertToBase64String(matrixData);
+	//	QString qstring = convertToBase64String(matrixData);
 
-		std::string drawingData = qstring.toUtf8().constData();
-		//aici o sa trebuiasca sa trimit imaginea
+	//	std::string drawingData = qstring.toUtf8().constData();
+	//	//aici o sa trebuiasca sa trimit imaginea
 
-		Send_Drawing(drawingData);
-	}
-	else
-	{
-		//aici o sa trb sa primeasca clientul imaginea
-		std::string drawingData = Return_Drawing();
-		QString qStringData = QString::fromStdString(drawingData);
-		QByteArray byteArrayData = qStringData.toUtf8();
-		QImage image=convertByteArrayToQImage(byteArrayData);
-		m_drawingArea->SetImage(image);
-	}
+	//	Send_Drawing(drawingData);
+	//}
+	//else
+	//{
+	//	//aici o sa trb sa primeasca clientul imaginea
+	//	std::string drawingData = Return_Drawing();
+	//	QString qStringData = QString::fromStdString(drawingData);
+	//	QByteArray byteArrayData = qStringData.toUtf8();
+	//	QImage image=convertByteArrayToQImage(byteArrayData);
+	//	m_drawingArea->SetImage(image);
+	//}
 }
 
 void Game::closeEvent(QCloseEvent* event)
@@ -669,8 +669,19 @@ void Game::OnTimeEnd()
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
 		drawingArea->ClearDrawing();
+
 	/* Send the image to the server */
 
+	//QImage image = m_drawingArea->GetImage();
+
+	//QByteArray matrixData = SerializeImageToRGBMatrix(image);
+
+	//QString qstring = convertToBase64String(matrixData);
+
+	//std::string drawingData = qstring.toStdString();
+	//aici o sa trebuiasca sa trimit imaginea
+
+	//Send_Drawing(drawingData);
 }
 
 void Game::OnLeaveButtonClicked()
@@ -707,13 +718,13 @@ void Game::OnLeaveButtonClicked()
 
 
 
-QByteArray Game::SerializeImageToRGBMatrix(QImage& image) 
+QByteArray Game::SerializeImageToRGBMatrix(const QImage& image)
 {
 	QByteArray matrixData;
-	
-	for (int y = 0; y < image.height(); y++) 
+
+	for (int y = 0; y < image.height(); y++)
 	{
-		for (int x = 0; x < image.width(); x++) 
+		for (int x = 0; x < image.width(); x++)
 		{
 			QRgb pixel = image.pixel(x, y);
 			matrixData.append(qRed(pixel));
@@ -725,29 +736,39 @@ QByteArray Game::SerializeImageToRGBMatrix(QImage& image)
 	return matrixData;
 }
 
-QString Game::convertToBase64String(QByteArray& data)
+QString Game::convertToBase64String(const QByteArray& data)
 {
 	return data.toBase64();
 }
 
-void Game::Send_Drawing(std::string& drawingData)
+void Game::Send_Drawing(const std::string& drawingData)
 {
-	const std::string json_data = R"({"DrawingData": ")" + drawingData + R"("})";
-	const auto response = cpr::Post(
-		cpr::Url{ Server::GetUrl() },
-		cpr::Header{ {"Content-Type", "application/json"} },
-		cpr::Body{ json_data });
+	auto request = cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/drawingImage" },
+		cpr::Payload{ {"roomID", m_roomID}, {"imageData", drawingData} }
+	);
+
+
+	if (request.status_code != 200)
+		Send_Drawing(drawingData);
 }
 
 
 std::string Game::Return_Drawing()
 {
-	const auto response = cpr::Get(cpr::Url{ Server::GetUrl() });
-	return crow::json::load(response.text)["DrawingData"].s();
+	auto request = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/drawingImage" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (request.status_code != 200)
+		return Return_Drawing();
+
+	return request.text;
 }
 
 
-QImage Game::convertByteArrayToQImage(QByteArray& byteArray) 
+QImage Game::convertByteArrayToQImage(const QByteArray& byteArray)
 {
 	QImage image(621, 491, QImage::Format_ARGB32);
 
