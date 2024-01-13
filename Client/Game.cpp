@@ -390,6 +390,7 @@ void Game::CheckGameEnded()
 	{
 
 		m_updateTimer->stop();
+		m_roundTimer->stop();
 		int time = 10;
 
 		QTimer* timer = new QTimer(this);

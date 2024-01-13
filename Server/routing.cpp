@@ -14,7 +14,7 @@ void Routing::Run(Database& storage)
 	CROW_ROUTE(m_app, "/randomWord")([&]() {
 		return crow::response{ storage.GetRandomWord() };
 		});
-	
+
 	// Checks if the username exists in the database
 	CROW_ROUTE(m_app, "/checkUsername")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
@@ -24,7 +24,7 @@ void Routing::Run(Database& storage)
 		if (username == "")
 			return crow::response{ 404, "Username not found." };
 
-		if (storage.CheckUsername(username))
+		if (storage.CheckUsername(std::move(username)))
 			return crow::response{ "true" };
 
 		return crow::response{ 409, "Username does not exist!" };
@@ -72,7 +72,7 @@ void Routing::Run(Database& storage)
 		.methods("GET"_method, "POST"_method)([&]() {
 		std::string roomID = storage.GetRandomID();
 
-		while (storage.CheckRoomID(roomID) && storage.GetGame(roomID).GetGameStatusAsInt() != 3)
+		while (storage.CheckRoomID(std::move(roomID)) && storage.GetGame(std::move(roomID)).GetGameStatusAsInt() != 3)
 			roomID = storage.GetRandomID();
 
 		return crow::response{ roomID };
@@ -135,7 +135,7 @@ void Routing::Run(Database& storage)
 		auto x = parseUrlArgs(req.body);
 		const std::string& roomID = x["roomID"];
 
-		return crow::response{ storage.GetGame(roomID).SerializePlayers() };
+		return crow::response{ storage.GetGame(std::move(roomID)).SerializePlayers() };
 			});
 
 	// Gets the max number of players from the game in the database
@@ -207,7 +207,7 @@ void Routing::Run(Database& storage)
 		currentRound.SetWords(words);
 		currentRound.SetRoundNumber(1);
 		currentRound.SetDrawingPlayer(currentGame.GetPlayers()[0].GetName());
-		storage.Update(currentRound);
+		storage.Update(std::move(currentRound));
 
 		// Set the game status to 2 (in progress)
 		if (!storage.SetGameStatus(std::move(roomID), 2))
@@ -237,14 +237,14 @@ void Routing::Run(Database& storage)
 		std::string currentWord = storage.GetRound(std::move(roomID)).GetCurrentWord();
 		std::transform(text.begin(), text.end(), text.begin(), ::tolower);
 		std::transform(currentWord.begin(), currentWord.end(), currentWord.begin(), ::tolower);
-		
+
 		int timeLeft = storage.GetRound(std::move(roomID)).GetTimeLeft();
 		int score{ 0 };
 
 		if (timeLeft >= 30)
 			score = 100;
 		else if (timeLeft > 0 && timeLeft < 30)
-			score = ((60 - timeLeft) * 100) / 30;
+			score = (((60 - timeLeft) * 100) / 30);
 
 		Player player = storage.GetPlayer(std::move(username));
 		if (text == currentWord)
@@ -252,25 +252,25 @@ void Routing::Run(Database& storage)
 			// Add the timelft in an array in order to calculate the average time
 			Round currentRound = storage.GetRound(roomID);
 			int index = storage.GetGame(std::move(roomID)).GetPlayerIndex(std::move(username));
-			
-			if(index == -1)
+
+			if (index == -1)
 				return crow::response{ 409, "Error adding the chat." };
 
 			currentRound.UpdateTimes(index, timeLeft);
-			storage.Update(currentRound);
+			storage.Update(std::move(currentRound));
 
 			// Add the points to the player
 			player.AddPoints(score);
-			storage.Update(player);
+			storage.Update(std::move(player));
 
-			currentChat += username + " guessed the word!\n";
-			if (!storage.SetGameChat(roomID, currentChat))
+			currentChat += std::move(username) + " guessed the word!\n";
+			if (!storage.SetGameChat(std::move(roomID), std::move(currentChat)))
 				return crow::response{ 409, "Error adding the chat." };
 			return crow::response{ 200 , "TRUE" };
 		}
 		else
 		{
-			currentChat += username + ": " + std::move(text) + "\n";
+			currentChat += std::move(username) + ": " + std::move(text) + "\n";
 
 			if (!storage.SetGameChat(std::move(roomID), std::move(currentChat)))
 				return crow::response{ 409, "Error adding the chat." };
@@ -326,7 +326,7 @@ void Routing::Run(Database& storage)
 			const std::string& timeLeft = x["timer"];
 			Round currentRound = storage.GetRound(std::move(roomID));
 			currentRound.SetTimeLeft(std::stoi(std::move(timeLeft)));
-			storage.Update(currentRound);
+			storage.Update(std::move(currentRound));
 			return crow::response{ 200 };
 		}
 		else if (req.method == crow::HTTPMethod::GET)
@@ -351,29 +351,36 @@ void Routing::Run(Database& storage)
 
 		// Calculate the average time on the current round in order to calculate the points to the drawer
 		int averageTime{ 0 };
-		int points{ 0 };
+		int points{ -50 };
 		int currentDrawingPlayerIndex = storage.GetGame(std::move(roomID)).GetPlayerIndex(std::move(currentDrawingPlayer));
 
 		for (uint8_t index = 0; index < currentRound.GetTimes().size(); index++)
 			if (index != currentDrawingPlayerIndex)
 				averageTime = averageTime + (60 - currentRound.GetTimes()[index]);
 
-		averageTime /= players.size() - 1;
+		if(players.size() != 1)
+			averageTime /= players.size() - 1;
 
-		if (averageTime == ((players.size() - 1) * 60))
+		if (averageTime == ((players.size() - 1) * 60) || averageTime == 0)
+		{
+			std::ranges::for_each(players, [&](const Player& player) {
+				if (player.GetName() != currentDrawingPlayer)
+					storage.SetPlayerScore(std::move(player.GetName()), storage.GetPlayerScore(std::move(player.GetName())) + points);
+				});
 			points = -100;
+		}
 		else
 			points = ((60 - averageTime) * 100) / 60;
 
 		Player drawer = storage.GetPlayer(std::move(currentDrawingPlayer));
 
 		drawer.AddPoints(points); // Add the points to the drawer
-		storage.Update(drawer);
+		storage.Update(std::move(drawer));
 
 		// If it is the last round and the last player is the drawer, the timer ended so the game ends
 		if (currentRound.GetRoundNumber() == storage.GetGame(std::move(roomID)).GetNoOfRounds() && players[players.size() - 1].GetName() == currentDrawingPlayer)
 		{
-			storage.SetGameStatus(roomID, 3);
+			storage.SetGameStatus(std::move(roomID), 3);
 			currentRound.SetImageData("");
 			return crow::response{ 200 };
 		}
@@ -381,34 +388,31 @@ void Routing::Run(Database& storage)
 		// Set the average times to 0 for the next round
 		std::vector<int> times = currentRound.GetTimes();
 		std::ranges::for_each(times, [](int& time) { time = 0; });
-		
-		currentRound.SetTimes(times);
+
+		currentRound.SetTimes(std::move(times));
 
 		// Update the round
-		for (uint8_t index = 0; index < players.size(); index++)
+		for (size_t index = 0; index < players.size(); index++)
 		{
 			if (players[index].GetName() == currentDrawingPlayer)
 			{
-
 				if (index == players.size() - 1)
 				{
-					uint8_t roundNumber = currentRound.GetRoundNumber();
-					roundNumber++;
-					currentRound.SetRoundNumber(roundNumber);
-					currentRound.SetDrawingPlayer(players[0].GetName());
-					currentRound.SetCurrentWord(*words.begin());
+					currentRound.SetRoundNumber(currentRound.GetRoundNumber() + 1);
+					currentRound.SetDrawingPlayer(std::move(players[0].GetName()));
+					currentRound.SetCurrentWord(std::move(*words.begin()));
 					words.erase(words.begin());
-					currentRound.SetWords(words);
-					storage.Update(currentRound);
+					currentRound.SetWords(std::move(words));
+					storage.Update(std::move(currentRound));
 					return crow::response{ 200 };
 				}
 				else if (index < players.size() - 1)
 				{
-					currentRound.SetDrawingPlayer(players[index + 1].GetName());
-					currentRound.SetCurrentWord(*words.begin());
+					currentRound.SetDrawingPlayer(std::move(players[index + 1].GetName()));
+					currentRound.SetCurrentWord(std::move(*words.begin()));
 					words.erase(words.begin());
-					currentRound.SetWords(words);
-					storage.Update(currentRound);
+					currentRound.SetWords(std::move(words));
+					storage.Update(std::move(currentRound));
 					return crow::response{ 200 };
 				}
 			}
@@ -431,23 +435,23 @@ void Routing::Run(Database& storage)
 
 	CROW_ROUTE(m_app, "/drawingImage")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-			auto x = parseUrlArgs(req.body);
-			const std::string& roomID = x["roomID"];
+		auto x = parseUrlArgs(req.body);
+		const std::string& roomID = x["roomID"];
 
-			if (req.method == crow::HTTPMethod::POST)
-			{
-				const std::string& imageData = x["imageData"];
-				Round currentRound = storage.GetRound(std::move(roomID));
-				currentRound.SetImageData(std::move(imageData));
-				storage.Update(currentRound);
-				return crow::response{ 200 };
-			}
-			else if (req.method == crow::HTTPMethod::GET)
-			{
-				return crow::response{ storage.GetRound(std::move(roomID)).GetImageData() };
-			}
-			else
-				return crow::response{ 404 };
+		if (req.method == crow::HTTPMethod::POST)
+		{
+			const std::string& imageData = x["imageData"];
+			Round currentRound = storage.GetRound(std::move(roomID));
+			currentRound.SetImageData(std::move(imageData));
+			storage.Update(std::move(currentRound));
+			return crow::response{ 200 };
+		}
+		else if (req.method == crow::HTTPMethod::GET)
+		{
+			return crow::response{ storage.GetRound(std::move(roomID)).GetImageData() };
+		}
+		else
+			return crow::response{ 404 };
 
 			});
 

@@ -167,6 +167,10 @@ void Lobby::UpdateRoomInformation()
 		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
 		cpr::Payload{ {"roomID", m_roomID} }
 	);
+
+	if(req.status_code != 200)
+		return;
+
 	std::vector<std::string> players = split(req.text, ",");
 
 	if (players.empty())
