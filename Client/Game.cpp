@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "Settings.h"
 #include "Menu.h"
 #include "utils.h"
 
@@ -10,16 +9,19 @@
 Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
 	: QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(m_roomID)
 {
-	m_drawingArea = std::make_shared<DrawingWidget>(this);
+	m_drawingArea = std::make_unique<DrawingWidget>(this);
 	m_ui.setupUi(this);
 
 	HidePlayers();
 	DisplayPlayer(m_username, m_playerIndex, "0");
+
 	m_updateTimer = std::make_unique<QTimer>(this);
-	m_roundTimer = std::make_shared<QTimer>(this);
+	m_roundTimer = std::make_unique<QTimer>(this);
 
 	m_guessedWord = false;
+	m_currentBrushSizeIndex = 0;
 	StartTimer();
+
 	if (m_isOwner)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(700));
@@ -39,7 +41,6 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Yellow, &QPushButton::clicked, this, &Game::SetPenColorYellow);
 	connect(m_ui.Pink, &QPushButton::clicked, this, &Game::SetPenColorPink);
 	connect(m_ui.Turquoise, &QPushButton::clicked, this, &Game::SetPenColorTurquoise);
-	connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::OpenSettings);
 	connect(m_ui.Bucket, &QPushButton::clicked, this, &Game::OnFillButtonClicked);
 	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
@@ -183,13 +184,6 @@ void Game::SetPenColorPink()
 	}
 }
 
-void Game::OpenSettings()
-{
-	Settings* settings = new Settings(this);
-	settings->show();
-	// if the settings window is closed, the settings windows should be deleted from memory so it doesn't take up space
-}
-
 void Game::OnSendButtonClicked()
 {
 	QString text = m_ui.textEdit->toPlainText();
@@ -211,12 +205,6 @@ void Game::OnSendButtonClicked()
 		m_guessedWord = true;
 }
 
-/*
-TODO:
-- update room information (image that is being drawn)
-- if the player is the one that has to draw, send the image that is being drawn onto to the server every 0.2 seconds,
-otherwise pull and display the image from the server every 0.2 seconds
-*/
 void Game::UpdateRoomInformation()
 {
 	CheckGameEnded();
@@ -595,6 +583,10 @@ void Game::UpdateDrawingPlayerAndWord()
 	}
 }
 
+/*
+TODO:
+- update the drawing image
+*/
 void Game::UpdateDrawingImage()
 {
 	if (m_isDrawing)
@@ -644,6 +636,10 @@ void Game::ChangeBrushSize()
 	}
 }
 
+/*
+TODO:
+- send the image to the server
+*/
 void Game::OnTimeEnd()
 {
 	if (!m_isOwner)

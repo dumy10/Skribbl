@@ -16,15 +16,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
-    <ClCompile Include="Settings.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerProfile.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OtherPlayerProfile.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
     <ClCompile Include="DrawingWidget.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
@@ -68,15 +59,6 @@
     <QtMoc Include="Game.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Settings.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PlayerProfile.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="OtherPlayerProfile.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="DrawingWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -98,9 +80,6 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Game.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="Settings.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="PlayerProfile.ui">
