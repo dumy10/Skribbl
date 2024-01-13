@@ -40,9 +40,7 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("maxplayers", &Game::SetMaxPlayers, &Game::GetMaxPlayers),
 			sql::make_column("currentplayers", &Game::SetCurrentPlayers, &Game::GetCurrentPlayers),
 			sql::make_column("status", &Game::SetGameStatusInt, &Game::GetGameStatusAsInt),
-			sql::make_column("chat", &Game::SetChat, &Game::GetChat),
-			// foreign key for round table to reference the round with the same gameid
-			sql::foreign_key(&Game::GetId).references(&Round::GetGameId)
+			sql::make_column("chat", &Game::SetChat, &Game::GetChat)
 		),
 		sql::make_table(
 			"Rounds",
@@ -63,70 +61,31 @@ using Storage = decltype(CreateStorage(""));
 class Database
 {
 public:
-	// Initializes the database with the words from the file
-	bool Initialize();
-
-	// Gets a random word from the database
-	std::string GetRandomWord();
-	std::vector<Word> GetWords();
-	std::vector<std::string> GetCustomNumberOfWords(int numberOfWords);
-
-	//Gets all the stored games in the database *debugging purposes, will be removed later*
-	std::vector<Game> GetGames();
-	std::vector<Player> GetPlayers();
-	std::vector<Round> GetRounds();
-
-	// Adds a player to the database
-	bool AddUser(const std::string& username, const std::string& password, const std::string& email);
-
-	// Adds a game to the database
-	bool AddGame(const Player& player, const std::string& gameCode, size_t maxPlayers);
-	bool SetGameStatus(const std::string& roomID, int status);
-
-
-	// Gets a game from the database based on the roomID
-	Game GetGame(const std::string& roomID);
-
-	Round GetRound(const std::string& roomID);
-
-	// Sets the game chat in the database based on the roomID
-	bool SetGameChat(const std::string& roomID, const std::string& chat);
-
-	// Gets the players score from the database based on the username
-	int GetPlayerScore(const std::string& username);
 	
-	// Sets the players score in the database based on the username
-	void SetPlayerScore(const std::string& username, int score);
+	bool Initialize(); // Initializes the database with the words from the file
 
-	// Adds points to the players score in the database based on the username
-	void AddPointsToPlayer(const std::string& username, int points);
+	std::string GetRandomWord(); // Gets a random word from the database
 
-	// Substracts points from the players score in the database based on the username
-	void SubstractPointsFromPlayer(const std::string& username, int points);
+	bool AddUser(const std::string& username, const std::string& password, const std::string& email); // Adds a player to the database
+	bool AddGame(const Player& player, const std::string& gameCode, size_t maxPlayers); // Adds a game to the database
+	bool SetGameStatus(const std::string& roomID, int status); // Sets the game status in the database based on the roomID
+	bool SetGameChat(const std::string& roomID, const std::string& chat); // Sets the game chat in the database based on the roomID
+	bool AddPlayerToGame(const Player& player, const std::string& roomID, int currentPlayers); // Adds a player to an existing game based on the roomID in the database and updates the currentPlayers count
+	bool RemovePlayerFromGame(const Player& player, const std::string& roomID); // Removes a player from an existing game based on the roomID in the database and updates the currentPlayers count
+	bool CheckUsername(const std::string& username); //Checks if a username exists in the database
+	bool CheckRoomID(const std::string& roomID); // Checks if a game with the roomID exists in the database
+	bool CheckPassword(const std::string& username, const std::string& password); //Checks if a username and password match
 
-	// Adds a player to an existing game based on the roomID in the database and updates the currentPlayers count
-	bool AddPlayerToGame(const Player& player, const std::string& roomID, int currentPlayers);
+	Game GetGame(const std::string& roomID); // Gets a game from the database based on the roomID
+	Round GetRound(const std::string& roomID); // Gets a round from the database based on the roomID
+	Player GetPlayer(const std::string& username); // Gets a player from the database based on the username
+	int GetPlayerScore(const std::string& username); // Gets the players score from the database based on the username
+	void SetPlayerScore(const std::string& username, int score); // Sets the players score in the database based on the username
 
-	// Removes a player from an existing game based on the roomID in the database and updates the currentPlayers count
-	bool RemovePlayerFromGame(const Player& player, const std::string& roomID);
-
-	// Gets a player from the database based on the username
-	Player GetPlayer(const std::string& username);
-
-	//Checks if a username exists in the database
-	bool CheckUsername(const std::string& username);
-
-	// Checks if a game with the roomID exists in the database
-	bool CheckRoomID(const std::string& roomID);
-
-	//Checks if a username and password match
-	bool CheckPassword(const std::string& username, const std::string& password);
-
-	//Gets a random ID for game
-	std::string GetRandomID();
+	std::string GetRandomID(); //Gets a random ID for game
 
 	template<typename T>
-	void Update(T object);
+	void Update(T object); // Updates an object in the database
 
 private:
 	void PopulateStorage();

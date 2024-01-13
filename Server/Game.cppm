@@ -4,10 +4,7 @@ import round;
 import player;
 import <vector>;
 import <string>;
-import <array>;
 import <sstream>;
-import <algorithm>;
-import <set>;
 
 namespace skribbl
 {

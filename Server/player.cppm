@@ -21,17 +21,16 @@ namespace skribbl
 		void SetEmail(const std::string& email);
 		void SetPoints(int points);
 		void AddPoints(int points);
-		void SubstractPoints(int points);
 
 		bool operator<(const Player& player);
 		bool operator>(const Player& player);
 		bool operator==(const Player& player);
 	private:
 		int m_id;
+		int m_points;
 		std::string m_name;
 		std::string m_password;
 		std::string m_email;
-		int m_points;
 	};
 }
 

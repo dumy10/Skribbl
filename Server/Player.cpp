@@ -12,6 +12,31 @@ Player::Player(int id, const std::string& name, const std::string& password, con
 	// Empty
 }
 
+const std::string Player::GetName() const noexcept
+{
+	return this->m_name;
+}
+
+const std::string Player::GetPassword() const noexcept
+{
+	return this->m_password;
+}
+
+const std::string Player::GetEmail() const noexcept
+{
+	return this->m_email;
+}
+
+int Player::GetId() const
+{
+	return this->m_id;
+}
+
+int Player::GetPoints() const
+{
+	return this->m_points;
+}
+
 void Player::SetId(int id)
 {
 	this->m_id = id;
@@ -40,36 +65,6 @@ void Player::SetPoints(int points)
 void Player::AddPoints(int points)
 {
 	this->m_points += points;
-}
-
-void Player::SubstractPoints(int points)
-{
-	this->m_points -= points;
-}
-
-int Player::GetId() const
-{
-	return this->m_id;
-}
-
-int Player::GetPoints() const
-{
-	return this->m_points;
-}
-
-const std::string Player::GetName() const noexcept
-{
-	return this->m_name;
-}
-
-const std::string Player::GetPassword() const noexcept
-{
-	return this->m_password;
-}
-
-const std::string Player::GetEmail() const noexcept
-{
-	return this->m_email;
 }
 
 bool Player::operator<(const Player& player)

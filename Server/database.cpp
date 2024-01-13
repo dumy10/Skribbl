@@ -12,64 +12,12 @@ bool Database::Initialize()
 	return wordCount != 0;
 }
 
-void Database::PopulateStorage()
-{
-	std::vector<Word> words;
-	std::string word;
-	std::ifstream input{ "words.txt" };
-	if (input.fail())
-	{
-		std::cerr << "Failed to open words.txt\n";
-		return;
-	}
-	while (std::getline(input, word))
-		words.emplace_back(Word{ -1, std::move(word) });
-
-	input.close();
-	m_db.insert_range(words.begin(), words.end());
-}
-
 std::string Database::GetRandomWord()
 {
 	auto wordCount = m_db.count<Word>();
 	auto randomWordIndex = GenerateRandomNumber(1, wordCount);
 	auto word = m_db.get<Word>(randomWordIndex);
 	return word.GetWord();
-}
-
-std::vector<Word> Database::GetWords()
-{
-	return m_db.get_all<Word>();
-}
-
-std::vector<std::string> Database::GetCustomNumberOfWords(int numberOfWords)
-{
-	std::vector<std::string> words;
-	auto wordCount = m_db.count<Word>();
-
-	for (int i = 0; i < numberOfWords; i++)
-	{
-		auto randomWordIndex = GenerateRandomNumber(1, wordCount);
-		auto word = m_db.get<Word>(randomWordIndex);
-		words.push_back(word.GetWord());
-	}
-
-	return words;
-}
-
-std::vector<Game> Database::GetGames()
-{
-	return m_db.get_all<Game>();
-}
-
-std::vector<Player> Database::GetPlayers()
-{
-	return m_db.get_all<Player>();
-}
-
-std::vector<Round> Database::GetRounds()
-{
-	return m_db.get_all<Round>();
 }
 
 bool Database::AddUser(const std::string& username, const std::string& password, const std::string& email)
@@ -121,22 +69,6 @@ bool Database::SetGameStatus(const std::string& roomID, int status)
 	}
 }
 
-Game Database::GetGame(const std::string& roomID)
-{
-	auto existingGames = m_db.get_all<Game>(
-		sql::where(sql::c(&Game::GetGameCode) == roomID)
-	);
-	return existingGames[0];
-}
-
-Round Database::GetRound(const std::string& roomID)
-{
-	auto existingRounds = m_db.get_all<Round>(
-		sql::where(sql::c(&Round::GetGameId) == roomID)
-	);
-	return existingRounds[0];
-}
-
 bool Database::SetGameChat(const std::string& roomID, const std::string& chat)
 {
 	try
@@ -157,78 +89,6 @@ bool Database::SetGameChat(const std::string& roomID, const std::string& chat)
 	{
 		std::cerr << "Exception occurred while setting game chat: " << exception.what() << "\n";
 		return false;
-	}
-}
-
-int Database::GetPlayerScore(const std::string& username)
-{
-	auto existingPlayers = m_db.get_all<Player>(
-		sql::where(sql::c(&Player::GetName) == username)
-	);
-
-	if (existingPlayers.empty())
-		return 0;
-
-	return existingPlayers[0].GetPoints();
-}
-
-void Database::SetPlayerScore(const std::string& username, int score)
-{
-	try
-	{
-		auto existingPlayers = m_db.get_all<Player>(
-			sql::where(sql::c(&Player::GetName) == username)
-		);
-
-		if (existingPlayers.empty())
-			return;
-
-		auto& player = existingPlayers[0];
-		player.SetPoints(score);
-		m_db.update(player);
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Exception occurred while setting player score: " << e.what() << "\n";
-	}
-}
-
-void Database::AddPointsToPlayer(const std::string& username, int points)
-{
-	try
-	{
-		auto existingPlayers = m_db.get_all<Player>(
-			sql::where(sql::c(&Player::GetName) == username)
-		);
-
-		if (existingPlayers.empty())
-			return;
-
-		auto& player = existingPlayers[0];
-		player.AddPoints(points);
-		m_db.update(player);
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Exception occurred while adding points to player: " << e.what() << "\n";
-	}
-}
-
-void Database::SubstractPointsFromPlayer(const std::string& username, int points)
-{
-	try
-	{
-		auto existingPlayers = m_db.get_all<Player>(
-			sql::where(sql::c(&Player::GetName) == username)
-		);
-
-		if (existingPlayers.empty())
-			return;
-
-		auto& player = existingPlayers[0];
-		player.SubstractPoints(points);
-		m_db.update(player);
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Exception occurred while substracting points from player: " << e.what() << "\n";
 	}
 }
 
@@ -277,25 +137,6 @@ bool Database::RemovePlayerFromGame(const Player& player, const std::string& roo
 	}
 }
 
-Player Database::GetPlayer(const std::string& username)
-{
-	try
-	{
-		auto existingPlayers = m_db.get_all<Player>(
-			sql::where(sql::c(&Player::GetName) == username)
-		);
-
-		if (existingPlayers.empty())
-			return Player{};
-
-		return existingPlayers[0];
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Exception occurred while getting player: " << e.what() << "\n";
-		return Player{};
-	}
-}
-
 bool Database::CheckUsername(const std::string& username)
 {
 	try
@@ -308,6 +149,22 @@ bool Database::CheckUsername(const std::string& username)
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Exception occurred while checking if username exists: " << e.what() << "\n";
+		return false;
+	}
+}
+
+bool Database::CheckRoomID(const std::string& roomID)
+{
+	try
+	{
+		auto existingGames = m_db.get_all<Game>(
+			sql::where(sql::c(&Game::GetGameCode) == roomID)
+		);
+
+		return !existingGames.empty();
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while checking if roomID exists: " << e.what() << "\n";
 		return false;
 	}
 }
@@ -331,19 +188,70 @@ bool Database::CheckPassword(const std::string& username, const std::string& pas
 	}
 }
 
-bool Database::CheckRoomID(const std::string& roomID)
+Game Database::GetGame(const std::string& roomID)
+{
+	auto existingGames = m_db.get_all<Game>(
+		sql::where(sql::c(&Game::GetGameCode) == roomID)
+	);
+	return existingGames[0];
+}
+
+Round Database::GetRound(const std::string& roomID)
+{
+	auto existingRounds = m_db.get_all<Round>(
+		sql::where(sql::c(&Round::GetGameId) == roomID)
+	);
+	return existingRounds[0];
+}
+
+Player Database::GetPlayer(const std::string& username)
 {
 	try
 	{
-		auto existingGames = m_db.get_all<Game>(
-			sql::where(sql::c(&Game::GetGameCode) == roomID)
+		auto existingPlayers = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::GetName) == username)
 		);
 
-		return !existingGames.empty();
+		if (existingPlayers.empty())
+			return Player{};
+
+		return existingPlayers[0];
 	}
 	catch (const std::exception& e) {
-		std::cerr << "Exception occurred while checking if roomID exists: " << e.what() << "\n";
-		return false;
+		std::cerr << "Exception occurred while getting player: " << e.what() << "\n";
+		return Player{};
+	}
+}
+
+int Database::GetPlayerScore(const std::string& username)
+{
+	auto existingPlayers = m_db.get_all<Player>(
+		sql::where(sql::c(&Player::GetName) == username)
+	);
+
+	if (existingPlayers.empty())
+		return 0;
+
+	return existingPlayers[0].GetPoints();
+}
+
+void Database::SetPlayerScore(const std::string& username, int score)
+{
+	try
+	{
+		auto existingPlayers = m_db.get_all<Player>(
+			sql::where(sql::c(&Player::GetName) == username)
+		);
+
+		if (existingPlayers.empty())
+			return;
+
+		auto& player = existingPlayers[0];
+		player.SetPoints(score);
+		m_db.update(player);
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception occurred while setting player score: " << e.what() << "\n";
 	}
 }
 
@@ -354,6 +262,23 @@ std::string Database::GetRandomID()
 		id += std::to_string(GenerateRandomNumber(0, 9));
 
 	return id;
+}
+
+void Database::PopulateStorage()
+{
+	std::vector<Word> words;
+	std::string word;
+	std::ifstream input{ "words.txt" };
+	if (input.fail())
+	{
+		std::cerr << "Failed to open words.txt\n";
+		return;
+	}
+	while (std::getline(input, word))
+		words.emplace_back(Word{ -1, std::move(word) });
+
+	input.close();
+	m_db.insert_range(words.begin(), words.end());
 }
 
 int Database::GenerateRandomNumber(int min, int max)

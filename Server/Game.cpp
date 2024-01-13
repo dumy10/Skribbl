@@ -28,61 +28,6 @@ void Game::RemovePlayer(const Player& player)
 	}
 }
 
-std::string Game::GetGameCode() const noexcept
-{
-	return this->m_gameCode;
-}
-
-const Game::GameStatus Game::GetGameStatus() const noexcept
-{
-	return this->m_gameStatus;
-}
-
-void Game::SetGameCode(const std::string& gameCode)
-{
-	this->m_gameCode = gameCode;
-}
-
-void Game::SetGameStatus(GameStatus status)
-{
-	this->m_gameStatus = status;
-}
-
-void Game::SetMaxPlayers(size_t maxPlayers)
-{
-	this->m_maxPlayers = maxPlayers;
-}
-
-void Game::SetCurrentPlayers(int currentPlayers)
-{
-	this->m_currentPlayers = currentPlayers;
-}
-
-void Game::SetId(int id)
-{
-	this->m_id = id;
-}
-
-void Game::SetPlayers(const std::vector<Player>& players)
-{
-	this->m_players = players;
-}
-
-void Game::SetGameStatusInt(int status)
-{
-	this->m_gameStatus = static_cast<GameStatus>(status);
-}
-
-void Game::SetChat(const std::string& chat)
-{
-	this->m_chat = chat;
-}
-
-int Game::GetGameStatusAsInt() const
-{
-	return static_cast<int>(m_gameStatus);
-}
-
 void Game::DeserializePlayers(const std::string& serializedPlayers) {
 	m_players.clear();
 	std::istringstream iss(serializedPlayers);
@@ -96,6 +41,11 @@ int Game::GetCurrentPlayers() const
 	return m_players.size();
 }
 
+int Game::GetGameStatusAsInt() const
+{
+	return static_cast<int>(m_gameStatus);
+}
+
 std::string Game::SerializePlayers() const
 {
 	std::string serializedPlayers;
@@ -106,6 +56,16 @@ std::string Game::SerializePlayers() const
 		serializedPlayers.pop_back();
 
 	return serializedPlayers;
+}
+
+std::string Game::GetGameCode() const noexcept
+{
+	return this->m_gameCode;
+}
+
+const Game::GameStatus Game::GetGameStatus() const noexcept
+{
+	return this->m_gameStatus;
 }
 
 const size_t Game::GetMaxPlayers() const noexcept
@@ -157,4 +117,44 @@ int Game::GetPlayerIndex(const std::string& username) const noexcept
 		if (m_players[i].GetName() == username)
 			return i;
 	return -1;
+}
+
+void Game::SetGameCode(const std::string& gameCode)
+{
+	this->m_gameCode = gameCode;
+}
+
+void Game::SetGameStatus(GameStatus status)
+{
+	this->m_gameStatus = status;
+}
+
+void Game::SetMaxPlayers(size_t maxPlayers)
+{
+	this->m_maxPlayers = maxPlayers;
+}
+
+void Game::SetCurrentPlayers(int currentPlayers)
+{
+	this->m_currentPlayers = currentPlayers;
+}
+
+void Game::SetId(int id)
+{
+	this->m_id = id;
+}
+
+void Game::SetPlayers(const std::vector<Player>& players)
+{
+	this->m_players = players;
+}
+
+void Game::SetGameStatusInt(int status)
+{
+	this->m_gameStatus = static_cast<GameStatus>(status);
+}
+
+void Game::SetChat(const std::string& chat)
+{
+	this->m_chat = chat;
 }

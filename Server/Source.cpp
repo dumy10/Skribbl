@@ -6,23 +6,15 @@
 #include "database.h"
 #include "routing.h"
 
-import game;
-import player;
-
-
 int main()
 {
 	Database storage;
 
 	if (!storage.Initialize())
 	{
-		std::cout << "Failed to initialize database" << std::endl;
+		std::cerr << "Failed to initialize database" << std::endl;
 		return -1;
 	}
-
-	std::vector<Player> players = storage.GetPlayers(); // leave this for debugging
-	std::vector<Game> games = storage.GetGames(); // leave this for debugging
-	std::vector<Round> rounds = storage.GetRounds(); // leave this for debugging
 
 	try 
 	{
@@ -34,7 +26,6 @@ int main()
 		std::cerr << e.what() << std::endl;
 		return -1;
 	}
-	
 
 	return 0;
 }

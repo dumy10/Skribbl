@@ -3,10 +3,8 @@ export module round;
 import player;
 
 import <vector>;
-import <string>;
 import <set>;
-import <chrono>;
-import <thread>;
+import <string>;
 import <sstream>;
 
 namespace skribbl
