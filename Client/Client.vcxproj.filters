@@ -82,12 +82,6 @@
     <QtUic Include="Game.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtUic Include="PlayerProfile.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="OtherPlayerProfile.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
     <QtUic Include="Lobby.ui">
       <Filter>Form Files</Filter>
     </QtUic>

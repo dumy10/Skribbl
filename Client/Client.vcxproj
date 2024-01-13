@@ -120,8 +120,6 @@
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="main.cpp" />
     <QtUic Include="Menu.ui" />
-    <QtUic Include="OtherPlayerProfile.ui" />
-    <QtUic Include="PlayerProfile.ui" />
     <QtUic Include="RegisterForm.ui" />
     <QtUic Include="ServerConnectForm.ui" />
   </ItemGroup>
