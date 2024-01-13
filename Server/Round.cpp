@@ -13,8 +13,7 @@ Round::Round(int id, const std::string& gameId, size_t maxPlayers)
 	m_timeLeft{ 60 }
 {
 	m_times.resize(maxPlayers);
-	for (auto& time : m_times)
-		time = 0;
+	std::ranges::for_each(m_times, [](auto& time) { time = 0; });
 }
 
 void Round::SetId(int id)
@@ -53,6 +52,11 @@ void Round::DeserializeTimes(const std::string& serializedTimes)
 	std::string point;
 	while (std::getline(ss, point, ','))
 		m_times.push_back(std::stoi(point));
+}
+
+void Round::SetTimes(const std::vector<int>& times)
+{
+	m_times = times;
 }
 
 int Round::GetId() const noexcept

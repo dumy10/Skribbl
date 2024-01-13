@@ -31,7 +31,6 @@ private slots:
 	void SetPenColorGrey();
 	void SetPenColorTurquoise();
 	void SetPenColorPink();
-	void OpenSettings();
 	void OnFillButtonClicked();
 	void OnSendButtonClicked();
 	void OnUndoButtonClicked();
@@ -39,6 +38,7 @@ private slots:
 	void OnPlayerQuit();
 	void ChangeBrushSize();
 	void OnTimeEnd();
+	void OnLeaveButtonClicked();
 
 private:
 	void DisplayPlayer(const std::string& username, int index, const std::string& score);
@@ -69,12 +69,12 @@ private:
 	bool m_isOwner;
 	bool m_isDrawing;
 	bool m_guessedWord;
-	int m_currentBrushSizeIndex{ 0 };
+	int m_currentBrushSizeIndex;
 	
 private:
-	std::shared_ptr<DrawingWidget> m_drawingArea;
+	std::unique_ptr<DrawingWidget> m_drawingArea;
 	std::unique_ptr<QTimer> m_updateTimer;
-	std::shared_ptr<QTimer> m_roundTimer;
+	std::unique_ptr<QTimer> m_roundTimer;
 };
 
 #endif // GAME_H

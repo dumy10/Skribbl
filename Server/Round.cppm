@@ -1,11 +1,11 @@
 export module round;
 
-import player;
-
 import <vector>;
 import <set>;
 import <string>;
 import <sstream>;
+import <algorithm>;
+import <ranges>;
 
 namespace skribbl
 {
@@ -22,6 +22,7 @@ namespace skribbl
 		void SetWords(const std::set<std::string>& words);
 		void SetRoundNumber(uint8_t roundNumber);
 		void DeserializeTimes(const std::string& serializedPoints);
+		void SetTimes(const std::vector<int>& times);
 
 		int GetId() const noexcept;
 		std::string GetGameId() const noexcept;

@@ -4,7 +4,6 @@
 #include <QTime>
 #include <QCoreApplication>
 
-//#include "Hashing.h"
 #include "utils.h"
 #include <cpr/cpr.h>
 #include <crow.h>
@@ -95,11 +94,6 @@ void RegisterForm::OnBackButtonClicked()
 	LoginForm* loginForm = new LoginForm();
 	loginForm->show();
 }
-
-/*
-TODO:
-- Hasher getting a null password passed
-*/
 
 void RegisterForm::OnRegisterButtonClicked()
 {

@@ -1135,7 +1135,7 @@ QPushButton:default
    <widget class="QLabel" name="drawerLabel">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>380</x>
       <y>30</y>
       <width>361</width>
       <height>41</height>

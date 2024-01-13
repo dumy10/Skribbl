@@ -172,7 +172,7 @@ void Lobby::UpdateRoomInformation()
 	if (players.empty())
 		return;
 
-	if(players.size() != 1 && m_isOwner)
+	if (players.size() != 1 && m_isOwner)
 		m_ui.startGame->show();
 	else
 		m_ui.startGame->hide();
@@ -271,7 +271,7 @@ void Lobby::OnStartGameButtonPress()
 		if (request.status_code != 200)
 			return;
 
-		Game* game = new Game(std::move(m_username), m_isOwner, m_playerIndex, m_roomID);
+		Game* game = new Game(std::move(m_username), m_playerIndex, m_isOwner, m_roomID);
 		game->show();
 		this->hide();
 		this->deleteLater();
