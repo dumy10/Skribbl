@@ -590,11 +590,24 @@ void Game::UpdateDrawingImage()
 	if (m_isDrawing)
 	{
 		QImage image = m_drawingArea->GetImage();
-		/* Send the image to the server */
+
+		QByteArray matrixData = SerializeImageToRGBMatrix(image);
+
+		QString qstring = convertToBase64String(matrixData);
+
+		std::string drawingData = qstring.toUtf8().constData();
+		//aici o sa trebuiasca sa trimit imaginea
+
+		Send_Drawing(drawingData);
 	}
 	else
 	{
-		/* Get the image from the server and display it */
+		//aici o sa trb sa primeasca clientul imaginea
+		std::string drawingData = Return_Drawing();
+		QString qStringData = QString::fromStdString(drawingData);
+		QByteArray byteArrayData = qStringData.toUtf8();
+		QImage image=convertByteArrayToQImage(byteArrayData);
+		m_drawingArea->SetImage(image);
 	}
 }
 
@@ -652,23 +665,66 @@ void Game::OnTimeEnd()
 		drawingArea->ClearDrawing();
 	/* Send the image to the server */
 
-
 }
 
 
 
-//QByteArray SerializeImageToRGBMatrix(const QImage& image) 
-//{
-//	QByteArray matrixData;
-//	
-//	for (int y = 0; y < image.height(); y++) {
-//		for (int x = 0; x < image.width(); x++) {
-//			QRgb pixel = image.pixel(x, y);
-//			matrixData.append(qRed(pixel));
-//			matrixData.append(qGreen(pixel));
-//			matrixData.append(qBlue(pixel));
-//
-//		}
-//	}
-//	return matrixData;
-//}
+QByteArray Game::SerializeImageToRGBMatrix(QImage& image) 
+{
+	QByteArray matrixData;
+	
+	for (int y = 0; y < image.height(); y++) 
+	{
+		for (int x = 0; x < image.width(); x++) 
+		{
+			QRgb pixel = image.pixel(x, y);
+			matrixData.append(qRed(pixel));
+			matrixData.append(qGreen(pixel));
+			matrixData.append(qBlue(pixel));
+
+		}
+	}
+	return matrixData;
+}
+
+QString Game::convertToBase64String(QByteArray& data)
+{
+	return data.toBase64();
+}
+
+void Game::Send_Drawing(std::string& drawingData)
+{
+	const std::string json_data = R"({"DrawingData": ")" + drawingData + R"("})";
+	const auto response = cpr::Post(
+		cpr::Url{ Server::GetUrl() },
+		cpr::Header{ {"Content-Type", "application/json"} },
+		cpr::Body{ json_data });
+}
+
+
+std::string Game::Return_Drawing()
+{
+	const auto response = cpr::Get(cpr::Url{ Server::GetUrl() });
+	return crow::json::load(response.text)["DrawingData"].s();
+}
+
+
+QImage Game::convertByteArrayToQImage(QByteArray& byteArray) 
+{
+	QImage image(621, 491, QImage::Format_ARGB32);
+
+	const uchar* data = reinterpret_cast<const uchar*>(byteArray.constData());
+
+	for (int y = 0; y < 491; ++y) {
+		QRgb* line = reinterpret_cast<QRgb*>(image.scanLine(y));
+		for (int x = 0; x < 621; ++x) {
+			int red = *data++;
+			int green = *data++;
+			int blue = *data++;
+			// Assuming the alpha channel is fully opaque
+			line[x] = qRgba(red, green, blue, 255);
+		}
+	}
+
+	return image;
+}

@@ -449,5 +449,25 @@ void Routing::Run(Database& storage)
 		return crow::response{ 409 };
 			});
 
+	CROW_ROUTE(m_app, "/startTurn/SendDrawing")
+		.methods("POST"_method)
+		([this](const crow::request& req) {
+		auto jsonData = crow::json::load(req.body);
+		if (!jsonData)
+			return crow::response(400);
+
+		m_gameHandlers.SetDrawing(jsonData["DrawingData"].s());
+		return crow::response(200, "OK");
+			});
+
+	CROW_ROUTE(m_app, "/startTurn/Return_DrawingData")
+		.methods("POST"_method)
+		([this]() {
+		auto drawingData = m_gameHandlers.GetDrawing();
+		return crow::json::wvalue{ {"DrawingData", drawingData} };
+			});
+
+
+
 	m_app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }
