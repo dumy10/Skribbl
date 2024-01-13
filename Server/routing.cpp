@@ -197,8 +197,7 @@ void Routing::Run(Database& storage)
 		std::vector<Player> players = storage.GetGame(roomID).GetPlayers();
 
 		// Set the players score to 0 at the start of the game
-		for (auto& player : players)
-			storage.SetPlayerScore(player.GetName(), 0);
+		std::ranges::for_each(players, [&](Player& player) { player.SetPoints(0); storage.Update(player); });
 
 		Game currentGame = storage.GetGame(roomID);
 		Round currentRound = storage.GetRound(roomID);
@@ -394,8 +393,8 @@ void Routing::Run(Database& storage)
 
 		// Set the average times to 0 for the next round
 		std::vector<int> times = currentRound.GetTimes();
-		for(auto& time : times)
-			time = 0;
+		std::ranges::for_each(times, [](int& time) { time = 0; });
+		
 		currentRound.SetTimes(times);
 
 		// Update the round
