@@ -590,28 +590,28 @@ TODO:
 */
 void Game::UpdateDrawingImage()
 {
-	//if (m_isDrawing)
-	//{
-	//	QImage image = m_drawingArea->GetImage();
+	/*if (m_isDrawing)
+	{
+		QImage image = m_drawingArea->GetImage();
 
-	//	QByteArray matrixData = SerializeImageToRGBMatrix(image);
+		QByteArray matrixData = SerializeImageToRGBMatrix(image);
 
-	//	QString qstring = convertToBase64String(matrixData);
+		QString qstring = convertToBase64String(matrixData);
 
-	//	std::string drawingData = qstring.toUtf8().constData();
-	//	//aici o sa trebuiasca sa trimit imaginea
+		std::string drawingData = matrixData.toStdString();
+		//aici o sa trebuiasca sa trimit imaginea
 
-	//	Send_Drawing(drawingData);
-	//}
-	//else
-	//{
-	//	//aici o sa trb sa primeasca clientul imaginea
-	//	std::string drawingData = Return_Drawing();
-	//	QString qStringData = QString::fromStdString(drawingData);
-	//	QByteArray byteArrayData = qStringData.toUtf8();
-	//	QImage image=convertByteArrayToQImage(byteArrayData);
-	//	m_drawingArea->SetImage(image);
-	//}
+		Send_Drawing(drawingData);
+	}
+	else
+	{
+		//aici o sa trb sa primeasca clientul imaginea
+		std::string drawingData = Return_Drawing();
+		QString qStringData = QString::fromStdString(drawingData);
+		QByteArray byteArrayData = qStringData.toUtf8();
+		QImage image=convertByteArrayToQImage(byteArrayData);
+		m_drawingArea->SetImage(image);
+	}*/
 }
 
 void Game::closeEvent(QCloseEvent* event)

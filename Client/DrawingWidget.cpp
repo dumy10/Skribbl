@@ -4,8 +4,8 @@
 DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), m_isDrawing(false), m_isErasing(false)
 {
     setAttribute(Qt::WA_StaticContents); // Continutul widgetului ramane static la redimensionare
-    m_image = QImage(621, 491, QImage::Format_ARGB32); // Initializare imagine
-    m_image.fill(Qt::white); // Umple imaginea cu alb
+    m_pixmap = QPixmap(621, 491);
+    m_pixmap.fill(Qt::white); // Umple imaginea cu alb
     m_pen = QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // Initializare stilou
     m_fillMode = false;
 }
@@ -16,7 +16,10 @@ void DrawingWidget::mousePressEvent(QMouseEvent* event)
     {
         saveCurrentState();
         QPoint fillStartPoint = event->pos();
-        QColor oldColor = m_image.pixelColor(fillStartPoint);
+        QColor oldColor;
+        QImage tempImage = m_pixmap.toImage(); 
+        if (tempImage.valid(fillStartPoint))  
+            oldColor = tempImage.pixelColor(fillStartPoint);
         FloodFill(fillStartPoint, m_currentFillColor, oldColor);
     }
     else
@@ -41,12 +44,16 @@ void DrawingWidget::mousePressEvent(QMouseEvent* event)
             SetEraser(); // Seteaza modul de stergere
         }
     }
+    update();
 }
 
 void DrawingWidget::mouseMoveEvent(QMouseEvent* event)
 {
     if ((event->buttons() & (Qt::LeftButton | Qt::RightButton)) && m_isDrawing)
+    {
         DrawLineTo(event->pos());
+        update();
+    }
 }
 
 void DrawingWidget::mouseReleaseEvent(QMouseEvent* event)
@@ -55,6 +62,7 @@ void DrawingWidget::mouseReleaseEvent(QMouseEvent* event)
     {
         DrawLineTo(event->pos());
         m_isDrawing = false;
+        update();
     }
 }
 
@@ -62,7 +70,7 @@ void DrawingWidget::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
     QRect dirtyRect = event->rect();
-    painter.drawImage(dirtyRect, m_image, dirtyRect);
+    painter.drawPixmap(dirtyRect, m_pixmap, dirtyRect);
 }
 
 void DrawingWidget::SetEraser()
@@ -75,7 +83,7 @@ void DrawingWidget::SetEraser()
 
 void DrawingWidget::ClearDrawing()
 {
-    m_image.fill(Qt::white);
+    m_pixmap.fill(Qt::white);
     update();
 }
 
@@ -93,7 +101,7 @@ void DrawingWidget::setText(const QString& text)
 
 void DrawingWidget::DrawLineTo(const QPoint& endPoint)
 {
-    QPainter painter(&m_image);
+    QPainter painter(&m_pixmap);
     painter.setPen(m_pen);
 
     // Calculate the line points between m_lastPoint and endPoint
@@ -112,6 +120,7 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
     }
 
     update(QRect(m_lastPoint, endPoint).normalized().adjusted(-1, -1, 1, 1));
+    update();
 }
 
 
@@ -162,7 +171,7 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
 
 void DrawingWidget::FloodFill(const QPoint&, const QColor& fillColor, const QColor&) {
     // Fill the entire image with the selected fill color.
-    m_image.fill(fillColor);
+    m_pixmap.fill(fillColor);
 
     // Trigger an update for the widget to repaint itself with the new fill color.
     update();
@@ -182,14 +191,14 @@ void DrawingWidget::ToggleFillMode()
     m_fillMode = !m_fillMode; // Inverseazã valoarea lui m_fillMode
 }
 
-QImage DrawingWidget::GetImage() const noexcept
+QPixmap DrawingWidget::GetImage() const noexcept
 {
-    return m_image;
+    return m_pixmap;
 }
 
-void DrawingWidget::SetImage(const QImage& image)
+void DrawingWidget::SetImage(const QPixmap& image)
 {
-	m_image = image;
+	m_pixmap = image;
 	update();
 }
 
@@ -199,13 +208,13 @@ void DrawingWidget::saveCurrentState()
     { // Limit the undo stack size to avoid excessive memory use.
         m_undoStack.removeFirst(); // Remove the oldest state to maintain the stack size.
     }
-    m_undoStack.push_back(m_image.copy()); // Save the current state of the image.
+    m_undoStack.push_back(m_pixmap.copy()); // Save the current state of the image.
 }
 
 void DrawingWidget::Undo() 
 {
     if (!m_undoStack.isEmpty()) {
-        m_image = m_undoStack.takeLast(); // Take the last saved state.
+        m_pixmap = m_undoStack.takeLast(); // Take the last saved state.
         update(); // Update the canvas to reflect the undone state.
     }
 }
@@ -214,10 +223,4 @@ void DrawingWidget::SetPenWidth(int newWidth)
 {
     m_pen.setWidth(newWidth);
     update();
-}
-
-
-QImage DrawingWidget::GetImage()
-{
-    return m_image;
 }
