@@ -21,7 +21,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{
-background:url(:/LoginForm/pattern.png);
+backgroundurl(:/background/pattern.png);
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">

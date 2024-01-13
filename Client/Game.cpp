@@ -476,7 +476,7 @@ void Game::UpdateTimeLeft()
 	{
 		int timeLeft = m_roundTimer->remainingTime() / 1000;
 		m_ui.timer->display(timeLeft);
-		if(timeLeft == 1)
+		if(timeLeft == 0)
 			m_guessedWord = false;
 		auto timeLeftRequest = cpr::Post(
 			cpr::Url{ Server::GetUrl() + "/timeLeft" },
@@ -496,7 +496,7 @@ void Game::UpdateTimeLeft()
 			return;
 
 		m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
-		if(std::stoi(timeLeftRequest.text) == 1)
+		if(std::stoi(timeLeftRequest.text) == 0)
 			m_guessedWord = false;
 	}
 }
@@ -536,6 +536,8 @@ void Game::UpdateDrawingPlayerAndWord()
 
 	if (drawingPlayerRequest.status_code != 200)
 		return;
+
+	m_ui.drawerLabel->setText(QString::fromUtf8(drawingPlayerRequest.text.data(), int(drawingPlayerRequest.text.size())) + " is currently drawing");
 
 	if (m_username == drawingPlayerRequest.text)
 		m_isDrawing = true;
@@ -641,6 +643,10 @@ void Game::OnTimeEnd()
 		cpr::Url{ Server::GetUrl() + "/nextRound" },
 		cpr::Payload{ {"roomID", m_roomID} }
 	);
+
+	if (request.status_code != 200)
+		OnTimeEnd();
+
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 	if (drawingArea)
 		drawingArea->ClearDrawing();
