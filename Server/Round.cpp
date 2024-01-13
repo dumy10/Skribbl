@@ -55,6 +55,11 @@ void Round::DeserializeTimes(const std::string& serializedTimes)
 		m_times.push_back(std::stoi(point));
 }
 
+void Round::SetTimes(const std::vector<int>& times)
+{
+	m_times = times;
+}
+
 int Round::GetId() const noexcept
 {
 	return m_id;

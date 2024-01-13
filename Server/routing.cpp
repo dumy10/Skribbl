@@ -24,8 +24,6 @@ void Routing::Run(Database& storage)
 		if (username == "")
 			return crow::response{ 404, "Username not found." };
 
-		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
-
 		if (storage.CheckUsername(username))
 			return crow::response{ "true" };
 
@@ -42,7 +40,7 @@ void Routing::Run(Database& storage)
 
 		if (username == "" || password == "" || email == "")
 			return crow::response{ 404, "Username, password or email not found." };
-		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
+
 		if (storage.AddUser(username, password, email))
 			return crow::response{ "true" };
 
@@ -58,7 +56,7 @@ void Routing::Run(Database& storage)
 
 		if (username == "" || password == "")
 			return crow::response{ 404, "Username or password not found." };
-		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
+
 		if (!storage.CheckUsername(username))
 			return crow::response{ 409, "Username does not exist!" };
 
@@ -89,7 +87,6 @@ void Routing::Run(Database& storage)
 		int maxPlayers = std::stoi(x["maxPlayers"]);
 		int currentPlayers = std::stoi(x["currentPlayers"]);
 
-		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		Player player = storage.GetPlayer(username);
 
 		if (!storage.AddGame(player, roomID, maxPlayers))
@@ -123,7 +120,6 @@ void Routing::Run(Database& storage)
 		std::string roomID = x["roomID"];
 		std::string username = x["username"];
 
-		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		Player player = storage.GetPlayer(username);
 		int currentPlayers = std::stoi(x["currentPlayers"]);
 
@@ -173,7 +169,6 @@ void Routing::Run(Database& storage)
 		std::string roomID = x["roomID"];
 		std::string username = x["username"];
 
-		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		Player player = storage.GetPlayer(username);
 
 		if (!storage.RemovePlayerFromGame(player, roomID))
@@ -235,7 +230,6 @@ void Routing::Run(Database& storage)
 		std::string username = x["username"];
 		std::string roomID = x["roomID"];
 
-		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 		std::string score = std::to_string(storage.GetPlayerScore(username));
 
 		return crow::response{ score };
@@ -261,8 +255,6 @@ void Routing::Run(Database& storage)
 			score = 100;
 		else if (timeLeft > 0 && timeLeft < 30)
 			score = ((60 - timeLeft) * 100) / 30;
-
-		std::transform(username.begin(), username.end(), username.begin(), ::tolower);
 
 		Player player = storage.GetPlayer(username);
 		if (text == currentWord)
@@ -401,8 +393,10 @@ void Routing::Run(Database& storage)
 		}
 
 		// Set the average times to 0 for the next round
-		for(auto& time : currentRound.GetTimes())
+		std::vector<int> times = currentRound.GetTimes();
+		for(auto& time : times)
 			time = 0;
+		currentRound.SetTimes(times);
 
 		// Update the round
 		for (uint8_t index = 0; index < players.size(); index++)
