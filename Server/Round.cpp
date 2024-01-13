@@ -13,8 +13,7 @@ Round::Round(int id, const std::string& gameId, size_t maxPlayers)
 	m_timeLeft{ 60 }
 {
 	m_times.resize(maxPlayers);
-	for (auto& time : m_times)
-		time = 0;
+	std::ranges::for_each(m_times, [](auto& time) { time = 0; });
 }
 
 void Round::SetId(int id)

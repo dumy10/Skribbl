@@ -1,11 +1,11 @@
 export module round;
 
-import player;
-
 import <vector>;
 import <set>;
 import <string>;
 import <sstream>;
+import <algorithm>;
+import <ranges>;
 
 namespace skribbl
 {
