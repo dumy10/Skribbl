@@ -358,13 +358,15 @@ void Routing::Run(Database& storage)
 			if (index != currentDrawingPlayerIndex)
 				averageTime = averageTime + (60 - currentRound.GetTimes()[index]);
 
-		if(players.size() != 1)
+		if (players.size() != 1)
 			averageTime /= players.size() - 1;
 
-		if (averageTime == ((players.size() - 1) * 60) || averageTime == 0)
+		std::vector<int> times = currentRound.GetTimes();
+
+		if (averageTime == ((players.size() - 1) * 60))
 		{
 			std::ranges::for_each(players, [&](const Player& player) {
-				if (player.GetName() != currentDrawingPlayer)
+				if (player.GetName() != currentDrawingPlayer && times[storage.GetGame(std::move(roomID)).GetPlayerIndex(std::move(player.GetName()))] != 0)
 					storage.SetPlayerScore(std::move(player.GetName()), storage.GetPlayerScore(std::move(player.GetName())) + points);
 				});
 			points = -100;
@@ -386,7 +388,6 @@ void Routing::Run(Database& storage)
 		}
 
 		// Set the average times to 0 for the next round
-		std::vector<int> times = currentRound.GetTimes();
 		std::ranges::for_each(times, [](int& time) { time = 0; });
 
 		currentRound.SetTimes(std::move(times));
