@@ -23,7 +23,7 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	if (m_isOwner)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(700));
-		m_roundTimer->start(63000);
+		m_roundTimer->start(61500);
 	}
 
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
@@ -40,15 +40,14 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Pink, &QPushButton::clicked, this, &Game::SetPenColorPink);
 	connect(m_ui.Turquoise, &QPushButton::clicked, this, &Game::SetPenColorTurquoise);
 	connect(m_ui.SettingsButton, &QPushButton::clicked, this, &Game::OpenSettings);
-	connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::OnSendButtonClicked);
 	connect(m_ui.Bucket, &QPushButton::clicked, this, &Game::OnFillButtonClicked);
-	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
-	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
-	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
 	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
-	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnPlayerQuit);
+	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
+	connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::OnSendButtonClicked);
+	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnLeaveButtonClicked);
+	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
+	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
 	connect(m_roundTimer.get(), SIGNAL(timeout()), this, SLOT(OnTimeEnd()));
-
 }
 
 Game::~Game()
@@ -202,11 +201,11 @@ void Game::OnSendButtonClicked()
 		cpr::Payload{ {"roomID", m_roomID}, {"username", m_username}, {"text", text.toUtf8().constData()} }
 	);
 
-	m_ui.chat->ensureCursorVisible();
-	m_ui.textEdit->clear();
-
 	if (request.status_code != 200)
 		return;
+
+	m_ui.chat->ensureCursorVisible();
+	m_ui.textEdit->clear();
 
 	if (request.text == "TRUE")
 		m_guessedWord = true;
@@ -237,13 +236,7 @@ void Game::OnPlayerQuit()
 	);
 
 	if (request.status_code == 200)
-	{
-		Menu* menu = new Menu(std::move(m_username));
-		menu->show();
-		this->close();
-		this->deleteLater();
 		return;
-	}
 
 	// send request to server to remove the player from the room (game)
 	auto req = cpr::Post(
@@ -253,16 +246,6 @@ void Game::OnPlayerQuit()
 			{"username", m_username}
 		}
 	);
-
-	/*if (m_isDrawing == true)
-		auto requ = cpr::Post(
-			cpr::Url{ Server::GetUrl() + "/drawerLeft" },
-			cpr::Payload{
-				{"roomID",m_roomID},
-				{"username",m_username}
-			}
-	);*/
-	//the server should start a new round now
 
 	this->close();
 }
@@ -417,10 +400,37 @@ void Game::CheckGameEnded()
 
 	if (gameEndedRequest.status_code == 200)
 	{
-		Menu* menu = new Menu(std::move(m_username));
-		menu->show();
-		this->close();
-		this->deleteLater();
+		
+		m_updateTimer->stop();
+		int time = 10;
+
+		QTimer* timer = new QTimer(this);
+		
+		connect(timer, &QTimer::timeout, [=]() mutable {
+			m_ui.timer->display(time);
+			time--;
+
+			m_ui.textEdit->setReadOnly(true);
+			m_ui.drawingArea->setEnabled(false);
+			m_ui.drawerLabel->setText("Game has ended");
+			m_ui.wordLabel->setText("Going back to the menu in 10 seconds");
+
+			if (time < 0)
+			{
+				timer->stop();
+				timer->deleteLater();
+
+				Menu* menu = new Menu(std::move(m_username));
+				menu->show();
+
+				this->close();
+				this->deleteLater();
+			}
+
+			});
+
+		timer->start(1000);
+
 		return;
 	}
 }
@@ -476,7 +486,7 @@ void Game::UpdateTimeLeft()
 	{
 		int timeLeft = m_roundTimer->remainingTime() / 1000;
 		m_ui.timer->display(timeLeft);
-		if(timeLeft == 0)
+		if (timeLeft == 0)
 			m_guessedWord = false;
 		auto timeLeftRequest = cpr::Post(
 			cpr::Url{ Server::GetUrl() + "/timeLeft" },
@@ -496,7 +506,7 @@ void Game::UpdateTimeLeft()
 			return;
 
 		m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
-		if(std::stoi(timeLeftRequest.text) == 0)
+		if (std::stoi(timeLeftRequest.text) == 0)
 			m_guessedWord = false;
 	}
 }
@@ -653,6 +663,38 @@ void Game::OnTimeEnd()
 	/* Send the image to the server */
 
 
+}
+
+void Game::OnLeaveButtonClicked()
+{
+	auto request = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/gameEnded" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (request.status_code == 200)
+	{
+		Menu* menu = new Menu(std::move(m_username));
+		menu->show();
+		this->close();
+		this->deleteLater();
+		return;
+
+	}
+
+	// send request to server to remove the player from the room (game)
+	auto req = cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/leaveRoom" },
+		cpr::Payload{
+			{"roomID", m_roomID},
+			{"username", m_username}
+		}
+	);
+
+	Menu* menu = new Menu(std::move(m_username));
+	menu->show();
+	this->close();
+	this->deleteLater();
 }
 
 

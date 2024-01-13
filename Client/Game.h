@@ -39,6 +39,7 @@ private slots:
 	void OnPlayerQuit();
 	void ChangeBrushSize();
 	void OnTimeEnd();
+	void OnLeaveButtonClicked();
 
 private:
 	void DisplayPlayer(const std::string& username, int index, const std::string& score);
