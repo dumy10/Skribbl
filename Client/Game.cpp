@@ -592,10 +592,6 @@ void Game::UpdateDrawingPlayerAndWord()
 	}
 }
 
-/*
-TODO:
-- update the drawing image
-*/
 void Game::UpdateDrawingImage()
 {
 	if (m_isDrawing)

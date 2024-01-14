@@ -76,13 +76,11 @@ void DrawingWidget::SetEraser()
     m_isErasing = true;
 }
 
-
 void DrawingWidget::ClearDrawing()
 {
     m_image.fill(Qt::white);
     update();
 }
-
 
 void DrawingWidget::SetPenColor(const QColor& newColor)
 {
@@ -117,7 +115,6 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
 
     update(QRect(m_lastPoint, endPoint).normalized().adjusted(-1, -1, 1, 1));
 }
-
 
 /*void DrawingWidget::FloodFill(const QPoint& startPoint, const QColor& fillColor, const QColor& oldColor) {
     if (!m_image.rect().contains(startPoint) || m_image.pixelColor(startPoint) != oldColor || fillColor == oldColor) {
@@ -161,8 +158,6 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
     // Trigger an update for the widget to repaint itself.
     update(m_image.rect());
 }*/
-
-
 
 void DrawingWidget::FloodFill(const QPoint&, const QColor& fillColor, const QColor&) {
     // Fill the entire image with the selected fill color.
