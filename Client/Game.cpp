@@ -5,6 +5,7 @@
 #include <cpr/cpr.h>
 #include <crow.h>
 #include <QScrollBar>
+#include <QBuffer>
 
 Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
 	: QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(m_roomID)
@@ -597,36 +598,28 @@ TODO:
 */
 void Game::UpdateDrawingImage()
 {
-	/*if (m_isDrawing)
+	if (m_isDrawing)
 	{
-		QPixmap pixmap = m_drawingArea->GetImage();
-
-		QImage image = pixmap.toImage();
-
-		QByteArray matrixData = SerializeImageToRGBMatrix(image);
-
-		QString qstring = convertToBase64String(matrixData);
-
-		std::string drawingData = matrixData.toStdString();
-		//aici o sa trebuiasca sa trimit imaginea
-
-		SendDrawing(drawingData);
+		QImage image = m_drawingArea->GetImage();
+		QByteArray byteArray;
+		QBuffer buffer(&byteArray);
+		buffer.open(QIODevice::WriteOnly);
+		image.save(&buffer, "PNG");
+		QString imageString = byteArray.toBase64();
+		std::string imgString = imageString.toUtf8().constData();
+		SendDrawing(imgString);
 	}
 	else
 	{
-		//aici o sa trb sa primeasca clientul imaginea
-		std::string drawingData;
-		ReturnDrawing(drawingData);
+		std::string imageString; 
+		ReturnDrawing(imageString);
+		QByteArray byteArray = QByteArray::fromBase64(imageString.c_str());
 
-		QString qStringData = QString::fromStdString(drawingData);
-
-		QByteArray byteArrayData = qStringData.toUtf8();
-
-		QImage image=convertByteArrayToQImage(byteArrayData);
-		QPixmap pixmap = QPixmap::fromImage(image);
-
-		m_drawingArea->SetImage(pixmap);
-	}*/
+		QImage m_receivedImage;
+		m_receivedImage.loadFromData(byteArray, "PNG");
+		m_drawingArea->SetImage(m_receivedImage);
+		update();
+	}
 }
 
 void Game::closeEvent(QCloseEvent* event)
@@ -712,29 +705,6 @@ void Game::OnLeaveButtonClicked()
 	this->deleteLater();
 }
 
-QByteArray Game::SerializeImageToRGBMatrix(const QImage& image)
-{
-	QByteArray matrixData;
-
-	for (int y = 0; y < image.height(); y++)
-	{
-		for (int x = 0; x < image.width(); x++)
-		{
-			QRgb pixel = image.pixel(x, y);
-			matrixData.append(qRed(pixel));
-			matrixData.append(qGreen(pixel));
-			matrixData.append(qBlue(pixel));
-
-		}
-	}
-	return matrixData;
-}
-
-QString Game::convertToBase64String(const QByteArray& data)
-{
-	return data.toBase64();
-}
-
 void Game::SendDrawing(const std::string& drawingData)
 {
 	auto request = cpr::Post(
@@ -758,24 +728,4 @@ void Game::ReturnDrawing(std::string& drawingData)
 		return ReturnDrawing(drawingData);
 
 	drawingData = request.text;
-}
-
-QImage Game::convertByteArrayToQImage(const QByteArray& byteArray)
-{
-	QImage image(621, 491, QImage::Format_ARGB32);
-
-	const uchar* data = reinterpret_cast<const uchar*>(byteArray.constData());
-
-	for (int y = 0; y < 491; ++y) {
-		QRgb* line = reinterpret_cast<QRgb*>(image.scanLine(y));
-		for (int x = 0; x < 621; ++x) {
-			int red = *data++;
-			int green = *data++;
-			int blue = *data++;
-			// Assuming the alpha channel is fully opaque
-			line[x] = qRgba(red, green, blue, 255);
-		}
-	}
-
-	return image;
 }
