@@ -14,6 +14,8 @@ RegisterForm::RegisterForm(QWidget* parent)
 {
 	m_ui.setupUi(this);
 
+	m_ui.errorLabel->hide();
+
 	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(OnRegisterButtonClicked()));
 	connect(m_ui.backButton, SIGNAL(clicked()), this, SLOT(OnBackButtonClicked()));
 
@@ -114,11 +116,14 @@ void RegisterForm::OnRegisterButtonClicked()
 	}
 	catch (std::exception& e)
 	{
+		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(e.what());
+		WaitForSeconds(2);
+		m_ui.errorLabel->hide();
 		return;
 
 	}
-
+	m_ui.errorLabel->show();
 	m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 	m_ui.errorLabel->setText("You have successfully registered.");
 	WaitForSeconds(2);

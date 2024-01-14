@@ -399,7 +399,7 @@ void Routing::Run(Database& storage)
 		std::ranges::for_each(times, [](int& time) { time = 0; });
 
 		currentRound.SetTimes(std::move(times));
-
+		currentRound.SetImageData("");
 		// Update the round
 		for (size_t index = 0; index < players.size(); index++)
 		{

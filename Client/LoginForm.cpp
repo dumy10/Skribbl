@@ -13,6 +13,7 @@ LoginForm::LoginForm(QWidget* parent)
 {
 	m_ui.setupUi(this);
 
+	m_ui.errorLabel->hide();
 
 	connect(m_ui.loginButton, SIGNAL(clicked()), this, SLOT(OnLoginButtonClicked()));
 	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(OnRegisterButtonClicked()));
@@ -89,7 +90,7 @@ void LoginForm::OnLoginButtonClicked()
 	try
 	{
 		ValidateUserLogin(username, password);
-
+		m_ui.errorLabel->show();
 		m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 		m_ui.errorLabel->setText("You have successfully logged into your account.");
 		WaitForSeconds(1);
@@ -100,7 +101,10 @@ void LoginForm::OnLoginButtonClicked()
 	}
 	catch (const std::exception& exception)
 	{
+		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(exception.what());
+		WaitForSeconds(2);
+		m_ui.errorLabel->hide();
 	}
 
 }

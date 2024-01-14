@@ -599,12 +599,16 @@ void Game::UpdateDrawingImage()
 {
 	if (m_isDrawing)
 	{
+		int timeLeft = m_ui.timer->intValue();
+		if (timeLeft == 0)
+			return;
+
 		QImage image{ 621, 491, QImage::Format_ARGB32 };
 		DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 		if (drawingArea)
 			image = drawingArea->GetImage();
 
-		if(image.isNull())
+		if (image.isNull())
 			return;
 
 		std::string imageString = "";
@@ -622,16 +626,23 @@ void Game::UpdateDrawingImage()
 	}
 	else
 	{
+		int timeLeft = m_ui.timer->intValue();
+		if (timeLeft == 0)
+		{
+			ClearDrawingArea();
+			return;
+		}
+
 		std::string imageString;
 		ReturnDrawing(imageString);
-		
-		if(imageString.empty())
+
+		if (imageString.empty())
 			return;
 
 		QImage m_receivedImage{ 621, 491, QImage::Format_ARGB32 };
 
 		std::vector<std::string> colors = split(imageString, ",");
-		
+
 
 		int index = 0;
 		for (int y = 0; y < m_receivedImage.height(); y++)
@@ -702,6 +713,7 @@ void Game::OnTimeEnd()
 
 	if (request.status_code != 200)
 		OnTimeEnd();
+	ClearDrawingArea();
 }
 
 void Game::OnLeaveButtonClicked()
