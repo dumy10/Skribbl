@@ -56,6 +56,10 @@ Game::~Game()
 {
 	m_updateTimer->stop();
 	m_roundTimer->stop();
+	auto clearImageRequest = cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/clearImage" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
 }
 
 void Game::ClearDrawingArea()
@@ -226,12 +230,6 @@ void Game::OnPlayerQuit()
 
 	if (request.status_code == 200)
 		return;
-
-	auto clearImageRequest = cpr::Post(
-		cpr::Url{ Server::GetUrl() + "/clearImage" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
-
 	// send request to server to remove the player from the room (game)
 	auto req = cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/leaveRoom" },
