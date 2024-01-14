@@ -20,5 +20,4 @@ void Hasher::HashPassword(const char* pass)
 			hashedPassword[i++] = c;
 		}
 	}
-	//return hashedPassword;
 }

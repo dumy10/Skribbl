@@ -58,7 +58,6 @@ void LoginForm::CheckPassword(const std::string& password)
 		throw std::exception("The Password needs to contain at least 1 upper case,\n one lower case and a number");
 }
 
-
 void LoginForm::ValidateUserLogin(const std::string& username, const std::string& password)
 {
 	CheckUsername(username);
@@ -78,15 +77,6 @@ void LoginForm::OnLoginButtonClicked()
 	std::string username = m_ui.usernameField->text().toUtf8().constData();
 	std::string password = m_ui.passwordField->text().toUtf8().constData();
 
-	if (username == "admin" && password == "admin")
-	{
-		Menu* menu = new Menu(std::move(username));
-		menu->show();
-		this->close();
-		this->deleteLater();
-		return;
-	}
-
 	try
 	{
 		ValidateUserLogin(username, password);
@@ -94,6 +84,7 @@ void LoginForm::OnLoginButtonClicked()
 		m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
 		m_ui.errorLabel->setText("You have successfully logged into your account.");
 		WaitForSeconds(1);
+
 		Menu* menu = new Menu(std::move(username));
 		menu->show();
 		this->close();
