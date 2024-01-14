@@ -1,19 +1,21 @@
 #include "Hashing.h"
 
-std::string Hasher::HashPassword(const std::string& password)
+void Hasher::HashPassword(const char* pass)
 {
-	std::string hashedPassword;
+	std::string password{ pass };
+	char* hashedPassword = std::_Const_cast(pass);
 	char hashedChar;
+	int i = 0;
 	for (const char& c : password) {
 		if (isalpha(c)) {
 			char base = (isupper(c)) ? 'A' : 'a';
 			hashedChar = base + (c - base + 3) % 26;
-			hashedPassword += hashedChar;
+			hashedPassword[i++] = hashedChar;
 		}
 		else if (isdigit(c)) {
 			hashedChar = '0' + (c - '0' + 3) % 10;
-			hashedPassword += hashedChar;
+			hashedPassword[i++] = hashedChar;
 		}
 	}
-	return hashedPassword;
+	//return hashedPassword;
 }

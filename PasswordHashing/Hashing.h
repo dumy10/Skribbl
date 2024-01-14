@@ -7,5 +7,5 @@ class DLL_API Hasher
 public:
 	Hasher() = delete;
 	Hasher(const Hasher&) = delete;
-	static std::string HashPassword(const std::string& password);
+	static void HashPassword(const char* password);
 };

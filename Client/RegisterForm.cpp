@@ -3,6 +3,7 @@
 #include <regex>
 #include <QTime>
 #include <QCoreApplication>
+#include "../PasswordHashing/Hashing.h"
 
 #include "utils.h"
 #include <cpr/cpr.h>
@@ -97,11 +98,14 @@ void RegisterForm::OnBackButtonClicked()
 
 void RegisterForm::OnRegisterButtonClicked()
 {
-
 	QString username = m_ui.usernameField->text();
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
 	try {
+		std::string hashedPass = password.toUtf8().data();
+		Hasher::HashPassword(hashedPass.c_str());
+		std::string hashedPassStr{ hashedPass };
+
 		CheckUsername(username.toUtf8().constData());
 		CheckEmailPattern(email.toUtf8().constData());
 		CheckPasswordPattern(password.toUtf8().constData());
