@@ -172,10 +172,6 @@ void DrawingWidget::FloodFill(const QPoint&, const QColor& fillColor, const QCol
     update();
 }
 
-
-
-
-
 void DrawingWidget::SetCurrentFillColor(const QColor& color)
 {
     m_currentFillColor = color;
@@ -218,10 +214,4 @@ void DrawingWidget::SetPenWidth(int newWidth)
 {
     m_pen.setWidth(newWidth);
     update();
-}
-
-
-QImage DrawingWidget::GetImage()
-{
-    return m_image;
 }
