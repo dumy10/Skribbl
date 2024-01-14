@@ -600,24 +600,57 @@ void Game::UpdateDrawingImage()
 {
 	if (m_isDrawing)
 	{
-		QImage image = m_drawingArea->GetImage();
-		QByteArray byteArray;
-		QBuffer buffer(&byteArray);
-		buffer.open(QIODevice::WriteOnly);
-		image.save(&buffer, "PNG");
-		QString imageString = byteArray.toBase64();
-		std::string imgString = imageString.toUtf8().constData();
-		SendDrawing(imgString);
+		QImage image{ 621, 491, QImage::Format_ARGB32 };
+		DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+		if (drawingArea)
+			image = drawingArea->GetImage();
+
+		if(image.isNull())
+			return;
+
+		std::string imageString = "";
+
+		for (int y = 0; y < image.height(); y++)
+		{
+			for (int x = 0; x < image.width(); x++)
+			{
+				QColor color(image.pixel(x, y));
+				imageString += std::to_string(color.red()) + "," + std::to_string(color.green()) + "," + std::to_string(color.blue()) + ",";
+			}
+		}
+
+		SendDrawing(imageString);
 	}
 	else
 	{
-		std::string imageString; 
+		std::string imageString;
 		ReturnDrawing(imageString);
-		QByteArray byteArray = QByteArray::fromBase64(imageString.c_str());
+		
+		if(imageString.empty())
+			return;
 
-		QImage m_receivedImage;
-		m_receivedImage.loadFromData(byteArray, "PNG");
-		m_drawingArea->SetImage(m_receivedImage);
+		QImage m_receivedImage{ 621, 491, QImage::Format_ARGB32 };
+
+		std::vector<std::string> colors = split(imageString, ",");
+		
+
+		int index = 0;
+		for (int y = 0; y < m_receivedImage.height(); y++)
+		{
+			for (int x = 0; x < m_receivedImage.width(); x++)
+			{
+				QColor color;
+				color.setRed(std::stoi(colors[index]));
+				color.setGreen(std::stoi(colors[index + 1]));
+				color.setBlue(std::stoi(colors[index + 2]));
+				m_receivedImage.setPixel(x, y, color.rgb());
+				index += 3;
+			}
+		}
+
+		DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+		if (drawingArea)
+			drawingArea->SetImage(m_receivedImage);
 		update();
 	}
 }
@@ -709,9 +742,9 @@ void Game::SendDrawing(const std::string& drawingData)
 {
 	auto request = cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/drawingImage" },
-		cpr::Payload{ {"roomID", m_roomID}, {"imageData", drawingData} }
+		cpr::Parameters{ {"roomID", m_roomID} },
+		cpr::Body{ drawingData }
 	);
-
 
 	if (request.status_code != 200)
 		SendDrawing(drawingData);

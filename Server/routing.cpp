@@ -444,12 +444,11 @@ void Routing::Run(Database& storage)
 
 	CROW_ROUTE(m_app, "/drawingImage")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-		auto x = parseUrlArgs(req.body);
-		const std::string& roomID = x["roomID"];
 
 		if (req.method == crow::HTTPMethod::POST)
 		{
-			const std::string& imageData = x["imageData"];
+			const std::string& roomID = req.url_params.get("roomID");
+			const std::string& imageData = req.body;
 			Round currentRound = storage.GetRound(std::move(roomID));
 			currentRound.SetImageData(std::move(imageData));
 			storage.Update(std::move(currentRound));
@@ -457,6 +456,8 @@ void Routing::Run(Database& storage)
 		}
 		else if (req.method == crow::HTTPMethod::GET)
 		{
+			auto x = parseUrlArgs(req.body);
+			const std::string& roomID = x["roomID"];
 			return crow::response{ storage.GetRound(std::move(roomID)).GetImageData() };
 		}
 		else

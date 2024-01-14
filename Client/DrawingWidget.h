@@ -22,7 +22,6 @@ public:
 	void ToggleFillMode();
 	QImage GetImage() const noexcept;
 	void SetImage(const QImage& image);
-	QImage GetImage();
 	void Undo();
 	void SetPenColor(const QColor& newColor);
 	void SetCurrentFillColor(const QColor& color);

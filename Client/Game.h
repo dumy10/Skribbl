@@ -55,11 +55,9 @@ private:
 	void UpdateChat();
 	void UpdateDrawingPlayerAndWord();
 	void UpdateDrawingImage();
-	QString convertToBase64String(const QByteArray& data);
-	QByteArray SerializeImageToRGBMatrix(const QImage& image);
 	void SendDrawing(const std::string& drawingData);
 	void ReturnDrawing(std::string& drawingData);
-	QImage convertByteArrayToQImage(const QByteArray& byteArray);
+
 
 private:
 	Ui::GameClass m_ui;
