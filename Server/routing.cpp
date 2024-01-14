@@ -237,6 +237,10 @@ void Routing::Run(Database& storage)
 		const std::string& username = x["username"];
 		std::string text = x["text"];
 
+		// if %20 is found in the text, replace it with a space
+		if (text.find("%20") != std::string::npos)
+			text.replace(text.find("%20"), 3, " ");
+
 		std::string currentChat = storage.GetGame(std::move(roomID)).GetChat();
 		std::string currentWord = storage.GetRound(std::move(roomID)).GetCurrentWord();
 		std::transform(text.begin(), text.end(), text.begin(), ::tolower);
@@ -370,7 +374,7 @@ void Routing::Run(Database& storage)
 		if (averageTime == ((players.size() - 1) * 60))
 		{
 			std::ranges::for_each(players, [&](const Player& player) {
-				if (player.GetName() != currentDrawingPlayer )
+				if (player.GetName() != currentDrawingPlayer)
 					storage.SetPlayerScore(std::move(player.GetName()), storage.GetPlayerScore(std::move(player.GetName())) + points);
 				});
 			points = -100;

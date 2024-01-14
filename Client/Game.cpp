@@ -234,7 +234,7 @@ void Game::OnPlayerQuit()
 			{"username", m_username}
 		}
 	);
-
+	ClearDrawingArea();
 	this->close();
 }
 
@@ -412,6 +412,7 @@ void Game::CheckGameEnded()
 				Menu* menu = new Menu(std::move(m_username));
 				menu->show();
 
+				ClearDrawingArea();
 				this->close();
 				this->deleteLater();
 			}
@@ -476,7 +477,10 @@ void Game::UpdateTimeLeft()
 		int timeLeft = m_roundTimer->remainingTime() / 1000;
 		m_ui.timer->display(timeLeft);
 		if (timeLeft == 0)
+		{
 			m_guessedWord = false;
+			ClearDrawingArea();
+		}
 		auto timeLeftRequest = cpr::Post(
 			cpr::Url{ Server::GetUrl() + "/timeLeft" },
 			cpr::Payload{ {"roomID", m_roomID}, {"timer", std::to_string(timeLeft) } }
@@ -496,7 +500,10 @@ void Game::UpdateTimeLeft()
 
 		m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
 		if (std::stoi(timeLeftRequest.text) == 0)
+		{
 			m_guessedWord = false;
+			ClearDrawingArea();
+		}
 	}
 }
 
@@ -592,7 +599,9 @@ void Game::UpdateDrawingImage()
 {
 	/*if (m_isDrawing)
 	{
-		QImage image = m_drawingArea->GetImage();
+		QPixmap pixmap = m_drawingArea->GetImage();
+
+		QImage image = pixmap.toImage();
 
 		QByteArray matrixData = SerializeImageToRGBMatrix(image);
 
@@ -601,16 +610,22 @@ void Game::UpdateDrawingImage()
 		std::string drawingData = matrixData.toStdString();
 		//aici o sa trebuiasca sa trimit imaginea
 
-		Send_Drawing(drawingData);
+		SendDrawing(drawingData);
 	}
 	else
 	{
 		//aici o sa trb sa primeasca clientul imaginea
-		std::string drawingData = Return_Drawing();
+		std::string drawingData;
+		ReturnDrawing(drawingData);
+
 		QString qStringData = QString::fromStdString(drawingData);
+
 		QByteArray byteArrayData = qStringData.toUtf8();
+
 		QImage image=convertByteArrayToQImage(byteArrayData);
-		m_drawingArea->SetImage(image);
+		QPixmap pixmap = QPixmap::fromImage(image);
+
+		m_drawingArea->SetImage(pixmap);
 	}*/
 }
 
@@ -650,10 +665,6 @@ void Game::ChangeBrushSize()
 	}
 }
 
-/*
-TODO:
-- send the image to the server
-*/
 void Game::OnTimeEnd()
 {
 	if (!m_isOwner)
@@ -666,23 +677,6 @@ void Game::OnTimeEnd()
 
 	if (request.status_code != 200)
 		OnTimeEnd();
-
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea)
-		drawingArea->ClearDrawing();
-
-	/* Send the image to the server */
-
-	//QImage image = m_drawingArea->GetImage();
-
-	//QByteArray matrixData = SerializeImageToRGBMatrix(image);
-
-	//QString qstring = convertToBase64String(matrixData);
-
-	//std::string drawingData = qstring.toStdString();
-	//aici o sa trebuiasca sa trimit imaginea
-
-	//Send_Drawing(drawingData);
 }
 
 void Game::OnLeaveButtonClicked()
@@ -713,11 +707,10 @@ void Game::OnLeaveButtonClicked()
 
 	Menu* menu = new Menu(std::move(m_username));
 	menu->show();
+	ClearDrawingArea();
 	this->close();
 	this->deleteLater();
 }
-
-
 
 QByteArray Game::SerializeImageToRGBMatrix(const QImage& image)
 {
@@ -742,7 +735,7 @@ QString Game::convertToBase64String(const QByteArray& data)
 	return data.toBase64();
 }
 
-void Game::Send_Drawing(const std::string& drawingData)
+void Game::SendDrawing(const std::string& drawingData)
 {
 	auto request = cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/drawingImage" },
@@ -751,11 +744,10 @@ void Game::Send_Drawing(const std::string& drawingData)
 
 
 	if (request.status_code != 200)
-		Send_Drawing(drawingData);
+		SendDrawing(drawingData);
 }
 
-
-std::string Game::Return_Drawing()
+void Game::ReturnDrawing(std::string& drawingData)
 {
 	auto request = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/drawingImage" },
@@ -763,11 +755,10 @@ std::string Game::Return_Drawing()
 	);
 
 	if (request.status_code != 200)
-		return Return_Drawing();
+		return ReturnDrawing(drawingData);
 
-	return request.text;
+	drawingData = request.text;
 }
-
 
 QImage Game::convertByteArrayToQImage(const QByteArray& byteArray)
 {

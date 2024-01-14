@@ -57,8 +57,8 @@ private:
 	void UpdateDrawingImage();
 	QString convertToBase64String(const QByteArray& data);
 	QByteArray SerializeImageToRGBMatrix(const QImage& image);
-	void Send_Drawing(const std::string& drawingData);
-	std::string Return_Drawing();
+	void SendDrawing(const std::string& drawingData);
+	void ReturnDrawing(std::string& drawingData);
 	QImage convertByteArrayToQImage(const QByteArray& byteArray);
 
 private:
