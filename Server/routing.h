@@ -1,6 +1,7 @@
 #pragma once
 #include <crow.h>
 #include "database.h"
+#include "../PasswordHashing/Hashing.h"
 
 class Routing
 {

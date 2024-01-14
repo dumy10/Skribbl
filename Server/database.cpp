@@ -24,7 +24,11 @@ bool Database::AddUser(const std::string& username, const std::string& password,
 {
 	try
 	{
-		m_db.insert(Player{ -1, username, password, email });
+		std::string correctEmail{ email };
+		// if %40 is in the email, replace it with @
+		if (correctEmail.find("%40") != std::string::npos)
+			correctEmail.replace(correctEmail.find("%40"), 3, "@");
+		m_db.insert(Player{ -1, username, password, correctEmail });
 		return true;
 	}
 	catch (const std::exception& e) {

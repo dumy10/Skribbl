@@ -16,6 +16,9 @@ void Hasher::HashPassword(const char* pass)
 			hashedChar = '0' + (c - '0' + 3) % 10;
 			hashedPassword[i++] = hashedChar;
 		}
+		else {
+			hashedPassword[i++] = c;
+		}
 	}
 	//return hashedPassword;
 }

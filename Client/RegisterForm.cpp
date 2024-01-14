@@ -110,7 +110,7 @@ void RegisterForm::OnRegisterButtonClicked()
 		CheckEmailPattern(email.toUtf8().constData());
 		CheckPasswordPattern(password.toUtf8().constData());
 
-		AddUserToDataBase(username.toUtf8().constData(), password.toUtf8().constData(), email.toUtf8().constData());
+		AddUserToDataBase(username.toUtf8().constData(), hashedPassStr, email.toUtf8().constData());
 	}
 	catch (std::exception& e)
 	{

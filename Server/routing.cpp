@@ -54,13 +54,17 @@ void Routing::Run(Database& storage)
 		const std::string& username = x["username"];
 		const std::string& password = x["password"];
 
+		std::string hashedPass = password;
+		Hasher::HashPassword(hashedPass.c_str());
+		std::string hashedPassStr{ hashedPass };
+
 		if (username == "" || password == "")
 			return crow::response{ 404, "Username or password not found." };
 
 		if (!storage.CheckUsername(std::move(username)))
 			return crow::response{ 409, "Username does not exist!" };
 
-		if (!storage.CheckPassword(std::move(username), std::move(password)))
+		if (!storage.CheckPassword(std::move(username), std::move(hashedPassStr)))
 			return crow::response{ 409, "Wrong password!" };
 
 		return crow::response{ 200 };

@@ -168,6 +168,11 @@
     <ClInclude Include="database.h" />
     <ClInclude Include="routing.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PasswordHashing\PasswordHashing.vcxproj">
+      <Project>{e6fdf952-187c-43c5-be7a-e007e934def4}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
