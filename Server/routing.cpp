@@ -465,6 +465,15 @@ void Routing::Run(Database& storage)
 
 			});
 
+	CROW_ROUTE(m_app, "/clearImage")
+		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
+			auto x = parseUrlArgs(req.body);
+			const std::string& roomID = x["roomID"];
+			Round currentRound = storage.GetRound(std::move(roomID));
+			currentRound.SetImageData("");
+			storage.Update(std::move(currentRound));
+			return crow::response{ 200 };
+			});
 
 	m_app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }
