@@ -55,7 +55,7 @@ private:
 	void UpdateChat();
 	void UpdateDrawingPlayerAndWord();
 	void UpdateDrawingImage();
-	void SendDrawing(const std::string& drawingData);
+	void SendDrawing(const QByteArray& drawingData);
 	void ReturnDrawing(std::string& drawingData);
 
 

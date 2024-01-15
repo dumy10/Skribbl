@@ -613,16 +613,12 @@ void Game::UpdateDrawingImage()
 
 		std::string imageString = "";
 
-		for (int y = 0; y < image.height(); y++)
-		{
-			for (int x = 0; x < image.width(); x++)
-			{
-				QColor color(image.pixel(x, y));
-				imageString += std::to_string(color.red()) + "," + std::to_string(color.green()) + "," + std::to_string(color.blue()) + ",";
-			}
-		}
+		QByteArray byteArray;
+		QBuffer buffer(&byteArray);
+		buffer.open(QIODevice::WriteOnly);
+		image.save(&buffer, "PNG");
 
-		SendDrawing(imageString);
+		SendDrawing(byteArray);
 	}
 	else
 	{
@@ -639,24 +635,11 @@ void Game::UpdateDrawingImage()
 		if (imageString.empty())
 			return;
 
+		QByteArray byteArray = QByteArray::fromBase64(imageString.c_str());
+
 		QImage m_receivedImage{ 621, 491, QImage::Format_ARGB32 };
 
-		std::vector<std::string> colors = split(imageString, ",");
-
-
-		int index = 0;
-		for (int y = 0; y < m_receivedImage.height(); y++)
-		{
-			for (int x = 0; x < m_receivedImage.width(); x++)
-			{
-				QColor color;
-				color.setRed(std::stoi(colors[index]));
-				color.setGreen(std::stoi(colors[index + 1]));
-				color.setBlue(std::stoi(colors[index + 2]));
-				m_receivedImage.setPixel(x, y, color.rgb());
-				index += 3;
-			}
-		}
+		m_receivedImage.loadFromData(byteArray, "PNG");
 
 		DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 		if (drawingArea)
@@ -749,12 +732,12 @@ void Game::OnLeaveButtonClicked()
 	this->deleteLater();
 }
 
-void Game::SendDrawing(const std::string& drawingData)
+void Game::SendDrawing(const QByteArray& drawingData)
 {
 	auto request = cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/drawingImage" },
 		cpr::Parameters{ {"roomID", m_roomID} },
-		cpr::Body{ drawingData }
+		cpr::Body{ drawingData.toBase64() }
 	);
 
 	if (request.status_code != 200)
