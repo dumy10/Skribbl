@@ -392,6 +392,7 @@ void Routing::Run(Database& storage)
 		{
 			storage.SetGameStatus(std::move(roomID), 3);
 			currentRound.SetImageData("");
+			storage.Update(std::move(currentRound));
 			return crow::response{ 200 };
 		}
 
@@ -410,20 +411,16 @@ void Routing::Run(Database& storage)
 					currentRound.SetRoundNumber(currentRound.GetRoundNumber() + 1);
 					currentRound.SetDrawingPlayer(std::move(players[0].GetName()));
 					currentRound.SetCurrentWord(std::move(*words.begin()));
-					words.erase(words.begin());
-					currentRound.SetWords(std::move(words));
-					storage.Update(std::move(currentRound));
-					return crow::response{ 200 };
 				}
 				else if (index < players.size() - 1)
 				{
 					currentRound.SetDrawingPlayer(std::move(players[index + 1].GetName()));
 					currentRound.SetCurrentWord(std::move(*words.begin()));
-					words.erase(words.begin());
-					currentRound.SetWords(std::move(words));
-					storage.Update(std::move(currentRound));
-					return crow::response{ 200 };
 				}
+				words.erase(words.begin());
+				currentRound.SetWords(std::move(words));
+				storage.Update(std::move(currentRound));
+				return crow::response{ 200 };
 			}
 		}
 
@@ -440,6 +437,17 @@ void Routing::Run(Database& storage)
 			return crow::response{ 200 };
 
 		return crow::response{ 409 };
+			});
+
+	CROW_ROUTE(m_app, "/endGame")
+		.methods("GET"_method)([&](const crow::request& req) {
+		auto x = parseUrlArgs(req.body);
+		const std::string& roomID = x["roomID"];
+
+		if (!storage.SetGameStatus(std::move(roomID), 3))
+			return crow::response{ 409, "Error ending the game." };
+
+		return crow::response{ 200 };
 			});
 
 	CROW_ROUTE(m_app, "/drawingImage")
@@ -467,12 +475,12 @@ void Routing::Run(Database& storage)
 
 	CROW_ROUTE(m_app, "/clearImage")
 		.methods("GET"_method, "POST"_method)([&](const crow::request& req) {
-			auto x = parseUrlArgs(req.body);
-			const std::string& roomID = x["roomID"];
-			Round currentRound = storage.GetRound(std::move(roomID));
-			currentRound.SetImageData("");
-			storage.Update(std::move(currentRound));
-			return crow::response{ 200 };
+		auto x = parseUrlArgs(req.body);
+		const std::string& roomID = x["roomID"];
+		Round currentRound = storage.GetRound(std::move(roomID));
+		currentRound.SetImageData("");
+		storage.Update(std::move(currentRound));
+		return crow::response{ 200 };
 			});
 
 	m_app.bindaddr("127.0.0.1").port(18080).multithreaded().run();

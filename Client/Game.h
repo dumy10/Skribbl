@@ -57,6 +57,7 @@ private:
 	void UpdateDrawingImage();
 	void SendDrawing(const QByteArray& drawingData);
 	void ReturnDrawing(std::string& drawingData);
+	void EndGame();
 
 
 private:

@@ -390,9 +390,16 @@ void Game::CheckGameEnded()
 		cpr::Payload{ {"roomID", m_roomID} }
 	);
 
-	if (gameEndedRequest.status_code == 200)
-	{
+	auto currentNumberOfPlayersRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/currentNumberOfPlayers" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
 
+	if (std::stoi(currentNumberOfPlayersRequest.text) == 1)
+		EndGame();
+
+	if (gameEndedRequest.status_code == 200 || std::stoi(currentNumberOfPlayersRequest.text) == 1)
+	{
 		m_updateTimer->stop();
 		m_roundTimer->stop();
 		int time = 10;
@@ -405,7 +412,10 @@ void Game::CheckGameEnded()
 
 			m_ui.textEdit->setReadOnly(true);
 			m_ui.drawingArea->setEnabled(false);
-			m_ui.drawerLabel->setText("Game has ended");
+			if (std::stoi(currentNumberOfPlayersRequest.text) == 1)
+				m_ui.drawerLabel->setText("You are the only player left in the room");
+			else
+				m_ui.drawerLabel->setText("Game has ended");
 			m_ui.wordLabel->setText("Going back to the menu in 10 seconds");
 
 			if (time < 0)
@@ -755,4 +765,15 @@ void Game::ReturnDrawing(std::string& drawingData)
 		return ReturnDrawing(drawingData);
 
 	drawingData = request.text;
+}
+
+void Game::EndGame()
+{
+	auto endGameRequest = cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/endGame" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
+
+	if (endGameRequest.status_code != 200)
+		EndGame();
 }
