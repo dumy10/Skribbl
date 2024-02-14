@@ -14,9 +14,17 @@ bool Database::Initialize()
 
 std::string Database::GetRandomWord()
 {
-	auto wordCount = m_db.count<Word>();
-	auto randomWordIndex = GenerateRandomNumber(1, wordCount);
-	auto word = m_db.get<Word>(randomWordIndex);
+	std::vector<Word> words{ m_db.get_all<Word>() };
+
+	std::random_device rd;
+	std::mt19937 g(rd());
+
+	std::shuffle(words.begin(), words.end(), rd);
+	std::shuffle(words.begin(), words.end(), rd);
+
+	int randomWordIndex = GenerateRandomNumber(0, words.size() - 1);
+	auto& word = words[randomWordIndex];
+
 	return word.GetWord();
 }
 

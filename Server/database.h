@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <random>
 #include <fstream>
 
@@ -86,7 +87,7 @@ public:
 	std::string GetRandomID(); //Gets a random ID for game
 
 	template<typename T>
-	void Update(T object); // Updates an object in the database
+	void Update(const T& object); // Updates an object in the database
 
 private:
 	void PopulateStorage();
@@ -98,7 +99,7 @@ private:
 };
 
 template<typename T>
-inline void Database::Update(T object)
+inline void Database::Update(const T& object)
 {
 	m_db.update(object);
 }
