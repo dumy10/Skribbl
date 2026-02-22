@@ -2,151 +2,237 @@ module round;
 
 using namespace skribbl;
 
-
 Round::Round(int id, const std::string& gameId, size_t maxPlayers)
 	:
 	m_id{ id },
 	m_gameId{ gameId },
 	m_drawingPlayerName{ "" },
 	m_currentWord{ "" },
-	m_roundNumber{ 1 },
-	m_timeLeft{ 60 }
+	m_imageData{ "" },
+	m_roundNumber{ 1 }
 {
-	m_imageData = std::string();
 	m_times.resize(maxPlayers);
 	std::ranges::for_each(m_times, [](auto& time) { time = 0; });
 }
 
-void Round::SetId(int id)
+bool Round::StartRound(const std::string& drawingPlayerName, const uint8_t roundNumber) noexcept
+{
+	SetCurrentWord(*m_words.begin());
+	SetRoundNumber(roundNumber);
+	SetDrawingPlayer(drawingPlayerName);
+	m_words.erase(m_words.begin());
+
+	if (roundNumber == 1) {
+		m_timer.StartTicking();
+	}
+	else {
+		m_timer.StopTicking();
+		m_timer.ResetTimer();
+
+		std::ranges::for_each(m_times, [](int& time) { time = 0; });
+		SetImageData("");
+
+		m_timer.StartTicking();
+	}
+
+	return true;
+}
+
+bool Round::StopRound() noexcept
+{
+	SetImageData("");
+	m_timer.StopTicking();
+
+	return true;
+}
+
+void Round::SetId(int id) noexcept
 {
 	m_id = id;
 }
 
-void Round::SetGameId(std::string gameId)
-{
-	m_gameId = gameId;
-}
-
-void Round::SetDrawingPlayer(const std::string& drawingPlayerName)
-{
-	m_drawingPlayerName = drawingPlayerName;
-}
-
-void Round::SetCurrentWord(const std::string& currentWord)
-{
-	m_currentWord = currentWord;
-}
-
-void Round::SetWords(const std::set<std::string>& words)
-{
-	m_words = words;
-}
-
-void Round::SetRoundNumber(uint8_t roundNumber)
+void Round::SetRoundNumber(uint8_t roundNumber) noexcept
 {
 	m_roundNumber = roundNumber;
 }
 
-void Round::DeserializeTimes(const std::string& serializedTimes)
+void Round::SetGameId(const std::string& gameId) noexcept
 {
-	std::stringstream ss{ serializedTimes };
-	std::string point;
-	while (std::getline(ss, point, ','))
-		m_times.push_back(std::stoi(point));
+	m_gameId = gameId;
 }
 
-void Round::SetTimes(const std::vector<int>& times)
+void Round::SetDrawingPlayer(const std::string& drawingPlayerName) noexcept
 {
-	m_times = times;
+	m_drawingPlayerName = drawingPlayerName;
 }
 
-void Round::SetImageData(const std::string& imageData)
+void Round::SetCurrentWord(const std::string& currentWord) noexcept
+{
+	m_currentWord = currentWord;
+}
+
+void Round::SetImageData(const std::string& imageData) noexcept
 {
 	m_imageData = imageData;
 }
 
-int Round::GetId() const noexcept
+void Round::SetWords(const std::set<std::string>& words) noexcept
+{
+	m_words = words;
+}
+
+void Round::PlayerGuessedWord(const std::string& playerName, const int index, const int timeLeft) noexcept
+{
+	m_guessedPlayerNames.emplace_back(std::move(playerName));
+	UpdateTimes(index, timeLeft);
+}
+
+void Round::SetTimes(const std::vector<int>& times) noexcept
+{
+	m_times = times;
+}
+
+void Round::DeserializeTimes(const std::string& serializedTimes) noexcept
+{
+	std::stringstream ss{ serializedTimes };
+	std::string point;
+	while (std::getline(ss, point, ',')) {
+		m_times.push_back(std::stoi(point));
+	}
+}
+
+void Round::DeserializeWords(const std::string& serializedWords) noexcept
+{
+	std::stringstream ss{ serializedWords };
+	std::string word;
+	while (std::getline(ss, word, ',')) {
+		m_words.insert(word);
+	}
+}
+
+void Round::UpdateTimes(const int index, const int value) noexcept
+{
+	if (index < 0 || index >= m_times.size()) {
+		return;
+	}
+
+	m_times[index] = value;
+}
+
+const int Round::GetId() const noexcept
 {
 	return m_id;
 }
 
-std::string Round::GetGameId() const noexcept
+const int Round::GetTimeLeft() const noexcept
 {
-	return m_gameId;
+	return m_timer.GetTimeLeft();
 }
 
-std::string Round::GetDrawingPlayer() const noexcept
+const int Round::CalculatePoints(const int time) const noexcept
 {
-	return m_drawingPlayerName;
+	if (time >= 30) {
+		return 100;
+	}
+
+	return ((60 - time) * 100) / 60;
 }
 
-std::string Round::GetCurrentWord() const noexcept
-{
-	return m_currentWord;
-}
-
-uint8_t Round::GetRoundNumber() const noexcept
+const uint8_t Round::GetRoundNumber() const noexcept
 {
 	return m_roundNumber;
 }
 
-std::string Round::SerializeWords() const noexcept
+const std::string Round::GetGameId() const noexcept
+{
+	return m_gameId;
+}
+
+const std::string Round::GetDrawingPlayer() const noexcept
+{
+	return m_drawingPlayerName;
+}
+
+const std::string Round::GetCurrentWord() const noexcept
+{
+	return m_currentWord;
+}
+
+const std::string Round::SerializeWords() const noexcept
 {
 	std::string serializedWords;
-	for (const auto& word : m_words)
+	for (const auto& word : m_words) {
 		serializedWords += word + ",";
+	}
 
-	if (!serializedWords.empty())
+	if (!serializedWords.empty()) {
 		serializedWords.pop_back();
+	}
 
 	return serializedWords;
 }
 
-void Round::DeserializeWords(const std::string& serializedWords)
-{
-	std::stringstream ss{ serializedWords };
-	std::string word;
-	while (std::getline(ss, word, ','))
-		m_words.insert(word);
-}
-
-std::set<std::string> skribbl::Round::GetWords() const noexcept
-{
-	return m_words;
-}
-
-std::string Round::SerializeTimes() const noexcept
+const std::string Round::SerializeTimes() const noexcept
 {
 	std::string serializedTimes;
-	for (const auto& time : m_times)
+	for (const auto& time : m_times) {
 		serializedTimes += std::to_string(time) + ",";
-	if (!serializedTimes.empty())
+	}
+	if (!serializedTimes.empty()) {
 		serializedTimes.pop_back();
+	}
+
 	return serializedTimes;
 }
 
-std::vector<int> Round::GetTimes() const noexcept
-{
-	return m_times;
-}
-
-void Round::UpdateTimes(int index, int value) noexcept
-{
-	m_times[index] = value;
-}
-
-std::string Round::GetImageData() const noexcept
+const std::string Round::GetImageData() const noexcept
 {
 	return m_imageData;
 }
 
-void Round::SetTimeLeft(int timeLeft)
+const std::vector<int> Round::GetTimes() const noexcept
 {
-	m_timeLeft = timeLeft;
+	return m_times;
 }
 
-int Round::GetTimeLeft() const noexcept
+const std::vector<std::string> Round::GetGuessedPlayerNames() const noexcept
 {
-	return m_timeLeft;
+	return m_guessedPlayerNames;
 }
 
+const std::set<std::string> skribbl::Round::GetWords() const noexcept
+{
+	return m_words;
+}
+
+Round::Round(Round&& other) noexcept
+	: m_id{ other.m_id },
+	m_roundNumber{ other.m_roundNumber },
+	m_gameId{ std::move(other.m_gameId) },
+	m_drawingPlayerName{ std::move(other.m_drawingPlayerName) },
+	m_currentWord{ std::move(other.m_currentWord) },
+	m_imageData{ std::move(other.m_imageData) },
+	m_times{ std::move(other.m_times) },
+	m_guessedPlayerNames{ std::move(other.m_guessedPlayerNames) },
+	m_words{ std::move(other.m_words) },
+	m_timer{ std::move(other.m_timer) }
+{
+}
+
+Round& Round::operator=(Round&& other) noexcept
+{
+
+	if (this != &other) {
+		m_id = other.m_id;
+		m_roundNumber = other.m_roundNumber;
+		m_gameId = std::move(other.m_gameId);
+		m_drawingPlayerName = std::move(other.m_drawingPlayerName);
+		m_currentWord = std::move(other.m_currentWord);
+		m_imageData = std::move(other.m_imageData);
+		m_times = std::move(other.m_times);
+		m_guessedPlayerNames = std::move(other.m_guessedPlayerNames);
+		m_words = std::move(other.m_words);
+		m_timer = std::move(other.m_timer);
+	}
+	return *this;
+}

@@ -7,7 +7,6 @@
 
 #include "utils.h"
 #include <cpr/cpr.h>
-#include <crow.h>
 
 RegisterForm::RegisterForm(QWidget* parent)
 	: QMainWindow(parent)
@@ -28,17 +27,17 @@ RegisterForm::~RegisterForm()
 
 void RegisterForm::CheckUsername(const std::string& username)
 {
-	if (username == "")
+	if (username.empty())
 		throw std::exception("Username cannot be empty");
 
 	cpr::Response response = cpr::Get(cpr::Url{ Server::GetUrl() + "/checkUsername" },
 		cpr::Payload{ {"username", username} }
 	);
 
-	if (response.status_code != 200 && response.status_code != 409)
+	if (response.status_code != 200 && response.status_code != 404)
 		throw std::exception("Server error");
 
-	if (response.text == "true")
+	if (response.text == "EXISTING")
 		throw std::exception("Username already taken");
 
 }
@@ -46,7 +45,7 @@ void RegisterForm::CheckUsername(const std::string& username)
 void RegisterForm::CheckEmailPattern(const std::string& email)
 {
 
-	if (email == "")
+	if (email.empty())
 		throw std::exception("Email cannot be empty");
 
 	const std::regex emailPattern("^([a-zA-Z0-9_\\ \\.+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$");
@@ -76,11 +75,12 @@ void RegisterForm::AddUserToDataBase(const std::string& username, const std::str
 		cpr::Payload{ {"username", username}, {"password", password}, {"email", email} }
 	);
 
-	if (response.status_code != 200)
+	if (response.status_code != 400)
+		throw std::exception("Could not add user to database");
+
+	if (response.status_code != 201)
 		throw std::exception("Server error");
 
-	if (response.text == "false")
-		throw std::exception("Could not add user to database");
 }
 
 void RegisterForm::WaitForSeconds(int seconds)

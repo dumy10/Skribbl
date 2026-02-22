@@ -2,63 +2,97 @@ export module game;
 
 import round;
 import player;
+
 import <vector>;
+import <set>;
 import <string>;
 import <sstream>;
+import <algorithm>;
+import <ranges>;
 
 namespace skribbl
 {
-	export class Game {
-	private:
-		enum class GameStatus : uint8_t
-		{
-			UNKNOWN,
-			WAITING,
-			INPROGRESS,
-			FINISHED
-		};
+	export enum class GameStatus : uint8_t
+	{
+		UNKNOWN,
+		WAITING,
+		INPROGRESS,
+		FINISHED
+	};
 
+	export class Game {
 	public:
 		Game() = default;
 		Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers, size_t currentPlayers);
 
+		[[nodiscard]] const uint8_t GetRoundNumber() const noexcept;
+
+		[[nodiscard]] const int GetId() const noexcept;
+		[[nodiscard]] const int GetPlayerIndex(const std::string& username) const noexcept;
+		[[nodiscard]] const int GetPlayerScore(const std::string& username) const noexcept;
+		[[nodiscard]] const int GetMaxNumberOfRoundsAllowed() const noexcept;
+		[[nodiscard]] const int GetGameStatusAsInt() const noexcept;
+
+		[[nodiscard]] const bool GetAllPlayersGuessedWord() const noexcept;
+
+		[[nodiscard]] const size_t GetCurrentPlayerCount() const noexcept;
+		[[nodiscard]] const size_t GetNumberOfMaxPlayers() const noexcept;
+
+		[[nodiscard]] const std::string SerializePlayers() const;
+		[[nodiscard]] const std::string SerializePlayerNames() const;
+		[[nodiscard]] const std::string SerializeGameChat() const;
+		[[nodiscard]] const std::string GetGameCode() const noexcept;
+		[[nodiscard]] const std::string GetDrawingPlayer() const noexcept;
+
+		[[nodiscard]] const GameStatus GetGameStatus() const noexcept;
+
+		inline [[nodiscard]] const Round& GetRound() const noexcept { return m_round; }
+
+		[[nodiscard]] const std::vector<Player> GetPlayers() const noexcept;
+		[[nodiscard]] const std::vector<std::string> GetChatLines() const noexcept;
+
+		[[nodiscard]] bool StartGame(const std::set<std::string>& words) noexcept;
+		[[nodiscard]] bool EndGame() noexcept;
+		[[nodiscard]] bool NextRound() noexcept;
+		[[nodiscard]] bool AddChatLineMessage(const std::string& message, const std::string& username, bool& guessed);
+
+
 		void AddPlayer(const Player& player);
 		void RemovePlayer(const Player& player);
-
-		void DeserializePlayers(const std::string& serializedPlayers);
-		int GetCurrentPlayers() const;
-		int GetGameStatusAsInt() const;
-		std::string SerializePlayers() const;
-		std::string GetGameCode() const noexcept;
-		const GameStatus GetGameStatus() const noexcept;
-		const size_t GetMaxPlayers() const noexcept;
-		const std::vector<Player>& GetPlayers() const noexcept;
-		int GetId() const noexcept;
-		int GetPlayerScore(const std::string& username) const noexcept;
-		int GetNoOfRounds() const noexcept;
-		std::string GetChat() const noexcept;
-		std::string GetDrawingPlayer() const noexcept;
-		uint8_t GetRoundNumber() const noexcept;
-		int GetPlayerIndex(const std::string& username) const noexcept;
-
-		void SetGameCode(const std::string& gameCode);
-		void SetGameStatus(GameStatus status);
-		void SetMaxPlayers(size_t maxPlayers);
-		void SetCurrentPlayers(int currentPlayers);
+		void SetGameCode(const std::string& gameCode) noexcept;
+		void SetGameStatus(const GameStatus status) noexcept;
+		void SetGameStatusFromInt(int status) noexcept;
+		void SetMaxPlayers(size_t maxPlayers) noexcept;
+		void SetCurrentPlayers(size_t currentPlayers) noexcept;
 		void SetId(int id);
 		void SetPlayers(const std::vector<Player>& players);
-		void SetGameStatusInt(int status);
-		void SetChat(const std::string& chat);
+		void DeserializePlayers(const std::string& serializedPlayers);
+		void DeserializeGameChat(const std::string& serializedChatLines);
+
+		Game(const Game& other) = delete;
+		Game& operator=(const Game& other) = delete;
+
+		// Move constructor and move assignment operator
+		Game(Game&& other);
+		Game& operator=(Game&& other);
+
+	public:
+		[[nodiscard]] bool operator==(const Game& other) const noexcept;
 
 	private:
 		int m_id;
-		static const size_t kNoOfRounds{ 4 };
 		size_t m_currentPlayers;
 		size_t m_maxPlayers;
-		std::string m_chat;
+
 		std::string m_gameCode;
+
+		std::vector<std::string> m_chatLineMessages;
 		std::vector<Player> m_players;
+
 		Round m_round;
 		GameStatus m_gameStatus{ GameStatus::UNKNOWN };
+
+	private:
+		static constexpr size_t kMaxNumberOfRounds{ 4 };
 	};
 }

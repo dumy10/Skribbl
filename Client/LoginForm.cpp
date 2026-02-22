@@ -6,7 +6,6 @@
 #include <regex>
 
 #include <cpr/cpr.h>
-#include <crow.h>
 
 LoginForm::LoginForm(QWidget* parent)
 	: QMainWindow(parent)
@@ -41,13 +40,13 @@ void LoginForm::CheckUsername(const std::string& username)
 	);
 
 	if (response.status_code != 200)
-		throw std::exception(response.text.c_str());
+		throw std::exception("Username or password are invalid.");
 
 }
 
 void LoginForm::CheckPassword(const std::string& password)
 {
-	if (password == "")
+	if (password.empty())
 		throw std::exception("Password cannot be empty");
 
 	if (password.length() < 6)
@@ -63,13 +62,13 @@ void LoginForm::ValidateUserLogin(const std::string& username, const std::string
 	CheckUsername(username);
 	CheckPassword(password);
 
-	cpr::Response loginRequest = cpr::Get(
+	cpr::Response loginRequest = cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/loginUser" },
 		cpr::Payload{ {"username", username}, {"password", password} }
 	);
 
-	if (loginRequest.status_code != 200)
-		throw std::exception(loginRequest.text.c_str());
+	if (loginRequest.status_code != 204)
+		throw std::exception("Username or password are invalid.");
 }
 
 void LoginForm::OnLoginButtonClicked()

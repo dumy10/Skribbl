@@ -4,7 +4,6 @@
 
 #include <regex>
 #include <cpr/cpr.h>
-#include <crow.h>
 
 ServerConnectForm::ServerConnectForm(QWidget *parent)
 	: QMainWindow(parent)

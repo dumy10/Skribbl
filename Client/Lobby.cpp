@@ -3,7 +3,6 @@
 #include "Menu.h"
 
 #include "utils.h"
-#include <crow.h>
 #include <cpr/cpr.h>
 #include <QTime>
 
@@ -53,7 +52,7 @@ void Lobby::GetRoomID()
 		cpr::Url{ Server::GetUrl() + "/roomID" }
 	);
 
-	if (response.status_code != 200)
+	if (response.status_code != 201)
 		throw std::exception(response.text.c_str());
 
 	m_roomID = response.text;
@@ -224,17 +223,17 @@ void Lobby::OnCreateLobbyButtonPress()
 		m_ui.playerNumber->setText(numberOfPlayers);
 
 		// send request to server to create a room (game) with the room id, the max number of players and how many players are already in the room
-		cpr::Response response = cpr::Get(
+		cpr::Response response = cpr::Post(
 			cpr::Url{ Server::GetUrl() + "/createRoom" },
 			cpr::Payload{
-				{ "gameCode", m_roomID },
+				{ "roomID", m_roomID },
 				{ "username", m_username },
 				{ "maxPlayers", std::to_string(numberOfPlayers[0].digitValue()) },
 				{ "currentPlayers", std::to_string(m_playerIndex) }
 			}
 		);
 
-		if (response.status_code != 200)
+		if (response.status_code != 201)
 			throw std::exception(response.text.c_str());
 
 		m_ui.roomOwnerField_2->setText(QString::fromUtf8(m_username.data(), int(m_username.size())));

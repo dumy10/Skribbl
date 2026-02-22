@@ -19,9 +19,6 @@
     <ClCompile Include="player.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils.cppm">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="word.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
@@ -34,11 +31,20 @@
     <ClCompile Include="routing.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="word.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cppm">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>Class Files</Filter>
+    </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
-    <ClCompile Include="word.cpp">
-      <Filter>Class Files</Filter>
+    <ClCompile Include="utils.cppm">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -20,8 +20,8 @@ int main()
 
 		try
 		{
-			Routing router;
-			router.Run(storage);
+			Routing router(storage);
+			router.Run();
 		}
 		catch (const std::exception& e)
 		{

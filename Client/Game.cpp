@@ -3,7 +3,6 @@
 #include "utils.h"
 
 #include <cpr/cpr.h>
-#include <crow.h>
 #include <QScrollBar>
 #include <QBuffer>
 
@@ -17,17 +16,10 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	DisplayPlayer(m_username, m_playerIndex, "0");
 
 	m_updateTimer = std::make_unique<QTimer>(this);
-	m_roundTimer = std::make_unique<QTimer>(this);
 
 	m_guessedWord = false;
 	m_currentBrushSizeIndex = 0;
 	StartTimer();
-
-	if (m_isOwner)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(700));
-		m_roundTimer->start(61500);
-	}
 
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
 	connect(m_ui.Verde, &QPushButton::clicked, this, &Game::SetPenColorGreen);
@@ -49,13 +41,11 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnLeaveButtonClicked);
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
-	connect(m_roundTimer.get(), SIGNAL(timeout()), this, SLOT(OnTimeEnd()));
 }
 
 Game::~Game()
 {
 	m_updateTimer->stop();
-	m_roundTimer->stop();
 	auto clearImageRequest = cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/clearImage" },
 		cpr::Payload{ {"roomID", m_roomID} }
@@ -401,7 +391,6 @@ void Game::CheckGameEnded()
 	if (gameEndedRequest.status_code == 200 || std::stoi(currentNumberOfPlayersRequest.text) == 1)
 	{
 		m_updateTimer->stop();
-		m_roundTimer->stop();
 		int time = 10;
 
 		QTimer* timer = new QTimer(this);
@@ -486,38 +475,19 @@ void Game::CheckRoundNumber()
 
 void Game::UpdateTimeLeft()
 {
-	if (m_isOwner)
-	{
-		int timeLeft = m_roundTimer->remainingTime() / 1000;
-		m_ui.timer->display(timeLeft);
-		if (timeLeft == 0)
-		{
-			m_guessedWord = false;
-			ClearDrawingArea();
-		}
-		auto timeLeftRequest = cpr::Post(
-			cpr::Url{ Server::GetUrl() + "/timeLeft" },
-			cpr::Payload{ {"roomID", m_roomID}, {"timer", std::to_string(timeLeft) } }
-		);
-		if (timeLeftRequest.status_code != 200)
-			return;
-	}
-	else
-	{
-		auto timeLeftRequest = cpr::Get(
-			cpr::Url{ Server::GetUrl() + "/timeLeft" },
-			cpr::Payload{ {"roomID", m_roomID} }
-		);
+	auto timeLeftRequest = cpr::Get(
+		cpr::Url{ Server::GetUrl() + "/timeLeft" },
+		cpr::Payload{ {"roomID", m_roomID} }
+	);
 
-		if (timeLeftRequest.status_code != 200)
-			return;
+	if (timeLeftRequest.status_code != 200)
+		return;
 
-		m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
-		if (std::stoi(timeLeftRequest.text) == 0)
-		{
-			m_guessedWord = false;
-			ClearDrawingArea();
-		}
+	m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
+	if (std::stoi(timeLeftRequest.text) == 0)
+	{
+		m_guessedWord = false;
+		ClearDrawingArea();
 	}
 }
 
@@ -744,10 +714,11 @@ void Game::OnLeaveButtonClicked()
 
 void Game::SendDrawing(const QByteArray& drawingData)
 {
+	return;
 	auto request = cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/drawingImage" },
 		cpr::Parameters{ {"roomID", m_roomID} },
-		cpr::Body{ drawingData.toBase64() }
+		cpr::Body{ drawingData.toBase64().toStdString() }
 	);
 
 	if (request.status_code != 200)

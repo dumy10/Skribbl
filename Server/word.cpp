@@ -9,14 +9,19 @@ Word::Word(int id, const std::string& word) :
 	// Empty
 }
 
-int Word::GetId() const noexcept
+const int Word::GetId() const noexcept
 {
 	return m_id;
 }
 
-std::string Word::GetWord() const noexcept
+const std::string Word::GetWord() const noexcept
 {
 	return m_word;
+}
+
+const std::string Word::Serialize() const noexcept
+{
+	return std::to_string(this->m_id) + "," + this->m_word;
 }
 
 void Word::SetId(int id)

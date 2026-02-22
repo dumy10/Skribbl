@@ -73,7 +73,6 @@ private:
 private:
 	std::unique_ptr<DrawingWidget> m_drawingArea;
 	std::unique_ptr<QTimer> m_updateTimer;
-	std::unique_ptr<QTimer> m_roundTimer;
 };
 
 #endif // GAME_H
