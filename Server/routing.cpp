@@ -178,7 +178,6 @@ void Routing::Run()
 		}
 
 		game->AddPlayer(std::move(*player));
-		game->SetCurrentPlayers(currentPlayers);
 
 		return crow::response{ 200 };
 			});
@@ -491,7 +490,7 @@ void Routing::Run()
 				return crow::response{ 404 };
 			}
 
-			Round& currentRound = const_cast<Round&>(game->GetRound());
+			Round& currentRound = game->GetRound();
 			currentRound.SetImageData(imageData);
 
 			return crow::response{ 200 };
@@ -523,7 +522,7 @@ void Routing::Run()
 			return crow::response{ 404 };
 		}
 
-		Round& currentRound = const_cast<Round&>(game->GetRound());
+		Round& currentRound = game->GetRound();
 		currentRound.SetImageData("");
 
 		return crow::response{ 200 };

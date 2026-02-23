@@ -49,7 +49,6 @@ std::optional<std::shared_ptr<Game>> Database::AddGame(const Player& player, con
 	try
 	{
 		m_db.insert(Game{ -1, player, gameCode, maxPlayers, 1 });
-		m_db.insert(Round{ -1, gameCode, maxPlayers });
 		return GetGame(gameCode);
 	}
 	catch (const std::exception& e) {

@@ -2,10 +2,11 @@ module game;
 
 using namespace skribbl;
 
-Game::Game(int id, const Player& player, const std::string& gameCode, size_t maxPlayers, size_t currentPlayers)
+Game::Game(const int id, const Player& player, const std::string& gameCode, const size_t maxPlayers, const size_t currentPlayers)
 	: m_id{ id },
 	m_gameCode{ gameCode },
-	m_maxPlayers{ maxPlayers }
+	m_maxPlayers{ maxPlayers },
+	m_round{ gameCode, {} , maxPlayers }
 {
 	m_players.reserve(maxPlayers);
 	m_players.emplace_back(player);
@@ -103,7 +104,7 @@ const size_t Game::GetNumberOfMaxPlayers() const noexcept
 	return m_maxPlayers;
 }
 
-const std::string Game::SerializePlayers() const
+const std::string Game::SerializePlayers() const noexcept
 {
 	std::string serializedPlayers;
 	for (const auto& player : m_players) {
@@ -117,7 +118,7 @@ const std::string Game::SerializePlayers() const
 	return serializedPlayers;
 }
 
-const std::string skribbl::Game::SerializePlayerNames() const
+const std::string Game::SerializePlayerNames() const noexcept
 {
 	std::string serializedPlayerNames;
 	for (const auto& player : m_players) {
@@ -131,7 +132,7 @@ const std::string skribbl::Game::SerializePlayerNames() const
 	return serializedPlayerNames;
 }
 
-const std::string Game::SerializeGameChat() const
+const std::string Game::SerializeGameChat() const noexcept
 {
 	std::string serializedChat;
 	for (const auto& chatLine : m_chatLineMessages) {
@@ -143,6 +144,11 @@ const std::string Game::SerializeGameChat() const
 	}
 
 	return serializedChat;
+}
+
+const std::string Game::SerializeRound() const noexcept
+{
+	return m_round.Serialize();
 }
 
 const std::string Game::GetGameCode() const noexcept
@@ -248,7 +254,7 @@ bool Game::NextRound() noexcept
 	return true;
 }
 
-bool Game::AddChatLineMessage(const std::string& message, const std::string& username, bool& guessed)
+bool Game::AddChatLineMessage(const std::string& message, const std::string& username, bool& guessed) noexcept
 {
 	guessed = false;
 	std::string chatLine{ username };
@@ -283,12 +289,13 @@ bool Game::AddChatLineMessage(const std::string& message, const std::string& use
 	return true;
 }
 
-void Game::AddPlayer(const Player& player)
+void Game::AddPlayer(const Player& player) noexcept
 {
 	m_players.push_back(player);
+	m_currentPlayers++;
 }
 
-void Game::RemovePlayer(const Player& player)
+void Game::RemovePlayer(const Player& player) noexcept
 {
 	auto playerIt = std::find(m_players.begin(), m_players.end(), player);
 	if (playerIt != m_players.end()) {
@@ -317,22 +324,17 @@ void Game::SetMaxPlayers(size_t maxPlayers) noexcept
 	m_maxPlayers = maxPlayers;
 }
 
-void Game::SetCurrentPlayers(size_t currentPlayers) noexcept
-{
-	m_currentPlayers = currentPlayers;
-}
-
-void Game::SetId(int id)
+void Game::SetId(int id) noexcept
 {
 	m_id = id;
 }
 
-void Game::SetPlayers(const std::vector<Player>& players)
+void Game::SetPlayers(const std::vector<Player>& players) noexcept
 {
 	m_players = players;
 }
 
-void Game::DeserializePlayers(const std::string& serializedPlayers)
+void Game::DeserializePlayers(const std::string& serializedPlayers) noexcept
 {
 	m_players.clear();
 	std::istringstream ss(serializedPlayers);
@@ -342,7 +344,7 @@ void Game::DeserializePlayers(const std::string& serializedPlayers)
 	}
 }
 
-void Game::DeserializeGameChat(const std::string& serializedChatLines)
+void Game::DeserializeGameChat(const std::string& serializedChatLines) noexcept
 {
 	m_chatLineMessages.clear();
 	std::istringstream ss(serializedChatLines);
@@ -352,7 +354,12 @@ void Game::DeserializeGameChat(const std::string& serializedChatLines)
 	}
 }
 
-bool skribbl::Game::operator==(const Game& other) const noexcept
+void Game::DeserializeRound(const std::string& serializedRound) noexcept
+{
+	m_round.Deserialize(serializedRound);
+}
+
+bool Game::operator==(const Game& other) const noexcept
 {
 	if (this == &other) {
 		return true;

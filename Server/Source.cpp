@@ -1,14 +1,8 @@
-#include <filesystem>
-#include <iostream>
-#include <memory>
-
-#include <sqlite_orm/sqlite_orm.h>
-#include "database.h"
 #include "routing.h"
 
 int main()
 {
-	Database storage;
+	Database storage{};
 
 	try
 	{
@@ -20,7 +14,7 @@ int main()
 
 		try
 		{
-			Routing router(storage);
+			Routing router{ storage };
 			router.Run();
 		}
 		catch (const std::exception& e)

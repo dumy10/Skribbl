@@ -4,55 +4,55 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="database.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>Class Files</Filter>
+    <ClCompile Include="utils.cppm">
+      <Filter>Header Files\Rest</Filter>
     </ClCompile>
     <ClCompile Include="game.cppm">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="round.cppm">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="player.cppm">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="round.cppm">
+      <Filter>Header Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="word.cppm">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="round.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="routing.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="word.cpp">
-      <Filter>Class Files</Filter>
+      <Filter>Header Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="timer.cppm">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="timer.cpp">
-      <Filter>Class Files</Filter>
+    <ClCompile Include="routing.cpp">
+      <Filter>Class Files\Rest</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
-      <Filter>Class Files</Filter>
+      <Filter>Class Files\Rest</Filter>
     </ClCompile>
-    <ClCompile Include="utils.cppm">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="game.cpp">
+      <Filter>Class Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Class Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="round.cpp">
+      <Filter>Class Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>Class Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="word.cpp">
+      <Filter>Class Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="database.cpp">
+      <Filter>Class Files\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="database.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="routing.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Rest</Filter>
+    </ClInclude>
+    <ClInclude Include="database.h">
+      <Filter>Header Files\Database</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +67,24 @@
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{6afe67b5-f679-462b-8bef-3b94df4b9216}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rest">
+      <UniqueIdentifier>{d207bf75-07d2-4bfe-b0f1-345b7b7b5c6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{16f68d03-2505-49c4-832c-e3fe3a046787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Rest">
+      <UniqueIdentifier>{b2cbd2c0-9edc-480f-92d9-c027672fda3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Game">
+      <UniqueIdentifier>{fcbdabb9-60ea-4b1d-ac32-c8c1c8ed51b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Database">
+      <UniqueIdentifier>{42392bef-f5d3-4332-af7e-a3de100c676b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Database">
+      <UniqueIdentifier>{4b5427da-3d22-44b4-ba86-5c0264c07a68}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -15,12 +15,11 @@ namespace skribbl
 	public:
 
 		Round() = default;
-		Round(int id, const std::string& gameId, size_t maxPlayers);
+		Round(const std::string& gameId, const std::set<std::string>& words, const size_t maxPlayers);
 
 		[[nodiscard]] bool StartRound(const std::string& drawingPlayerName, const uint8_t roundNumber) noexcept;
 		[[nodiscard]] bool StopRound() noexcept;
 
-		void SetId(int id) noexcept;
 		void SetRoundNumber(uint8_t roundNumber) noexcept;
 		void SetGameId(const std::string& gameId) noexcept;
 		void SetDrawingPlayer(const std::string& drawingPlayerName) noexcept;
@@ -32,9 +31,9 @@ namespace skribbl
 
 		void DeserializeTimes(const std::string& serializedPoints) noexcept;
 		void DeserializeWords(const std::string& serializedWords) noexcept;
+		void Deserialize(const std::string& serializedRound);
 		void UpdateTimes(const int index, const int value) noexcept;
 
-		[[nodiscard]] const int GetId() const noexcept;
 		[[nodiscard]] const int GetTimeLeft() const noexcept;
 		[[nodiscard]] const int CalculatePoints(const int time) const noexcept;
 
@@ -45,6 +44,7 @@ namespace skribbl
 		[[nodiscard]] const std::string GetCurrentWord() const noexcept;
 		[[nodiscard]] const std::string SerializeWords() const noexcept;
 		[[nodiscard]] const std::string SerializeTimes() const noexcept;
+		[[nodiscard]] const std::string Serialize() const noexcept;
 		[[nodiscard]] const std::string GetImageData() const noexcept;
 
 		[[nodiscard]] const std::vector<int> GetTimes() const noexcept;
@@ -59,7 +59,6 @@ namespace skribbl
 		Round& operator=(Round&& other) noexcept;
 
 	private:
-		int m_id;
 		uint8_t m_roundNumber;
 
 		std::string m_gameId;

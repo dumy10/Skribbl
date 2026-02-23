@@ -7,49 +7,6 @@ Timer::Timer(int startTime) : m_timeLeft{ startTime }, m_startTime{ startTime }
 	// Empty
 }
 
-//Timer::Timer(const Timer& other)
-//{
-//	bool wasTicking = other.m_isTicking.load();
-//
-//	if (wasTicking) {
-//		const_cast<Timer&>(other).StopTicking(); // Stop temporarily to get consistent state
-//	}
-//
-//	m_timeLeft = other.m_timeLeft.load();
-//	m_startTime = other.m_startTime;
-//	m_isTicking = false; // Initialize to false
-//
-//	if (wasTicking) {
-//		const_cast<Timer&>(other).StartTicking(); // Restart the other timer
-//		StartTicking(); // Start the new timer
-//	}
-//}
-//
-//Timer& skribbl::Timer::operator=(const Timer& other)
-//{
-//	if (this != &other) {
-//		bool wasTicking = other.m_isTicking.load();
-//
-//		// Stop both timers
-//		StopTicking();
-//		if (wasTicking) {
-//			const_cast<Timer&>(other).StopTicking(); // Stop temporarily to get consistent state
-//		}
-//
-//		// Copy state from source
-//		m_timeLeft.store(other.m_timeLeft.load());
-//		m_startTime = other.m_startTime;
-//
-//		// Restart both if source was ticking
-//		if (wasTicking) {
-//			const_cast<Timer&>(other).StartTicking(); // Restart the other timer
-//			StartTicking(); // Start this timer
-//		}
-//	}
-//
-//	return *this;
-//}
-
 Timer::Timer(Timer&& other) noexcept
 	: m_startTime{ other.m_startTime }
 {

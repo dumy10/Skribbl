@@ -38,20 +38,9 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("players", &Game::SerializePlayers, &Game::DeserializePlayers),
 			sql::make_column("gamecode", &Game::SetGameCode, &Game::GetGameCode),
 			sql::make_column("maxplayers", &Game::SetMaxPlayers, &Game::GetNumberOfMaxPlayers),
-			sql::make_column("currentplayers", &Game::SetCurrentPlayers, &Game::GetCurrentPlayerCount),
 			sql::make_column("status", &Game::SetGameStatusFromInt, &Game::GetGameStatusAsInt),
-			sql::make_column("chat", &Game::SerializeGameChat, &Game::DeserializeGameChat)
-		),
-		sql::make_table(
-			"Rounds",
-			sql::make_column("id", &Round::SetId, &Round::GetId, sql::primary_key().autoincrement()),
-			sql::make_column("gameid", &Round::SetGameId, &Round::GetGameId),
-			sql::make_column("word", &Round::SetCurrentWord, &Round::GetCurrentWord),
-			sql::make_column("drawingplayer", &Round::SetDrawingPlayer, &Round::GetDrawingPlayer),
-			sql::make_column("roundnumber", &Round::SetRoundNumber, &Round::GetRoundNumber),
-			sql::make_column("words", &Round::SerializeWords, &Round::DeserializeWords),
-			sql::make_column("times", &Round::SerializeTimes, &Round::DeserializeTimes),
-			sql::make_column("imagedata", &Round::SetImageData, &Round::GetImageData)
+			sql::make_column("chat", &Game::SerializeGameChat, &Game::DeserializeGameChat),
+			sql::make_column("round", &Game::SerializeRound, &Game::DeserializeRound)
 		)
 	);
 }

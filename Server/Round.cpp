@@ -2,17 +2,48 @@ module round;
 
 using namespace skribbl;
 
-Round::Round(int id, const std::string& gameId, size_t maxPlayers)
+Round::Round(const std::string& gameId, const std::set<std::string>& words, const size_t maxPlayers)
 	:
-	m_id{ id },
 	m_gameId{ gameId },
 	m_drawingPlayerName{ "" },
 	m_currentWord{ "" },
 	m_imageData{ "" },
-	m_roundNumber{ 1 }
+	m_roundNumber{ 1 },
+	m_words{ words }
 {
 	m_times.resize(maxPlayers);
 	std::ranges::for_each(m_times, [](auto& time) { time = 0; });
+}
+
+Round::Round(Round&& other) noexcept
+	:
+	m_roundNumber{ other.m_roundNumber },
+	m_gameId{ std::move(other.m_gameId) },
+	m_drawingPlayerName{ std::move(other.m_drawingPlayerName) },
+	m_currentWord{ std::move(other.m_currentWord) },
+	m_imageData{ std::move(other.m_imageData) },
+	m_times{ std::move(other.m_times) },
+	m_guessedPlayerNames{ std::move(other.m_guessedPlayerNames) },
+	m_words{ std::move(other.m_words) },
+	m_timer{ std::move(other.m_timer) }
+{
+}
+
+Round& Round::operator=(Round&& other) noexcept
+{
+	if (this != &other) {
+		m_roundNumber = other.m_roundNumber;
+		m_gameId = std::move(other.m_gameId);
+		m_drawingPlayerName = std::move(other.m_drawingPlayerName);
+		m_currentWord = std::move(other.m_currentWord);
+		m_imageData = std::move(other.m_imageData);
+		m_times = std::move(other.m_times);
+		m_guessedPlayerNames = std::move(other.m_guessedPlayerNames);
+		m_words = std::move(other.m_words);
+		m_timer = std::move(other.m_timer);
+	}
+
+	return *this;
 }
 
 bool Round::StartRound(const std::string& drawingPlayerName, const uint8_t roundNumber) noexcept
@@ -22,16 +53,15 @@ bool Round::StartRound(const std::string& drawingPlayerName, const uint8_t round
 	SetDrawingPlayer(drawingPlayerName);
 	m_words.erase(m_words.begin());
 
+	std::ranges::for_each(m_times, [](int& time) { time = 0; });
+	SetImageData("");
+
 	if (roundNumber == 1) {
 		m_timer.StartTicking();
 	}
 	else {
 		m_timer.StopTicking();
 		m_timer.ResetTimer();
-
-		std::ranges::for_each(m_times, [](int& time) { time = 0; });
-		SetImageData("");
-
 		m_timer.StartTicking();
 	}
 
@@ -44,11 +74,6 @@ bool Round::StopRound() noexcept
 	m_timer.StopTicking();
 
 	return true;
-}
-
-void Round::SetId(int id) noexcept
-{
-	m_id = id;
 }
 
 void Round::SetRoundNumber(uint8_t roundNumber) noexcept
@@ -110,6 +135,40 @@ void Round::DeserializeWords(const std::string& serializedWords) noexcept
 	}
 }
 
+void Round::Deserialize(const std::string& serializedRound)
+{
+	std::stringstream ss{ serializedRound };
+	std::string token;
+	std::vector<std::string> tokens;
+	while (std::getline(ss, token, ';')) {
+		tokens.push_back(token);
+	}
+
+	if (tokens.size() < 7) {
+		throw std::runtime_error("Invalid serialized round format");
+	}
+
+	SetRoundNumber(static_cast<uint8_t>(std::stoi(tokens[0])));
+	SetGameId(tokens[1]);
+	SetDrawingPlayer(tokens[2]);
+	SetCurrentWord(tokens[3]);
+	SetImageData(tokens[4]);
+	DeserializeTimes(tokens[5]);
+	DeserializeWords(tokens[6]);
+
+	if (tokens.size() > 7) {
+		std::string guessedPlayerNamesStr = tokens[7];
+		std::stringstream guessedPlayerNamesSS{ guessedPlayerNamesStr };
+		std::string guessedPlayerName;
+		while (std::getline(guessedPlayerNamesSS, guessedPlayerName, ',')) {
+			m_guessedPlayerNames.emplace_back(guessedPlayerName);
+		}
+	}
+
+	m_timer.StopTicking(); // Ensure the timer is stopped before resetting
+	m_timer = Timer();
+}
+
 void Round::UpdateTimes(const int index, const int value) noexcept
 {
 	if (index < 0 || index >= m_times.size()) {
@@ -117,11 +176,6 @@ void Round::UpdateTimes(const int index, const int value) noexcept
 	}
 
 	m_times[index] = value;
-}
-
-const int Round::GetId() const noexcept
-{
-	return m_id;
 }
 
 const int Round::GetTimeLeft() const noexcept
@@ -185,6 +239,30 @@ const std::string Round::SerializeTimes() const noexcept
 	return serializedTimes;
 }
 
+const std::string Round::Serialize() const noexcept
+{
+	std::string serializedRound;
+	serializedRound += std::to_string(m_roundNumber) + ";";
+	serializedRound += m_gameId + ";";
+	serializedRound += m_drawingPlayerName + ";";
+	serializedRound += m_currentWord + ";";
+	serializedRound += m_imageData + ";";
+	serializedRound += SerializeTimes() + ";";
+	serializedRound += SerializeWords() + ";";
+
+	if  (!m_guessedPlayerNames.empty()) {
+		for (const auto& guessedPlayerName : m_guessedPlayerNames) {
+			serializedRound += guessedPlayerName + ",";
+		}
+	}
+
+	if (!serializedRound.empty()) {
+		serializedRound.pop_back(); // Remove trailing comma or semicolon
+	}
+
+	return serializedRound;
+}
+
 const std::string Round::GetImageData() const noexcept
 {
 	return m_imageData;
@@ -203,36 +281,4 @@ const std::vector<std::string> Round::GetGuessedPlayerNames() const noexcept
 const std::set<std::string> skribbl::Round::GetWords() const noexcept
 {
 	return m_words;
-}
-
-Round::Round(Round&& other) noexcept
-	: m_id{ other.m_id },
-	m_roundNumber{ other.m_roundNumber },
-	m_gameId{ std::move(other.m_gameId) },
-	m_drawingPlayerName{ std::move(other.m_drawingPlayerName) },
-	m_currentWord{ std::move(other.m_currentWord) },
-	m_imageData{ std::move(other.m_imageData) },
-	m_times{ std::move(other.m_times) },
-	m_guessedPlayerNames{ std::move(other.m_guessedPlayerNames) },
-	m_words{ std::move(other.m_words) },
-	m_timer{ std::move(other.m_timer) }
-{
-}
-
-Round& Round::operator=(Round&& other) noexcept
-{
-
-	if (this != &other) {
-		m_id = other.m_id;
-		m_roundNumber = other.m_roundNumber;
-		m_gameId = std::move(other.m_gameId);
-		m_drawingPlayerName = std::move(other.m_drawingPlayerName);
-		m_currentWord = std::move(other.m_currentWord);
-		m_imageData = std::move(other.m_imageData);
-		m_times = std::move(other.m_times);
-		m_guessedPlayerNames = std::move(other.m_guessedPlayerNames);
-		m_words = std::move(other.m_words);
-		m_timer = std::move(other.m_timer);
-	}
-	return *this;
 }
