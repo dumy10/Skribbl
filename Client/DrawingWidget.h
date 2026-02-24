@@ -4,8 +4,7 @@
 #include <QWidget>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QPen>
-#include <QWidget>
+#include <QPen> 
 #include <QImage>
 #include <QStack>
 #include <QPoint>

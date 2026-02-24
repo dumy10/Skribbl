@@ -9,17 +9,17 @@ class Menu : public QMainWindow
 
 public:
 	Menu(const std::string& username, QWidget* parent = nullptr);
-	~Menu();
+	~Menu() = default;
 
 private:
 	Ui::MenuClass m_ui;
 	std::string m_username;
 
 private:
-	void WaitForSeconds(int seconds);
+	void WaitForSeconds(int seconds) const noexcept;
 
 private slots:
-	void OnCreateButtonClicked();
-	void OnJoinButtonClicked();
+	void OnCreateButtonClicked() noexcept;
+	void OnJoinButtonClicked() noexcept;
 	void OnJoinGameButtonClicked();
 };

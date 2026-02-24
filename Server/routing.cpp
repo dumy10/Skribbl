@@ -13,6 +13,12 @@ Routing::Routing(const Database& storage)
 	for (const auto& player : players) {
 		m_players.insert_or_assign(player->GetName(), player);
 	}
+	StartCleanupTimer();
+}
+
+Routing::~Routing()
+{
+	StopCleanupTimer();
 }
 
 void Routing::Run()
@@ -60,6 +66,8 @@ void Routing::Run()
 		if (!player.has_value()) {
 			return crow::response{ 400 };
 		}
+
+		std::unique_lock lock{ m_playersMutex };
 
 		m_players.insert_or_assign(player.value()->GetName(), *player);
 
@@ -128,6 +136,10 @@ void Routing::Run()
 			return crow::response{ 400, "Error creating the game." };
 		}
 
+		game.value()->GetRound() = Round{ std::move(roomID), {}, static_cast<size_t>(maxPlayers) };
+
+		std::unique_lock lock{ m_gamesMutex };
+
 		m_games.insert_or_assign(roomID, game.value());
 
 		return crow::response{ 201 };
@@ -168,8 +180,6 @@ void Routing::Run()
 		if (!player) {
 			return crow::response{ 404 };
 		}
-
-		int currentPlayers = std::stoi(params.at("currentPlayers"));
 
 		auto game = GetGameByRoomID(roomID);
 
@@ -234,9 +244,9 @@ void Routing::Run()
 		std::string roomID = params.at("roomID");
 		std::string username = params.at("username");
 
-		auto player = m_storage.GetPlayer(std::move(username));
+		auto player = GetPlayerByUsername(username);
 
-		if (!player.has_value()) {
+		if (!player) {
 			return crow::response{ 404 };
 		}
 
@@ -246,7 +256,7 @@ void Routing::Run()
 			return crow::response{ 404 };
 		}
 
-		game->RemovePlayer(std::move(*player.value()));
+		game->RemovePlayer(std::move(*player));
 
 		return crow::response{ 200 };
 			});
@@ -490,12 +500,10 @@ void Routing::Run()
 				return crow::response{ 404 };
 			}
 
-			Round& currentRound = game->GetRound();
-			currentRound.SetImageData(imageData);
+			game->GetRound().SetImageData(imageData);
 
 			return crow::response{ 200 };
-		}
-		else if (req.method == crow::HTTPMethod::Get) {
+		} else if (req.method == crow::HTTPMethod::Get) {
 			auto params = parseUrlArgs(req.body);
 			std::string roomID = params.at("roomID");
 
@@ -522,8 +530,7 @@ void Routing::Run()
 			return crow::response{ 404 };
 		}
 
-		Round& currentRound = game->GetRound();
-		currentRound.SetImageData("");
+		game->GetRound().SetImageData("");
 
 		return crow::response{ 200 };
 			});
@@ -551,6 +558,8 @@ void Routing::Run()
 
 std::shared_ptr<Game> Routing::GetGameByRoomID(const std::string& roomID) noexcept
 {
+	std::shared_lock lock{ m_gamesMutex };
+
 	auto it = m_games.find(roomID);
 	if (it != m_games.end()) {
 		return it->second;
@@ -561,10 +570,49 @@ std::shared_ptr<Game> Routing::GetGameByRoomID(const std::string& roomID) noexce
 
 std::shared_ptr<Player> Routing::GetPlayerByUsername(const std::string& username) noexcept
 {
+	std::shared_lock lock{ m_playersMutex };
+
 	auto it = m_players.find(username);
 	if (it != m_players.end()) {
 		return it->second;
 	}
 
 	return m_storage.GetPlayer(username).value_or(nullptr);
+}
+
+void Routing::CleanupFinishedGames()
+{
+	std::unique_lock lock{ m_gamesMutex };
+
+	std::vector<std::string> finishedGameIDs;
+	for (const auto& [roomID, game] : m_games) {
+		if (game->GetGameStatus() == GameStatus::FINISHED) {
+			finishedGameIDs.push_back(roomID);
+		}
+	}
+
+	for (const auto& roomID : finishedGameIDs) {
+		m_games.erase(roomID);
+	}
+}
+
+void Routing::StartCleanupTimer()
+{
+	m_isRunning = true;
+	m_cleanupThread = std::thread([this]() {
+		while (m_isRunning) {
+			std::this_thread::sleep_for(kCleanupInterval);
+			if (m_isRunning) { // Check again after waking up to avoid race condition
+				CleanupFinishedGames();
+			}
+		}
+		});
+}
+
+void Routing::StopCleanupTimer()
+{
+	m_isRunning = false;
+	if (m_cleanupThread.joinable()) {
+		m_cleanupThread.join();
+	}
 }

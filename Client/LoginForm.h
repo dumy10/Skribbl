@@ -9,19 +9,18 @@ class LoginForm : public QMainWindow
 
 public:
     LoginForm(QWidget *parent = nullptr);
-    ~LoginForm();
+    ~LoginForm() = default;
 
 private:
     Ui::LoginFormClass m_ui;
 
 private:
-    void WaitForSeconds(int seconds);
-    void CheckUsername(const std::string& username);
-    void CheckPassword(const std::string& password);
-    void ValidateUserLogin(const std::string& username, const std::string& password);
+    void WaitForSeconds(int seconds) const noexcept;
+    void CheckUsername(const std::string& username) const;
+    void CheckPassword(const std::string& password) const;
+    void ValidateUserLogin(const std::string& username, const std::string& password) const;
 
 private slots:
-    void OnLoginButtonClicked();
-    void OnRegisterButtonClicked();
-
+    void OnLoginButtonClicked() noexcept;
+    void OnRegisterButtonClicked() noexcept;
 };

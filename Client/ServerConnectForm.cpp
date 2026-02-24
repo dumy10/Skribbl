@@ -19,14 +19,16 @@ void ServerConnectForm::OnConnectButtonClicked()
 
 	try
 	{
-		if(ip == "")
+		if (ip.empty()) {
 			throw std::exception("IP cannot be empty");
+		}
 
 		CheckIp(ip);
 		Server::SetIp(ip);
 
-		if (!IsServerRunning(Server::GetUrl()))
+		if (!IsServerRunning(Server::GetUrl())) {
 			throw std::exception("Server is not running");
+		}
 
 		LoginForm* loginForm = new LoginForm();
 		loginForm->show();
@@ -40,14 +42,15 @@ void ServerConnectForm::OnConnectButtonClicked()
 	}
 }
 
-void ServerConnectForm::CheckIp(const std::string& ip)
+void ServerConnectForm::CheckIp(const std::string& ip) const
 {
 	std::regex ipv4("((0?[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}(0?[0-9]|[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-5])");
-	if (!std::regex_match(ip, ipv4))
+	if (!std::regex_match(ip, ipv4)) {
 		throw std::exception("Invalid IP address");
+	}
 }
 
-bool ServerConnectForm::IsServerRunning(const std::string& url)
+bool ServerConnectForm::IsServerRunning(const std::string& url) const noexcept
 {
 	cpr::Response response = cpr::Get(
 		cpr::Url{ url + "/"}

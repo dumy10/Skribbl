@@ -58,7 +58,7 @@ private:
 	void SendDrawing(const QByteArray& drawingData);
 	void ReturnDrawing(std::string& drawingData);
 	void EndGame();
-
+	void CheckAllPlayersGuessed();
 
 private:
 	Ui::GameClass m_ui;
@@ -70,6 +70,9 @@ private:
 	bool m_guessedWord;
 	int m_currentBrushSizeIndex;
 	
+private:
+	static constexpr int kMaxRetries{ 3 };
+
 private:
 	std::unique_ptr<DrawingWidget> m_drawingArea;
 	std::unique_ptr<QTimer> m_updateTimer;

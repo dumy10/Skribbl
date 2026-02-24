@@ -18,46 +18,47 @@ LoginForm::LoginForm(QWidget* parent)
 	connect(m_ui.registerButton, SIGNAL(clicked()), this, SLOT(OnRegisterButtonClicked()));
 }
 
-LoginForm::~LoginForm()
-{
-}
-
-void LoginForm::WaitForSeconds(int seconds)
+void LoginForm::WaitForSeconds(int seconds) const noexcept
 {
 	QTime delayTime = QTime::currentTime().addSecs(seconds);
-	while (QTime::currentTime() < delayTime)
+	while (QTime::currentTime() < delayTime) {
 		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+	}
 }
 
-void LoginForm::CheckUsername(const std::string& username)
+void LoginForm::CheckUsername(const std::string& username) const
 {
-	if (username == "")
+	if (username == "") {
 		throw std::exception("Username cannot be empty");
+	}
 
 	cpr::Response response = cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/checkUsername" },
 		cpr::Payload{ {"username", username} }
 	);
 
-	if (response.status_code != 200)
+	if (response.status_code != 200) {
 		throw std::exception("Username or password are invalid.");
-
+	}
 }
 
-void LoginForm::CheckPassword(const std::string& password)
+void LoginForm::CheckPassword(const std::string& password) const
 {
-	if (password.empty())
+	if (password.empty()) {
 		throw std::exception("Password cannot be empty");
+	}
 
-	if (password.length() < 6)
+	if (password.length() < 6) {
 		throw std::exception("Password must be at least 6 characters long");
+	}
 
 	const std::regex passwordPattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");
-	if (!std::regex_match(password, passwordPattern))
+	if (!std::regex_match(password, passwordPattern)) {
 		throw std::exception("The Password needs to contain at least 1 upper case,\n one lower case and a number");
+	}
 }
 
-void LoginForm::ValidateUserLogin(const std::string& username, const std::string& password)
+void LoginForm::ValidateUserLogin(const std::string& username, const std::string& password) const
 {
 	CheckUsername(username);
 	CheckPassword(password);
@@ -67,17 +68,17 @@ void LoginForm::ValidateUserLogin(const std::string& username, const std::string
 		cpr::Payload{ {"username", username}, {"password", password} }
 	);
 
-	if (loginRequest.status_code != 204)
+	if (loginRequest.status_code != 204) {
 		throw std::exception("Username or password are invalid.");
+	}
 }
 
-void LoginForm::OnLoginButtonClicked()
+void LoginForm::OnLoginButtonClicked() noexcept
 {
 	std::string username = m_ui.usernameField->text().toUtf8().constData();
 	std::string password = m_ui.passwordField->text().toUtf8().constData();
 
-	try
-	{
+	try {
 		ValidateUserLogin(username, password);
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setStyleSheet("QLabel { color : rgb(221, 242, 253); }");
@@ -88,18 +89,15 @@ void LoginForm::OnLoginButtonClicked()
 		menu->show();
 		this->close();
 		this->deleteLater();
-	}
-	catch (const std::exception& exception)
-	{
+	} catch (const std::exception& exception) {
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(exception.what());
 		WaitForSeconds(2);
 		m_ui.errorLabel->hide();
 	}
-
 }
 
-void LoginForm::OnRegisterButtonClicked()
+void LoginForm::OnRegisterButtonClicked() noexcept
 {
 	RegisterForm* registerForm = new RegisterForm();
 	registerForm->show();

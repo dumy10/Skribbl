@@ -18,17 +18,17 @@ public:
 private slots:
 	void OnCreateLobbyButtonPress();
 	void OnStartGameButtonPress();
-	void OnBackButtonPress();
-	void UpdateRoomInformation();
-	void OnPlayerLeft();
+	void OnBackButtonPress() noexcept;
+	void UpdateRoomInformation() noexcept;
+	void OnPlayerLeft() const noexcept;
 	void CheckGameStarted();
 
 private:
 	void GetRoomID();
-	void DisplayPlayer(const std::string& username, int index);
-	void DisplayPlayerCount(int count);
-	void DisplayRoomInformation();
-	void WaitForSeconds(int seconds);
+	void DisplayPlayer(const std::string& username, int index) noexcept;
+	void DisplayPlayerCount(int count) noexcept;
+	void DisplayRoomInformation() noexcept;
+	void WaitForSeconds(int seconds) const noexcept;
 	void StartTimer();
 	void closeEvent(QCloseEvent* event) override;
 

@@ -91,6 +91,10 @@ const int Game::GetGameStatusAsInt() const noexcept
 
 const bool Game::GetAllPlayersGuessedWord() const noexcept
 {
+	if (m_players.size() == 1) {
+		return false;
+	}
+
 	return m_round.GetGuessedPlayerNames().size() == m_players.size() - 1;
 }
 
@@ -243,6 +247,7 @@ bool Game::NextRound() noexcept
 		&& m_players[m_players.size() - 1].GetName() == currentDrawingPlayer) {
 		m_gameStatus = GameStatus::FINISHED;
 		m_round.SetImageData("");
+		m_round.ClearAllPlayersGuessed();
 
 		return true;
 	}

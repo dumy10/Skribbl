@@ -39,8 +39,7 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("gamecode", &Game::SetGameCode, &Game::GetGameCode),
 			sql::make_column("maxplayers", &Game::SetMaxPlayers, &Game::GetNumberOfMaxPlayers),
 			sql::make_column("status", &Game::SetGameStatusFromInt, &Game::GetGameStatusAsInt),
-			sql::make_column("chat", &Game::SerializeGameChat, &Game::DeserializeGameChat),
-			sql::make_column("round", &Game::SerializeRound, &Game::DeserializeRound)
+			sql::make_column("chat", &Game::SerializeGameChat, &Game::DeserializeGameChat)
 		)
 	);
 }

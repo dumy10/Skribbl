@@ -28,6 +28,7 @@ namespace skribbl
 		void SetTimes(const std::vector<int>& times) noexcept;
 		void SetWords(const std::set<std::string>& words) noexcept;
 		void PlayerGuessedWord(const std::string& playerName, const int index, const int timeLeft) noexcept;
+		void ClearAllPlayersGuessed() noexcept;
 
 		void DeserializeTimes(const std::string& serializedPoints) noexcept;
 		void DeserializeWords(const std::string& serializedWords) noexcept;

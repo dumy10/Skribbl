@@ -12,29 +12,22 @@ DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), m_isDrawing(fal
 
 void DrawingWidget::mousePressEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton && m_fillMode) 
-    {
+    if (event->button() == Qt::LeftButton && m_fillMode) {
         saveCurrentState();
         QPoint fillStartPoint = event->pos();
         QColor oldColor = m_image.pixelColor(fillStartPoint);
         FloodFill(fillStartPoint, m_currentFillColor, oldColor);
-    }
-    else
-    {
-        if (event->button() == Qt::LeftButton)
-        {
+    } else {
+        if (event->button() == Qt::LeftButton) {
             saveCurrentState();
             m_lastPoint = event->pos();
             m_isDrawing = true;
-            if (m_isErasing)
-            {
+            if (m_isErasing) {
                 // Daca se sterge, seteaza stiloul la modul de desenare
                 m_pen.setColor(Qt::black);
                 m_isErasing = false;
             }
-        }
-        else if (event->button() == Qt::RightButton)
-        {
+        } else if (event->button() == Qt::RightButton) {
             saveCurrentState();
             m_lastPoint = event->pos();
             m_isDrawing = true;
@@ -45,8 +38,7 @@ void DrawingWidget::mousePressEvent(QMouseEvent* event)
 
 void DrawingWidget::mouseMoveEvent(QMouseEvent* event)
 {
-    if ((event->buttons() & (Qt::LeftButton | Qt::RightButton)) && m_isDrawing)
-    {
+    if ((event->buttons() & (Qt::LeftButton | Qt::RightButton)) && m_isDrawing) {
         DrawLineTo(event->pos());
         update();
     }
@@ -54,8 +46,7 @@ void DrawingWidget::mouseMoveEvent(QMouseEvent* event)
 
 void DrawingWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-    if ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && m_isDrawing)
-    {
+    if ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && m_isDrawing) {
         DrawLineTo(event->pos());
         m_isDrawing = false;
         update();
@@ -116,49 +107,6 @@ void DrawingWidget::DrawLineTo(const QPoint& endPoint)
     update(QRect(m_lastPoint, endPoint).normalized().adjusted(-1, -1, 1, 1));
 }
 
-/*void DrawingWidget::FloodFill(const QPoint& startPoint, const QColor& fillColor, const QColor& oldColor) {
-    if (!m_image.rect().contains(startPoint) || m_image.pixelColor(startPoint) != oldColor || fillColor == oldColor) {
-        return;
-    }
-
-    // Create an auxiliary image to keep track of visited pixels.
-    QImage visited(m_image.size(), QImage::Format_ARGB32_Premultiplied);
-    visited.fill(Qt::black); // Black pixels are unvisited.
-
-    QQueue<QPoint> queue;
-    queue.enqueue(startPoint);
-    visited.setPixelColor(startPoint, Qt::white); // Mark the start point as visited.
-
-    while (!queue.isEmpty()) {
-        if (queue.size() > 10000) { // Limit the queue size to prevent memory overflow.
-            qDebug() << "Flood fill operation aborted: too many pixels to process.";
-            return;
-        }
-
-        QPoint p = queue.dequeue();
-        if (m_image.pixelColor(p) == oldColor) {
-            m_image.setPixelColor(p, fillColor);
-
-            QPoint points[4] = {
-                {p.x() + 1, p.y()},
-                {p.x() - 1, p.y()},
-                {p.x(), p.y() + 1},
-                {p.x(), p.y() - 1}
-            };
-
-            for (const QPoint& newP : points) {
-                if (m_image.rect().contains(newP) && visited.pixelColor(newP) != Qt::white && m_image.pixelColor(newP) == oldColor) {
-                    queue.enqueue(newP);
-                    visited.setPixelColor(newP, Qt::white); // Mark this pixel as visited.
-                }
-            }
-        }
-    }
-
-    // Trigger an update for the widget to repaint itself.
-    update(m_image.rect());
-}*/
-
 void DrawingWidget::FloodFill(const QPoint&, const QColor& fillColor, const QColor&) {
     // Fill the entire image with the selected fill color.
     m_image.fill(fillColor);
@@ -174,7 +122,7 @@ void DrawingWidget::SetCurrentFillColor(const QColor& color)
 
 void DrawingWidget::ToggleFillMode()
 {
-    m_fillMode = !m_fillMode; // Inverseazã valoarea lui m_fillMode
+    m_fillMode = !m_fillMode; // Inverseaza valoarea lui m_fillMode
 }
 
 QImage DrawingWidget::GetImage() const noexcept
@@ -190,10 +138,10 @@ void DrawingWidget::SetImage(const QImage& image)
 
 void DrawingWidget::saveCurrentState() 
 {
-    if (m_undoStack.size() > 10) 
-    { // Limit the undo stack size to avoid excessive memory use.
+    if (m_undoStack.size() > 10)  { // Limit the undo stack size to avoid excessive memory use.
         m_undoStack.removeFirst(); // Remove the oldest state to maintain the stack size.
     }
+
     m_undoStack.push_back(m_image.copy()); // Save the current state of the image.
 }
 

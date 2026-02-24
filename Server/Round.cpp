@@ -55,15 +55,14 @@ bool Round::StartRound(const std::string& drawingPlayerName, const uint8_t round
 
 	std::ranges::for_each(m_times, [](int& time) { time = 0; });
 	SetImageData("");
+	m_guessedPlayerNames.clear();
 
-	if (roundNumber == 1) {
-		m_timer.StartTicking();
-	}
-	else {
+	if (roundNumber != 1) {
 		m_timer.StopTicking();
 		m_timer.ResetTimer();
-		m_timer.StartTicking();
 	}
+
+	m_timer.StartTicking();
 
 	return true;
 }
@@ -110,6 +109,11 @@ void Round::PlayerGuessedWord(const std::string& playerName, const int index, co
 {
 	m_guessedPlayerNames.emplace_back(std::move(playerName));
 	UpdateTimes(index, timeLeft);
+}
+
+void Round::ClearAllPlayersGuessed() noexcept
+{
+	m_guessedPlayerNames.clear();
 }
 
 void Round::SetTimes(const std::vector<int>& times) noexcept

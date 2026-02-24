@@ -9,19 +9,19 @@ class RegisterForm : public QMainWindow
 
 public:
 	RegisterForm(QWidget *parent = nullptr);
-	~RegisterForm();
+	~RegisterForm() = default;
 
 private:
 	Ui::RegisterFormClass m_ui;
 
 private:
-	void CheckUsername(const std::string& username);
-	void CheckEmailPattern(const std::string& email);
-	void CheckPasswordPattern(const std::string& password);
-	void AddUserToDataBase(const std::string& username, const std::string& password, const std::string& email);
-	void WaitForSeconds(int seconds);
+	void CheckUsername(const std::string& username) const;
+	void CheckEmailPattern(const std::string& email) const;
+	void CheckPasswordPattern(const std::string& password) const;
+	void AddUserToDatabase(const std::string& username, const std::string& password, const std::string& email) const;
+	void WaitForSeconds(int seconds) const noexcept;
 
 private slots:
-	void OnRegisterButtonClicked();
-	void OnBackButtonClicked();
+	void OnRegisterButtonClicked() noexcept;
+	void OnBackButtonClicked() noexcept;
 };
