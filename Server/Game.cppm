@@ -9,6 +9,7 @@ import <string>;
 import <sstream>;
 import <algorithm>;
 import <ranges>;
+import <chrono>;
 
 namespace skribbl
 {
@@ -46,6 +47,7 @@ namespace skribbl
 		[[nodiscard]] const std::string GetDrawingPlayer() const noexcept;
 
 		[[nodiscard]] const GameStatus GetGameStatus() const noexcept;
+		inline [[nodiscard]] const std::chrono::steady_clock::time_point GetLastActivityTime() const noexcept { return m_lastActivityTime; }
 
 		inline [[nodiscard]] Round& GetRound() noexcept { return m_round; }
 
@@ -92,6 +94,8 @@ namespace skribbl
 
 		Round m_round;
 		GameStatus m_gameStatus{ GameStatus::UNKNOWN };
+
+		std::chrono::steady_clock::time_point m_lastActivityTime{ std::chrono::steady_clock::now() };
 
 	private:
 		static constexpr size_t kMaxNumberOfRounds{ 4 };

@@ -41,4 +41,5 @@ private:
 	crow::SimpleApp m_app;
 
 	static constexpr std::chrono::minutes kCleanupInterval{ 30 }; 
+	static constexpr std::chrono::minutes kGameInactivityThreshold { 60 }; 
 };

@@ -584,14 +584,35 @@ void Routing::CleanupFinishedGames()
 {
 	std::unique_lock lock{ m_gamesMutex };
 
-	std::vector<std::string> finishedGameIDs;
-	for (const auto& [roomID, game] : m_games) {
-		if (game->GetGameStatus() == GameStatus::FINISHED) {
-			finishedGameIDs.push_back(roomID);
-		}
-	}
+	auto now = std::chrono::steady_clock::now();
 
-	for (const auto& roomID : finishedGameIDs) {
+	auto shouldRemove = [&now, &storage = m_storage](const auto& pair) {
+		const auto& [roomID, game] = pair;
+
+		if (game->GetGameStatus() == GameStatus::FINISHED) {
+			return true;
+		}
+
+		auto timeSinceLastActivity = std::chrono::duration_cast<std::chrono::minutes>(
+			now - game->GetLastActivityTime()
+		);
+
+		if (timeSinceLastActivity < kGameInactivityThreshold) {
+			return false;
+		}
+
+		if (game->EndGame()) {
+			storage.Update(*game);
+		}
+		
+		return true;
+		};
+
+	auto toRemove = m_games
+		| std::views::filter(shouldRemove)
+		| std::views::keys;
+
+	for (const auto& roomID : toRemove | std::ranges::to<std::vector>()) {
 		m_games.erase(roomID);
 	}
 }
