@@ -1,11 +1,14 @@
 #pragma once
 
-#include <QMainWindow>
+#include <QWidget>
 #include "ui_RegisterForm.h"
 
-class RegisterForm : public QMainWindow
+class RegisterForm : public QWidget
 {
 	Q_OBJECT
+
+signals:
+	void NavigateToLogin();
 
 public:
 	RegisterForm(QWidget *parent = nullptr);

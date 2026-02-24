@@ -1,19 +1,23 @@
 #ifndef LOBBY_H
 #define LOBBY_H
 
-#include <QMainWindow>
+#include <QWidget>
 #include <ui_Lobby.h>
 #include <QTimer>
 
-class Lobby : public QMainWindow
+class Lobby : public QWidget
 {
 	Q_OBJECT
 
 signals:
 	void PlayerLeft();
+	void NavigateToMenu(const std::string& username);
+	void NavigateToGame(const std::string& username, int playerIndex, bool isOwner, const std::string& roomID);
+
 public:
 	Lobby(const std::string& username, int playerIndex = 0, bool isOwner = false, const std::string& roomID = "", QWidget* parent = nullptr);
 	~Lobby();
+	void StopTimer();
 
 private slots:
 	void OnCreateLobbyButtonPress();

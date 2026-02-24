@@ -1,5 +1,4 @@
 #include "RegisterForm.h"
-#include "LoginForm.h"
 #include <regex>
 #include <QTime>
 #include <QCoreApplication>
@@ -9,7 +8,7 @@
 #include <cpr/cpr.h>
 
 RegisterForm::RegisterForm(QWidget* parent)
-	: QMainWindow(parent)
+	: QWidget(parent)
 {
 	m_ui.setupUi(this);
 
@@ -90,10 +89,7 @@ void RegisterForm::WaitForSeconds(int seconds) const noexcept
 
 void RegisterForm::OnBackButtonClicked() noexcept
 {
-	this->close();
-	this->deleteLater();
-	LoginForm* loginForm = new LoginForm();
-	loginForm->show();
+	emit NavigateToLogin();
 }
 
 void RegisterForm::OnRegisterButtonClicked() noexcept
@@ -123,8 +119,5 @@ void RegisterForm::OnRegisterButtonClicked() noexcept
 	m_ui.errorLabel->setText("You have successfully registered.");
 
 	WaitForSeconds(2);
-	this->close();
-	this->deleteLater();
-	LoginForm* loginForm = new LoginForm();
-	loginForm->show();
+	emit NavigateToLogin();
 }

@@ -1,13 +1,10 @@
 #include "Lobby.h"
-#include "Game.h"
-#include "Menu.h"
-
 #include "utils.h"
 #include <cpr/cpr.h>
 #include <QTime>
 
 Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const std::string& roomID, QWidget* parent) :
-	QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(roomID)
+	QWidget(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(roomID)
 {
 	m_ui.setupUi(this);
 
@@ -42,6 +39,13 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 Lobby::~Lobby()
 {
 	m_updateTimer->stop();
+}
+
+void Lobby::StopTimer()
+{
+	if (m_updateTimer && m_updateTimer->isActive()) {
+		m_updateTimer->stop();
+	}
 }
 
 void Lobby::GetRoomID()
@@ -158,7 +162,7 @@ void Lobby::closeEvent(QCloseEvent* event)
 {
 	emit PlayerLeft();
 
-	QMainWindow::closeEvent(event);
+	QWidget::closeEvent(event);
 }
 
 void Lobby::UpdateRoomInformation() noexcept
@@ -214,10 +218,7 @@ void Lobby::CheckGameStarted()
 		return;
 	}
 
-	Game* game = new Game(std::move(m_username), m_playerIndex, m_isOwner, m_roomID);
-	game->show();
-	this->hide();
-	this->deleteLater();
+	emit NavigateToGame(m_username, m_playerIndex, m_isOwner, m_roomID);
 }
 
 void Lobby::OnCreateLobbyButtonPress()
@@ -282,16 +283,10 @@ void Lobby::OnStartGameButtonPress()
 		return;
 	}
 
-	Game* game = new Game(std::move(m_username), m_playerIndex, m_isOwner, m_roomID);
-	game->show();
-	this->hide();
-	this->deleteLater();
+	emit NavigateToGame(m_username, m_playerIndex, m_isOwner, m_roomID);
 }
 
 void Lobby::OnBackButtonPress() noexcept
 {
-	Menu* menuBar = new Menu(std::move(m_username));
-	menuBar->show();
-	this->close();
-	this->deleteLater();
+	emit NavigateToMenu(m_username);
 }

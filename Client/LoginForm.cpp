@@ -1,6 +1,4 @@
 #include "LoginForm.h"
-#include "RegisterForm.h"
-#include "Menu.h"
 #include "utils.h"
 #include <QTime>
 #include <regex>
@@ -8,7 +6,7 @@
 #include <cpr/cpr.h>
 
 LoginForm::LoginForm(QWidget* parent)
-	: QMainWindow(parent)
+	: QWidget(parent)
 {
 	m_ui.setupUi(this);
 
@@ -85,10 +83,7 @@ void LoginForm::OnLoginButtonClicked() noexcept
 		m_ui.errorLabel->setText("You have successfully logged into your account.");
 		WaitForSeconds(1);
 
-		Menu* menu = new Menu(std::move(username));
-		menu->show();
-		this->close();
-		this->deleteLater();
+		emit NavigateToMenu(username);
 	} catch (const std::exception& exception) {
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(exception.what());
@@ -99,8 +94,5 @@ void LoginForm::OnLoginButtonClicked() noexcept
 
 void LoginForm::OnRegisterButtonClicked() noexcept
 {
-	RegisterForm* registerForm = new RegisterForm();
-	registerForm->show();
-	this->close();
-	this->deleteLater();
+	emit NavigateToRegister();
 }

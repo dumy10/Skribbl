@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "Menu.h"
 #include "utils.h"
 
 #include <cpr/cpr.h>
@@ -7,7 +6,7 @@
 #include <QBuffer>
 
 Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
-	: QMainWindow(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(m_roomID)
+	: QWidget(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(m_roomID)
 {
 	m_drawingArea = std::make_unique<DrawingWidget>(this);
 	m_ui.setupUi(this);
@@ -54,6 +53,13 @@ Game::~Game()
 		if (clearImageRequest.status_code == 200) {
 			break;
 		}
+	}
+}
+
+void Game::StopTimer()
+{
+	if (m_updateTimer && m_updateTimer->isActive()) {
+		m_updateTimer->stop();
 	}
 }
 
@@ -250,7 +256,6 @@ void Game::OnPlayerQuit()
 	}
 
 	ClearDrawingArea();
-	this->close();
 }
 
 void Game::ShowDrawingUI()
@@ -449,15 +454,14 @@ void Game::CheckGameEnded()
 				timer->stop();
 				timer->deleteLater();
 
-				Menu* menu = new Menu(std::move(m_username));
-				menu->show();
-
+				emit NavigateToMenu(m_username);
 				ClearDrawingArea();
-				this->close();
-				this->deleteLater();
+				if (m_isOwner) {
+					EndGame();
+				}
 			}
 
-			});
+		});
 
 		timer->start(1000);
 
@@ -719,7 +723,7 @@ void Game::closeEvent(QCloseEvent* event)
 {
 	emit PlayerQuit();
 
-	QMainWindow::closeEvent(event);
+	QWidget::closeEvent(event);
 }
 
 void Game::OnFillButtonClicked()
@@ -789,10 +793,7 @@ void Game::OnLeaveButtonClicked()
 	}
 
 	if (request.status_code == 200) {
-		Menu* menu = new Menu(std::move(m_username));
-		menu->show();
-		this->close();
-		this->deleteLater();
+		emit NavigateToMenu(m_username);
 		return;
 	}
 
@@ -811,11 +812,8 @@ void Game::OnLeaveButtonClicked()
 		}
 	}
 
-	Menu* menu = new Menu(std::move(m_username));
-	menu->show();
+	emit NavigateToMenu(m_username);
 	ClearDrawingArea();
-	this->close();
-	this->deleteLater();
 }
 
 void Game::SendDrawing(const QByteArray& drawingData)
@@ -906,6 +904,7 @@ void Game::CheckAllPlayersGuessed()
 			timer->deleteLater();		
 			OnTimeEnd();
 			ClearDrawingArea();
+			m_guessedWord = false;
 			m_updateTimer->start(200);
 		}
 		});

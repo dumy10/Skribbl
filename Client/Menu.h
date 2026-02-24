@@ -1,11 +1,14 @@
 #pragma once
 
-#include <QMainWindow>
+#include <QWidget>
 #include "ui_Menu.h"
 
-class Menu : public QMainWindow
+class Menu : public QWidget
 {
 	Q_OBJECT
+
+signals:
+	void NavigateToLobby(const std::string& username, int playerIndex, bool isOwner, const std::string& roomID);
 
 public:
 	Menu(const std::string& username, QWidget* parent = nullptr);

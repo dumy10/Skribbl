@@ -1,11 +1,14 @@
 #pragma once
 
-#include <QMainWindow>
+#include <QWidget>
 #include "ui_ServerConnectForm.h"
 
-class ServerConnectForm : public QMainWindow
+class ServerConnectForm : public QWidget
 {
 	Q_OBJECT
+
+signals:
+	void NavigateToLogin();
 
 public:
 	ServerConnectForm(QWidget* parent = nullptr);

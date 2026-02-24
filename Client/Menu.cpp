@@ -1,11 +1,10 @@
 #include "Menu.h"
-#include "Lobby.h"
 #include "utils.h"
 #include <cpr/cpr.h>
 #include <QTime>
 
 Menu::Menu(const std::string& username, QWidget* parent)
-	: QMainWindow(parent),
+	: QWidget(parent),
 	m_username(username)
 {
 	m_ui.setupUi(this);
@@ -22,11 +21,7 @@ Menu::Menu(const std::string& username, QWidget* parent)
 void Menu::OnCreateButtonClicked() noexcept
 {
 	// open new lobby
-	Lobby* lobby = new Lobby(std::move(m_username), 1, true);
-	lobby->show();
-	this->close();
-	this->deleteLater();
-
+	emit NavigateToLobby(m_username, 1, true, "");
 }
 
 void Menu::WaitForSeconds(int seconds) const noexcept
@@ -79,10 +74,7 @@ void Menu::OnJoinGameButtonClicked()
 		}
 
 		// open new lobby for the player
-		Lobby* lobby = new Lobby(std::move(m_username), playerIndex, false, roomID);
-		lobby->show();
-		this->close();
-		this->deleteLater();
+		emit NavigateToLobby(m_username, playerIndex, false, roomID);
 	} catch (const std::exception& exception) {
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(exception.what());

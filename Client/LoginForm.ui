@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>LoginFormClass</class>
- <widget class="QMainWindow" name="LoginFormClass">
+ <widget class="QWidget" name="LoginFormClass">
   <property name="geometry">
    <rect>
     <x>0</x>

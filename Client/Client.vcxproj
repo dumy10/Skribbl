@@ -108,6 +108,7 @@
     <ClCompile Include="DrawingWidget.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Lobby.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
     <ClCompile Include="ServerConnectForm.cpp" />
@@ -116,6 +117,7 @@
     <QtUic Include="Game.ui" />
     <QtUic Include="Lobby.ui" />
     <QtUic Include="LoginForm.ui" />
+    <QtMoc Include="MainWindow.h" />
     <QtMoc Include="LoginForm.h" />
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="main.cpp" />

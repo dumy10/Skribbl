@@ -1,11 +1,15 @@
 #pragma once
 
-#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QWidget>
 #include "ui_LoginForm.h"
 
-class LoginForm : public QMainWindow
+class LoginForm : public QWidget
 {
     Q_OBJECT
+
+signals:
+    void NavigateToRegister();
+    void NavigateToMenu(const std::string& username);
 
 public:
     LoginForm(QWidget *parent = nullptr);

@@ -1,21 +1,23 @@
 ﻿#ifndef GAME_H
 #define GAME_H
 
-#include <QMainWindow>
+#include <QWidget>
 #include "ui_Game.h"
 #include "DrawingWidget.h"
 #include <QTimer>
 #include <algorithm>
 
-class Game : public QMainWindow {
+class Game : public QWidget {
 	Q_OBJECT
 
 signals:
 	void PlayerQuit();
+	void NavigateToMenu(const std::string& username);
 
 public:
 	explicit Game(const std::string& username, int playerIndex, bool isOwner = false, const std::string& m_roomID = "", QWidget* parent = nullptr);
 	~Game();
+	void StopTimer();
 
 private slots:
 	void ClearDrawingArea();

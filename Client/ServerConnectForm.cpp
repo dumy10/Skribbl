@@ -1,12 +1,11 @@
 #include "ServerConnectForm.h"
-#include "LoginForm.h"
 #include "utils.h"
 
 #include <regex>
 #include <cpr/cpr.h>
 
 ServerConnectForm::ServerConnectForm(QWidget *parent)
-	: QMainWindow(parent)
+	: QWidget(parent)
 {
 	m_ui.setupUi(this);
 	m_ui.errorLabel->hide();
@@ -30,10 +29,7 @@ void ServerConnectForm::OnConnectButtonClicked()
 			throw std::exception("Server is not running");
 		}
 
-		LoginForm* loginForm = new LoginForm();
-		loginForm->show();
-
-		this->close();
+		emit NavigateToLogin();
 	}
 	catch (const std::exception& e)
 	{
