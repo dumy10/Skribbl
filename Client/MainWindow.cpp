@@ -26,6 +26,29 @@ MainWindow::MainWindow(QWidget* parent)
 	m_stackedWidget->setCurrentWidget(m_serverConnectForm);
 }
 
+MainWindow::~MainWindow()
+{
+	if (m_loginForm) {
+		delete m_loginForm;
+	}
+
+	if (m_registerForm) {
+		delete m_registerForm;
+	}
+
+	if (m_menu) {
+		delete m_menu;
+	}
+
+	if (m_lobby) {
+		delete m_lobby;
+	}
+
+	if (m_game) {
+		delete m_game;
+	}
+}
+
 void MainWindow::ShowLoginForm()
 {
 	if (!m_loginForm) {
@@ -139,4 +162,19 @@ void MainWindow::ShowGame(const std::string& username, int playerIndex, bool isO
 void MainWindow::ReturnToServerConnect()
 {
 	m_stackedWidget->setCurrentWidget(m_serverConnectForm);
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+	if (m_lobby && m_stackedWidget->currentWidget() == m_lobby) {
+		emit m_lobby->PlayerLeft();
+		QCoreApplication::processEvents();
+	}
+
+	if (m_game && m_stackedWidget->currentWidget() == m_game) {
+		emit m_game->PlayerQuit();
+		QCoreApplication::processEvents();
+	}
+
+	QMainWindow::closeEvent(event);
 }

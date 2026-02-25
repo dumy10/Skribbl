@@ -48,7 +48,6 @@ private:
 	void HidePlayers();
 	void ShowDrawingUI();
 	void HideDrawingUI();
-	void closeEvent(QCloseEvent* event) override;
 	void StartTimer();
 	void CheckGameEnded();
 	void GamePlayers();

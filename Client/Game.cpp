@@ -594,13 +594,6 @@ void Game::UpdateDrawingImage()
 	}
 }
 
-void Game::closeEvent(QCloseEvent* event)
-{
-	emit PlayerQuit();
-
-	QWidget::closeEvent(event);
-}
-
 void Game::OnFillButtonClicked()
 {
 	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);

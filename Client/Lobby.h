@@ -33,7 +33,6 @@ private:
 	void DisplayPlayerCount(int count) noexcept;
 	void DisplayRoomInformation() noexcept;
 	void StartTimer();
-	void closeEvent(QCloseEvent* event) override;
 
 private:
 	Ui::Lobby m_ui;

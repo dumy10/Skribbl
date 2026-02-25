@@ -142,13 +142,6 @@ void Lobby::StartTimer()
 	m_updateTimer->start(1000);
 }
 
-void Lobby::closeEvent(QCloseEvent* event)
-{
-	emit PlayerLeft();
-
-	QWidget::closeEvent(event);
-}
-
 void Lobby::UpdateRoomInformation() noexcept
 {
 	auto req = RoutingManager::GetRoomPlayers(m_roomID);

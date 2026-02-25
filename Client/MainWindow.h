@@ -15,7 +15,7 @@ class MainWindow : public QMainWindow
 
 public:
 	MainWindow(QWidget* parent = nullptr);
-	~MainWindow() = default;
+	~MainWindow();
 
 private slots:
 	void ShowLoginForm();
@@ -24,6 +24,9 @@ private slots:
 	void ShowLobby(const std::string& username, int playerIndex, bool isOwner, const std::string& roomID);
 	void ShowGame(const std::string& username, int playerIndex, bool isOwner, const std::string& roomID);
 	void ReturnToServerConnect();
+
+private:
+	void closeEvent(QCloseEvent* event) override;
 
 private:
 	QStackedWidget* m_stackedWidget;

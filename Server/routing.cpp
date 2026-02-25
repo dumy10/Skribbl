@@ -258,6 +258,12 @@ void Routing::Run()
 
 		game->RemovePlayer(std::move(*player));
 
+		if (game->GetCurrentPlayerCount() == 0) {
+			std::unique_lock lock{ m_gamesMutex };
+			m_games.erase(roomID);
+			m_storage.Update(*game);
+		}
+
 		return crow::response{ 200 };
 			});
 
