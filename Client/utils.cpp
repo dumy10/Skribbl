@@ -1,6 +1,10 @@
 #include "utils.h"
+#include "RoutingManager.h"
 
 #include <sstream>
+#include <regex>
+#include <QTime>
+#include <QCoreApplication>
 
 // See https://stackoverflow.com/a/57346888/12388382
 std::vector<std::string> split(const std::string& str, const std::string& delim)
@@ -86,4 +90,71 @@ std::string Server::GetIp()
 std::string Server::GetUrl()
 {
     return "http://" + m_ip + ":18080";
+}
+
+void Utils::WaitForSeconds(int seconds) noexcept
+{
+	QTime delayTime = QTime::currentTime().addSecs(seconds);
+	while (QTime::currentTime() < delayTime) {
+		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+	}
+}
+
+void Utils::CheckPasswordPattern(const std::string& password)
+{
+	if (password.empty()) {
+		throw std::exception("Password cannot be empty");
+	}
+
+	if (password.length() < 6) {
+		throw std::exception("Password must be at least 6 characters long");
+	}
+
+	const std::regex passwordPattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");
+	if (!std::regex_match(password, passwordPattern)) {
+		throw std::exception("The Password needs to contain at least 1 upper case,\n one lower case and a number");
+	}
+}
+
+void Utils::CheckEmailPattern(const std::string& email)
+{
+	if (email.empty()) {
+		throw std::exception("Email cannot be empty");
+	}
+
+	const std::regex emailPattern("^([a-zA-Z0-9_\\.\\-+]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$");
+
+	if (!std::regex_match(email, emailPattern)) {
+		throw std::exception("Email should be like: example@mail.com");
+	}
+}
+
+void Utils::CheckUsernameForRegistration(const std::string& username)
+{
+	if (username.empty()) {
+		throw std::exception("Username cannot be empty");
+	}
+
+	cpr::Response response = RoutingManager::CheckUsername(username);
+
+	if (response.status_code != 200 && response.status_code != 404) {
+		throw std::exception("Server error");
+	}
+
+	if (response.text == "EXISTING") {
+		throw std::exception("Username already taken");
+	}
+}
+
+void Utils::CheckUsernameForLogin(const std::string& username)
+{
+	if (username.empty()) {
+		throw std::exception("Username cannot be empty");
+	}
+
+	cpr::Response response = RoutingManager::CheckUsername(username);
+
+	if (response.status_code != 200) {
+		throw std::exception("Username or password are invalid.");
+	}
 }

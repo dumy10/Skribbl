@@ -19,3 +19,13 @@ public:
 private:
 	static std::string m_ip;
 };
+
+class Utils
+{
+public:
+	static void WaitForSeconds(int seconds) noexcept;
+	static void CheckPasswordPattern(const std::string& password);
+	static void CheckEmailPattern(const std::string& email);
+	static void CheckUsernameForRegistration(const std::string& username);
+	static void CheckUsernameForLogin(const std::string& username);
+};

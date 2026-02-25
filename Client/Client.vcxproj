@@ -111,6 +111,7 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="RoutingManager.cpp" />
     <ClCompile Include="ServerConnectForm.cpp" />
     <ClCompile Include="utils.cpp" />
     <QtRcc Include="background.qrc" />
@@ -134,6 +135,7 @@
     <QtMoc Include="DrawingWidget.h" />
     <QtMoc Include="Lobby.h" />
     <QtMoc Include="ServerConnectForm.h" />
+    <ClInclude Include="RoutingManager.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

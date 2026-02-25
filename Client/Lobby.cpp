@@ -1,6 +1,6 @@
 #include "Lobby.h"
 #include "utils.h"
-#include <cpr/cpr.h>
+#include "RoutingManager.h"
 #include <QTime>
 
 Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const std::string& roomID, QWidget* parent) :
@@ -50,9 +50,7 @@ void Lobby::StopTimer()
 
 void Lobby::GetRoomID()
 {
-	cpr::Response response = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/roomID" }
-	);
+	cpr::Response response = RoutingManager::GetNewRoomID();
 
 	if (response.status_code != 201) {
 		throw std::exception(response.text.c_str());
@@ -123,17 +121,11 @@ void Lobby::DisplayPlayerCount(int count) noexcept
 
 void Lobby::DisplayRoomInformation() noexcept
 {
-	auto req = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
+	auto req = RoutingManager::GetRoomPlayers(m_roomID);
 
 	m_ui.roomIdField_2->setText(QString::fromUtf8(m_roomID.data(), int(m_roomID.size())));
 
-	auto req2 = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/numberOfPlayers" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
+	auto req2 = RoutingManager::GetNumberOfPlayers(m_roomID);
 
 	m_ui.playerNumber->setText(QString::fromUtf8(req2.text.data(), int(req2.text.size())));
 	m_ui.playerNumber->setText(m_ui.playerNumber->text() + " Players");
@@ -143,14 +135,6 @@ void Lobby::DisplayRoomInformation() noexcept
 		DisplayPlayer(players[i], i + 1);
 	}
 
-}
-
-void Lobby::WaitForSeconds(int seconds) const noexcept
-{
-	QTime delayTime = QTime::currentTime().addSecs(seconds);
-	while (QTime::currentTime() < delayTime) {
-		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-	}
 }
 
 void Lobby::StartTimer()
@@ -167,10 +151,7 @@ void Lobby::closeEvent(QCloseEvent* event)
 
 void Lobby::UpdateRoomInformation() noexcept
 {
-	auto req = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
+	auto req = RoutingManager::GetRoomPlayers(m_roomID);
 
 	if (req.status_code != 200) {
 		return;
@@ -198,21 +179,12 @@ void Lobby::UpdateRoomInformation() noexcept
 void Lobby::OnPlayerLeft() const noexcept
 {
 	// send request to server to remove the player from the room (game)
-	auto req = cpr::Post(
-		cpr::Url{ Server::GetUrl() + "/leaveRoom" },
-		cpr::Payload{
-			{"roomID", m_roomID},
-			{"username", m_username}
-		}
-	);
+	auto req = RoutingManager::LeaveRoom(m_roomID, m_username);
 }
 
 void Lobby::CheckGameStarted()
 {
-	auto request = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/gameStarted" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
+	auto request = RoutingManager::CheckGameStarted(m_roomID);
 
 	if (request.status_code != 200) {
 		return;
@@ -229,14 +201,11 @@ void Lobby::OnCreateLobbyButtonPress()
 		m_ui.playerNumber->setText(numberOfPlayers);
 
 		// send request to server to create a room (game) with the room id, the max number of players and how many players are already in the room
-		cpr::Response response = cpr::Post(
-			cpr::Url{ Server::GetUrl() + "/createRoom" },
-			cpr::Payload{
-				{ "roomID", m_roomID },
-				{ "username", m_username },
-				{ "maxPlayers", std::to_string(numberOfPlayers[0].digitValue()) },
-				{ "currentPlayers", std::to_string(m_playerIndex) }
-			}
+		cpr::Response response = RoutingManager::CreateRoom(
+			m_roomID,
+			m_username,
+			std::to_string(numberOfPlayers[0].digitValue()),
+			std::to_string(m_playerIndex)
 		);
 
 		if (response.status_code != 201) {
@@ -250,7 +219,7 @@ void Lobby::OnCreateLobbyButtonPress()
 	} catch (const std::exception& exception) {
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(exception.what());
-		WaitForSeconds(5);
+		Utils::WaitForSeconds(5);
 		m_ui.errorLabel->setText("");
 		m_ui.errorLabel->hide();
 	}
@@ -258,10 +227,7 @@ void Lobby::OnCreateLobbyButtonPress()
 
 void Lobby::OnStartGameButtonPress()
 {
-	auto req = cpr::Get(
-		cpr::Url{ Server::GetUrl() + "/currentNumberOfPlayers" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
+	auto req = RoutingManager::GetCurrentNumberOfPlayers(m_roomID);
 
 	if (req.status_code != 200) {
 		return;
@@ -274,10 +240,7 @@ void Lobby::OnStartGameButtonPress()
 	}
 
 	// send request to server to start the game for all the players in the room
-	auto request = cpr::Post(
-		cpr::Url{ Server::GetUrl() + "/startGame" },
-		cpr::Payload{ {"roomID", m_roomID} }
-	);
+	auto request = RoutingManager::StartGame(m_roomID);
 
 	if (request.status_code != 200) {
 		return;

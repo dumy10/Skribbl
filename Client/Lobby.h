@@ -32,7 +32,6 @@ private:
 	void DisplayPlayer(const std::string& username, int index) noexcept;
 	void DisplayPlayerCount(int count) noexcept;
 	void DisplayRoomInformation() noexcept;
-	void WaitForSeconds(int seconds) const noexcept;
 	void StartTimer();
 	void closeEvent(QCloseEvent* event) override;
 

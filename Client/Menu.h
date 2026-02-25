@@ -18,9 +18,6 @@ private:
 	Ui::MenuClass m_ui;
 	std::string m_username;
 
-private:
-	void WaitForSeconds(int seconds) const noexcept;
-
 private slots:
 	void OnCreateButtonClicked() noexcept;
 	void OnJoinButtonClicked() noexcept;

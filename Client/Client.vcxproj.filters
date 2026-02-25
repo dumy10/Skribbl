@@ -1,35 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="LoginForm.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RegisterForm.cpp">
-      <Filter>Class Files</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="RoutingManager.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
     <ClCompile Include="DrawingWidget.cpp">
-      <Filter>Class Files</Filter>
+      <Filter>Class Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Class Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="Lobby.cpp">
-      <Filter>Class Files</Filter>
+      <Filter>Class Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ServerConnectForm.cpp">
-      <Filter>Class Files</Filter>
+    <ClCompile Include="LoginForm.cpp">
+      <Filter>Class Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="MainWindow.cpp">
-      <Filter>Class Files</Filter>
+      <Filter>Class Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Class Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RegisterForm.cpp">
+      <Filter>Class Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerConnectForm.cpp">
+      <Filter>Class Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,31 +51,37 @@
     <Filter Include="Resource Files">
       <UniqueIdentifier>{1117ac19-c7f4-42ea-81c2-3000ea077944}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{65ca37c2-bf1d-4d8c-880a-83ae7b6ed293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\UI">
+      <UniqueIdentifier>{e38994e0-b95d-40c3-8db6-6addbd2b85f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="LoginForm.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="RegisterForm.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Menu.h">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="DrawingWidget.h">
+      <Filter>Header Files\UI</Filter>
     </QtMoc>
     <QtMoc Include="Game.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="DrawingWidget.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\UI</Filter>
     </QtMoc>
     <QtMoc Include="Lobby.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\UI</Filter>
     </QtMoc>
-    <QtMoc Include="ServerConnectForm.h">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="LoginForm.h">
+      <Filter>Header Files\UI</Filter>
     </QtMoc>
     <QtMoc Include="MainWindow.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
+    <QtMoc Include="Menu.h">
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
+    <QtMoc Include="RegisterForm.h">
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
+    <QtMoc Include="ServerConnectForm.h">
+      <Filter>Header Files\UI</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +111,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RoutingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

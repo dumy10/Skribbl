@@ -1,8 +1,8 @@
 #include "ServerConnectForm.h"
 #include "utils.h"
+#include "RoutingManager.h"
 
 #include <regex>
-#include <cpr/cpr.h>
 
 ServerConnectForm::ServerConnectForm(QWidget *parent)
 	: QWidget(parent)
@@ -48,9 +48,7 @@ void ServerConnectForm::CheckIp(const std::string& ip) const
 
 bool ServerConnectForm::IsServerRunning(const std::string& url) const noexcept
 {
-	cpr::Response response = cpr::Get(
-		cpr::Url{ url + "/"}
-	);
+	cpr::Response response = RoutingManager::CheckServerRunning(url);
 
 	return response.status_code == 200;
 }

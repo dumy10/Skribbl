@@ -1,6 +1,6 @@
 #include "Menu.h"
 #include "utils.h"
-#include <cpr/cpr.h>
+#include "RoutingManager.h"
 #include <QTime>
 
 Menu::Menu(const std::string& username, QWidget* parent)
@@ -24,14 +24,6 @@ void Menu::OnCreateButtonClicked() noexcept
 	emit NavigateToLobby(m_username, 1, true, "");
 }
 
-void Menu::WaitForSeconds(int seconds) const noexcept
-{
-	QTime delayTime = QTime::currentTime().addSecs(seconds);
-	while (QTime::currentTime() < delayTime) {
-		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-	}
-}
-
 void Menu::OnJoinButtonClicked() noexcept
 {
 	m_ui.joinGame->show();
@@ -48,10 +40,7 @@ void Menu::OnJoinGameButtonClicked()
 		}
 
 		// send request to server to check if the room exists
-		cpr::Response response = cpr::Get(
-			cpr::Url{ Server::GetUrl() + "/checkRoomID" },
-			cpr::Payload{ {"roomID", roomID} }
-		);
+		cpr::Response response = RoutingManager::CheckRoomID(roomID);
 
 		if (response.status_code != 200) {
 			throw std::exception(response.text.c_str());
@@ -61,13 +50,7 @@ void Menu::OnJoinGameButtonClicked()
 		int playerIndex = std::stoi(response.text.c_str()) + 1;
 
 		// put player in the room (game)
-		auto req = cpr::Post(
-			cpr::Url{ Server::GetUrl() + "/joinRoom" },
-			cpr::Payload{
-				{"roomID", roomID},
-				{"username", m_username}
-			}
-		);
+		auto req = RoutingManager::JoinRoom(roomID, m_username);
 
 		if (req.status_code != 200) {
 			throw std::exception(req.text.c_str());
@@ -78,7 +61,7 @@ void Menu::OnJoinGameButtonClicked()
 	} catch (const std::exception& exception) {
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(exception.what());
-		WaitForSeconds(2);
+		Utils::WaitForSeconds(2);
 		m_ui.errorLabel->setText("");
 		m_ui.errorLabel->hide();
 	}

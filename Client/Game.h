@@ -71,9 +71,6 @@ private:
 	bool m_isDrawing;
 	bool m_guessedWord;
 	int m_currentBrushSizeIndex;
-	
-private:
-	static constexpr int kMaxRetries{ 3 };
 
 private:
 	std::unique_ptr<DrawingWidget> m_drawingArea;

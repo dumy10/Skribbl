@@ -19,9 +19,6 @@ private:
     Ui::LoginFormClass m_ui;
 
 private:
-    void WaitForSeconds(int seconds) const noexcept;
-    void CheckUsername(const std::string& username) const;
-    void CheckPassword(const std::string& password) const;
     void ValidateUserLogin(const std::string& username, const std::string& password) const;
 
 private slots:
