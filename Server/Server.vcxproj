@@ -152,8 +152,11 @@
     <ClCompile Include="database.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game.cppm" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player.cppm" />
+    <ClCompile Include="PlayerManager.cpp" />
+    <ClCompile Include="RouteManager.cpp" />
     <ClCompile Include="round.cpp" />
     <ClCompile Include="round.cppm" />
     <ClCompile Include="routing.cpp" />
@@ -170,6 +173,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database.h" />
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="PlayerManager.h" />
+    <ClInclude Include="RouteManager.h" />
     <ClInclude Include="routing.h" />
   </ItemGroup>
   <ItemGroup>

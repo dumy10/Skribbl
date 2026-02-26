@@ -25,6 +25,15 @@
     <ClCompile Include="routing.cpp">
       <Filter>Class Files\Rest</Filter>
     </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="RouteManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>Class Files\Rest</Filter>
     </ClCompile>
@@ -50,6 +59,15 @@
   <ItemGroup>
     <ClInclude Include="routing.h">
       <Filter>Header Files\Rest</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="RouteManager.h">
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="database.h">
       <Filter>Header Files\Database</Filter>
@@ -85,6 +103,12 @@
     </Filter>
     <Filter Include="Header Files\Database">
       <UniqueIdentifier>{4b5427da-3d22-44b4-ba86-5c0264c07a68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Managers">
+      <UniqueIdentifier>{8a7e4d9c-1b2f-4e3a-a5c6-9d8e2f1a3b4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{9b8f5e0d-2c3g-5f4b-b6d7-0e9f3g2b4c5d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
