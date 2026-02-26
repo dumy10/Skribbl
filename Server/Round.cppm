@@ -30,9 +30,7 @@ namespace skribbl
 		void PlayerGuessedWord(const std::string& playerName, const int index, const int timeLeft) noexcept;
 		void ClearAllPlayersGuessed() noexcept;
 
-		void DeserializeTimes(const std::string& serializedPoints) noexcept;
-		void DeserializeWords(const std::string& serializedWords) noexcept;
-		void Deserialize(const std::string& serializedRound);
+
 		void UpdateTimes(const int index, const int value) noexcept;
 
 		[[nodiscard]] const int GetTimeLeft() const noexcept;
@@ -43,9 +41,6 @@ namespace skribbl
 		[[nodiscard]] const std::string GetGameId() const noexcept;
 		[[nodiscard]] const std::string GetDrawingPlayer() const noexcept;
 		[[nodiscard]] const std::string GetCurrentWord() const noexcept;
-		[[nodiscard]] const std::string SerializeWords() const noexcept;
-		[[nodiscard]] const std::string SerializeTimes() const noexcept;
-		[[nodiscard]] const std::string Serialize() const noexcept;
 		[[nodiscard]] const std::string GetImageData() const noexcept;
 
 		[[nodiscard]] const std::vector<int> GetTimes() const noexcept;

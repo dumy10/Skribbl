@@ -1,7 +1,9 @@
 #include "Lobby.h"
 #include "utils.h"
 #include "RoutingManager.h"
+
 #include <QTime>
+#include <array>
 
 Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const std::string& roomID, QWidget* parent) :
 	QWidget(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(roomID)
@@ -38,7 +40,7 @@ Lobby::Lobby(const std::string& username, int playerIndex, bool isOwner, const s
 
 Lobby::~Lobby()
 {
-	m_updateTimer->stop();
+	StopTimer();
 }
 
 void Lobby::StopTimer()
@@ -52,87 +54,53 @@ void Lobby::GetRoomID()
 {
 	cpr::Response response = RoutingManager::GetNewRoomID();
 
-	if (response.status_code != 201) {
+	if (!Utils::IsResponseSuccessful(response, 201)) {
 		throw std::exception(response.text.c_str());
 	}
 
 	m_roomID = response.text;
-	m_ui.roomIdField->setText(QString::fromUtf8(response.text.data(), int(response.text.size())));
+	m_ui.roomIdField->setText(Utils::ToQString(response.text));
 }
 
-void Lobby::DisplayPlayer(const std::string& username, int index) noexcept
+void Lobby::DisplayPlayer(const std::string& username, int index) const noexcept
 {
-	switch (index)
-	{
-	case 1:
-		m_ui.player1_2->show();
-		m_ui.player1_2->setText(QString::fromUtf8(username.data(), int(username.size())));
-		m_ui.roomOwnerField_2->setText(QString::fromUtf8(username.data(), int(username.size())));
-		break;
-	case 2:
-		m_ui.player2_2->show();
-		m_ui.player2_2->setText(QString::fromUtf8(username.data(), int(username.size())));
-		break;
-	case 3:
-		m_ui.player3_2->show();
-		m_ui.player3_2->setText(QString::fromUtf8(username.data(), int(username.size())));
-		break;
-	case 4:
-		m_ui.player4_2->show();
-		m_ui.player4_2->setText(QString::fromUtf8(username.data(), int(username.size())));
-		break;
-	default:
-		break;
+	if (index < 1 || index > 4) {
+		return;
+	}
+	
+	const std::array<QLabel*, 4> playerLabels = {
+		m_ui.player1_2, m_ui.player2_2, m_ui.player3_2, m_ui.player4_2
+	};
+	
+	Utils::ShowLabelWithText(playerLabels[static_cast<size_t>(index - 1)], username);
+	
+	if (index == 1) {
+		Utils::SetLineEditText(m_ui.roomOwnerField_2, username);
 	}
 }
 
 void Lobby::DisplayPlayerCount(int count) noexcept
 {
-	switch (count)
-	{
-	case 1:
-		m_ui.player1_2->show();
-		m_ui.player2_2->hide();
-		m_ui.player3_2->hide();
-		m_ui.player4_2->hide();
-		break;
-	case 2:
-		m_ui.player1_2->show();
-		m_ui.player2_2->show();
-		m_ui.player3_2->hide();
-		m_ui.player4_2->hide();
-		break;
-	case 3:
-		m_ui.player1_2->show();
-		m_ui.player2_2->show();
-		m_ui.player3_2->show();
-		m_ui.player4_2->hide();
-		break;
-	case 4:
-		m_ui.player1_2->show();
-		m_ui.player2_2->show();
-		m_ui.player3_2->show();
-		m_ui.player4_2->show();
-		break;
-	default:
-		break;
-	}
+	std::array<QWidget*, 4> playerLabels = {
+		m_ui.player1_2, m_ui.player2_2, m_ui.player3_2, m_ui.player4_2
+	};
+	
+	Utils::SetWidgetVisibilityByCount(playerLabels, count);
 }
 
 void Lobby::DisplayRoomInformation() noexcept
 {
 	auto req = RoutingManager::GetRoomPlayers(m_roomID);
 
-	m_ui.roomIdField_2->setText(QString::fromUtf8(m_roomID.data(), int(m_roomID.size())));
+	m_ui.roomIdField_2->setText(Utils::ToQString(m_roomID));
 
 	auto req2 = RoutingManager::GetNumberOfPlayers(m_roomID);
 
-	m_ui.playerNumber->setText(QString::fromUtf8(req2.text.data(), int(req2.text.size())));
-	m_ui.playerNumber->setText(m_ui.playerNumber->text() + " Players");
+	m_ui.playerNumber->setText(Utils::ToQString(req2.text) + " Players");
 	std::vector<std::string> players = split(req.text, ",");
 
-	for (int i = 0; i < players.size(); i++) {
-		DisplayPlayer(players[i], i + 1);
+	for (size_t i = 0; i < players.size(); i++) {
+		DisplayPlayer(players[i], static_cast<int>(i + 1));
 	}
 
 }
@@ -146,7 +114,7 @@ void Lobby::UpdateRoomInformation() noexcept
 {
 	auto req = RoutingManager::GetRoomPlayers(m_roomID);
 
-	if (req.status_code != 200) {
+	if (!Utils::IsResponseSuccessful(req)) {
 		return;
 	}
 
@@ -156,16 +124,12 @@ void Lobby::UpdateRoomInformation() noexcept
 		return;
 	}
 
-	if (players.size() != 1 && m_isOwner) {
-		m_ui.startGame->show();
-	} else {
-		m_ui.startGame->hide();
-	}
+	players.size() != 1 && m_isOwner ? m_ui.startGame->show() : m_ui.startGame->hide();
 
-	DisplayPlayerCount(players.size());
+	DisplayPlayerCount(static_cast<int>(players.size()));
 
-	for (int i = 0; i < players.size(); i++) {
-		DisplayPlayer(players[i], i + 1);
+	for (size_t i = 0; i < players.size(); i++) {
+		DisplayPlayer(players[i], static_cast<int>(i + 1));
 	}
 }
 
@@ -179,7 +143,7 @@ void Lobby::CheckGameStarted()
 {
 	auto request = RoutingManager::CheckGameStarted(m_roomID);
 
-	if (request.status_code != 200) {
+	if (!Utils::IsResponseSuccessful(request)) {
 		return;
 	}
 
@@ -201,12 +165,12 @@ void Lobby::OnCreateLobbyButtonPress()
 			std::to_string(m_playerIndex)
 		);
 
-		if (response.status_code != 201) {
+		if (!Utils::IsResponseSuccessful(response, 201)) {
 			throw std::exception(response.text.c_str());
 		}
 
-		m_ui.roomOwnerField_2->setText(QString::fromUtf8(m_username.data(), int(m_username.size())));
-		m_ui.roomIdField_2->setText(QString::fromUtf8(m_roomID.data(), int(m_roomID.size())));
+		m_ui.roomOwnerField_2->setText(Utils::ToQString(m_username));
+		m_ui.roomIdField_2->setText(Utils::ToQString(m_roomID));
 		m_ui.stackedWidget->setCurrentIndex(1);
 		StartTimer();
 	} catch (const std::exception& exception) {
@@ -222,7 +186,7 @@ void Lobby::OnStartGameButtonPress()
 {
 	auto req = RoutingManager::GetCurrentNumberOfPlayers(m_roomID);
 
-	if (req.status_code != 200) {
+	if (!Utils::IsResponseSuccessful(req)) {
 		return;
 	}
 
@@ -235,7 +199,7 @@ void Lobby::OnStartGameButtonPress()
 	// send request to server to start the game for all the players in the room
 	auto request = RoutingManager::StartGame(m_roomID);
 
-	if (request.status_code != 200) {
+	if (!Utils::IsResponseSuccessful(request)) {
 		return;
 	}
 

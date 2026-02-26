@@ -129,6 +129,14 @@ void Utils::CheckEmailPattern(const std::string& email)
 	}
 }
 
+void Utils::CheckIpPattern(const std::string& ip)
+{
+	std::regex ipv4("((0?[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}(0?[0-9]|[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-5])");
+	if (!std::regex_match(ip, ipv4)) {
+		throw std::exception("Invalid IP address");
+	}
+}
+
 void Utils::CheckUsernameForRegistration(const std::string& username)
 {
 	if (username.empty()) {
@@ -156,5 +164,37 @@ void Utils::CheckUsernameForLogin(const std::string& username)
 
 	if (response.status_code != 200) {
 		throw std::exception("Username or password are invalid.");
+	}
+}
+
+QString Utils::ToQString(const std::string& str) noexcept
+{
+	return QString::fromUtf8(str.data(), static_cast<int>(str.size()));
+}
+
+bool Utils::IsResponseSuccessful(const cpr::Response& response, int expectedCode) noexcept
+{
+	return response.status_code == expectedCode;
+}
+
+void Utils::SetWidgetVisibilityByCount(std::span<QWidget*> widgets, int visibleCount) noexcept
+{
+	for (size_t i = 0; i < widgets.size(); ++i) {
+		widgets[i]->setVisible(static_cast<int>(i) < visibleCount);
+	}
+}
+
+void Utils::ShowLabelWithText(QLabel* label, const std::string& text) noexcept
+{
+	if (label) {
+		label->show();
+		label->setText(ToQString(text));
+	}
+}
+
+void Utils::SetLineEditText(QLineEdit* lineEdit, const std::string& text) noexcept
+{
+	if (lineEdit) {
+		lineEdit->setText(ToQString(text));
 	}
 }

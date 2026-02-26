@@ -29,7 +29,7 @@ private slots:
 
 private:
 	void GetRoomID();
-	void DisplayPlayer(const std::string& username, int index) noexcept;
+	void DisplayPlayer(const std::string& username, int index) const noexcept;
 	void DisplayPlayerCount(int count) noexcept;
 	void DisplayRoomInformation() noexcept;
 	void StartTimer();

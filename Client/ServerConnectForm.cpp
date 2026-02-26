@@ -16,13 +16,12 @@ void ServerConnectForm::OnConnectButtonClicked()
 {
 	std::string ip = m_ui.IPField->text().toUtf8().constData();
 
-	try
-	{
+	try {
 		if (ip.empty()) {
 			throw std::exception("IP cannot be empty");
 		}
 
-		CheckIp(ip);
+		Utils::CheckIpPattern(ip);
 		Server::SetIp(ip);
 
 		if (!IsServerRunning(Server::GetUrl())) {
@@ -30,19 +29,9 @@ void ServerConnectForm::OnConnectButtonClicked()
 		}
 
 		emit NavigateToLogin();
-	}
-	catch (const std::exception& e)
-	{
+	} catch (const std::exception& e) {
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(e.what());
-	}
-}
-
-void ServerConnectForm::CheckIp(const std::string& ip) const
-{
-	std::regex ipv4("((0?[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}(0?[0-9]|[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-5])");
-	if (!std::regex_match(ip, ipv4)) {
-		throw std::exception("Invalid IP address");
 	}
 }
 

@@ -3,10 +3,10 @@
 
 DrawingWidget::DrawingWidget(QWidget* parent) : QWidget(parent), m_isDrawing(false), m_isErasing(false)
 {
-    setAttribute(Qt::WA_StaticContents); // Continutul widgetului ramane static la redimensionare
-    m_image = QImage(621, 491, QImage::Format_ARGB32); // Initializare imagine
-    m_image.fill(Qt::white); // Umple imaginea cu alb
-    m_pen = QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // Initializare stilou
+    setAttribute(Qt::WA_StaticContents);
+    m_image = QImage(621, 491, QImage::Format_ARGB32);
+    m_image.fill(Qt::white);
+    m_pen = QPen(Qt::black, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     m_fillMode = false;
 }
 
@@ -23,7 +23,7 @@ void DrawingWidget::mousePressEvent(QMouseEvent* event)
             m_lastPoint = event->pos();
             m_isDrawing = true;
             if (m_isErasing) {
-                // Daca se sterge, seteaza stiloul la modul de desenare
+				// If currently erasing, switch back to drawing mode
                 m_pen.setColor(Qt::black);
                 m_isErasing = false;
             }
@@ -31,7 +31,7 @@ void DrawingWidget::mousePressEvent(QMouseEvent* event)
             saveCurrentState();
             m_lastPoint = event->pos();
             m_isDrawing = true;
-            SetEraser(); // Seteaza modul de stergere
+            SetEraser();
         }
     }
 }
@@ -62,8 +62,8 @@ void DrawingWidget::paintEvent(QPaintEvent* event)
 
 void DrawingWidget::SetEraser()
 {
-    m_pen.setColor(Qt::white); // Culoarea de fundal pentru stergere
-    m_pen.setWidth(10); // Puteti ajusta grosimea pentru eraser
+    m_pen.setColor(Qt::white);
+    m_pen.setWidth(10);
     m_isErasing = true;
 }
 
@@ -122,7 +122,7 @@ void DrawingWidget::SetCurrentFillColor(const QColor& color)
 
 void DrawingWidget::ToggleFillMode()
 {
-    m_fillMode = !m_fillMode; // Inverseaza valoarea lui m_fillMode
+    m_fillMode = !m_fillMode;
 }
 
 QImage DrawingWidget::GetImage() const noexcept

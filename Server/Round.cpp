@@ -57,11 +57,8 @@ bool Round::StartRound(const std::string& drawingPlayerName, const uint8_t round
 	SetImageData("");
 	m_guessedPlayerNames.clear();
 
-	if (roundNumber != 1) {
-		m_timer.StopTicking();
-		m_timer.ResetTimer();
-	}
-
+	m_timer.StopTicking();
+	m_timer.ResetTimer();
 	m_timer.StartTicking();
 
 	return true;
@@ -121,58 +118,6 @@ void Round::SetTimes(const std::vector<int>& times) noexcept
 	m_times = times;
 }
 
-void Round::DeserializeTimes(const std::string& serializedTimes) noexcept
-{
-	std::stringstream ss{ serializedTimes };
-	std::string point;
-	while (std::getline(ss, point, ',')) {
-		m_times.push_back(std::stoi(point));
-	}
-}
-
-void Round::DeserializeWords(const std::string& serializedWords) noexcept
-{
-	std::stringstream ss{ serializedWords };
-	std::string word;
-	while (std::getline(ss, word, ',')) {
-		m_words.insert(word);
-	}
-}
-
-void Round::Deserialize(const std::string& serializedRound)
-{
-	std::stringstream ss{ serializedRound };
-	std::string token;
-	std::vector<std::string> tokens;
-	while (std::getline(ss, token, ';')) {
-		tokens.push_back(token);
-	}
-
-	if (tokens.size() < 7) {
-		throw std::runtime_error("Invalid serialized round format");
-	}
-
-	SetRoundNumber(static_cast<uint8_t>(std::stoi(tokens[0])));
-	SetGameId(tokens[1]);
-	SetDrawingPlayer(tokens[2]);
-	SetCurrentWord(tokens[3]);
-	SetImageData(tokens[4]);
-	DeserializeTimes(tokens[5]);
-	DeserializeWords(tokens[6]);
-
-	if (tokens.size() > 7) {
-		std::string guessedPlayerNamesStr = tokens[7];
-		std::stringstream guessedPlayerNamesSS{ guessedPlayerNamesStr };
-		std::string guessedPlayerName;
-		while (std::getline(guessedPlayerNamesSS, guessedPlayerName, ',')) {
-			m_guessedPlayerNames.emplace_back(guessedPlayerName);
-		}
-	}
-
-	m_timer.StopTicking(); // Ensure the timer is stopped before resetting
-	m_timer = Timer();
-}
-
 void Round::UpdateTimes(const int index, const int value) noexcept
 {
 	if (index < 0 || index >= m_times.size()) {
@@ -214,57 +159,6 @@ const std::string Round::GetDrawingPlayer() const noexcept
 const std::string Round::GetCurrentWord() const noexcept
 {
 	return m_currentWord;
-}
-
-const std::string Round::SerializeWords() const noexcept
-{
-	std::string serializedWords;
-	for (const auto& word : m_words) {
-		serializedWords += word + ",";
-	}
-
-	if (!serializedWords.empty()) {
-		serializedWords.pop_back();
-	}
-
-	return serializedWords;
-}
-
-const std::string Round::SerializeTimes() const noexcept
-{
-	std::string serializedTimes;
-	for (const auto& time : m_times) {
-		serializedTimes += std::to_string(time) + ",";
-	}
-	if (!serializedTimes.empty()) {
-		serializedTimes.pop_back();
-	}
-
-	return serializedTimes;
-}
-
-const std::string Round::Serialize() const noexcept
-{
-	std::string serializedRound;
-	serializedRound += std::to_string(m_roundNumber) + ";";
-	serializedRound += m_gameId + ";";
-	serializedRound += m_drawingPlayerName + ";";
-	serializedRound += m_currentWord + ";";
-	serializedRound += m_imageData + ";";
-	serializedRound += SerializeTimes() + ";";
-	serializedRound += SerializeWords() + ";";
-
-	if  (!m_guessedPlayerNames.empty()) {
-		for (const auto& guessedPlayerName : m_guessedPlayerNames) {
-			serializedRound += guessedPlayerName + ",";
-		}
-	}
-
-	if (!serializedRound.empty()) {
-		serializedRound.pop_back(); // Remove trailing comma or semicolon
-	}
-
-	return serializedRound;
 }
 
 const std::string Round::GetImageData() const noexcept

@@ -552,6 +552,14 @@ void Routing::Run()
 			return crow::response{ 404 };
 		}
 
+		if (game->ShouldEndGame()) {
+			if (!game->EndGame()) {
+				return crow::response{ 400, "Error ending the game." };
+			}
+			m_storage.Update(*game);
+			return crow::response{ 200, "GAME_ENDED" };
+		}
+
 		if (game->GetAllPlayersGuessedWord()) {
 			return crow::response{ 200, "TRUE" };
 		}

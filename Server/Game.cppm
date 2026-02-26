@@ -35,6 +35,8 @@ namespace skribbl
 		[[nodiscard]] const int GetGameStatusAsInt() const noexcept;
 
 		[[nodiscard]] const bool GetAllPlayersGuessedWord() const noexcept;
+		[[nodiscard]] const bool IsLastRound() const noexcept;
+		[[nodiscard]] const bool ShouldEndGame() const noexcept;
 
 		[[nodiscard]] const size_t GetCurrentPlayerCount() const noexcept;
 		[[nodiscard]] const size_t GetNumberOfMaxPlayers() const noexcept;
@@ -42,7 +44,6 @@ namespace skribbl
 		[[nodiscard]] const std::string SerializePlayers() const noexcept;
 		[[nodiscard]] const std::string SerializePlayerNames() const noexcept;
 		[[nodiscard]] const std::string SerializeGameChat() const noexcept;
-		[[nodiscard]] const std::string SerializeRound() const noexcept;
 		[[nodiscard]] const std::string GetGameCode() const noexcept;
 		[[nodiscard]] const std::string GetDrawingPlayer() const noexcept;
 
@@ -70,7 +71,6 @@ namespace skribbl
 		void SetPlayers(const std::vector<Player>& players) noexcept;
 		void DeserializePlayers(const std::string& serializedPlayers) noexcept;
 		void DeserializeGameChat(const std::string& serializedChatLines) noexcept;
-		void DeserializeRound(const std::string& serializedRound) noexcept;
 
 		Game(const Game& other) = delete;
 		Game& operator=(const Game& other) = delete;
@@ -78,9 +78,6 @@ namespace skribbl
 		// Move constructor and move assignment operator
 		Game(Game&& other);
 		Game& operator=(Game&& other);
-
-	public:
-		[[nodiscard]] bool operator==(const Game& other) const noexcept;
 
 	private:
 		int m_id;
@@ -99,5 +96,15 @@ namespace skribbl
 
 	private:
 		static constexpr size_t kMaxNumberOfRounds{ 4 };
+
+		// Helper methods for NextRound()
+		[[nodiscard]] size_t CalculateAverageGuessTime(int currentDrawingPlayerIndex) const noexcept;
+		[[nodiscard]] int CalculateDrawerPoints(size_t averageTime, const std::string& currentDrawingPlayer) noexcept;
+		void UpdateDrawerScore(const std::string& drawerName, int points) noexcept;
+		[[nodiscard]] bool ShouldEndGame(const std::string& currentDrawingPlayer) const noexcept;
+
+		// Helper methods for AddChatLineMessage()
+		[[nodiscard]] bool IsCorrectGuess(const std::string& message) const noexcept;
+		void ProcessCorrectGuess(const std::string& username, int timeLeft, int score) noexcept;
 	};
 }

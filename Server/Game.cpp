@@ -98,6 +98,17 @@ const bool Game::GetAllPlayersGuessedWord() const noexcept
 	return m_round.GetGuessedPlayerNames().size() == m_players.size() - 1;
 }
 
+const bool Game::IsLastRound() const noexcept
+{
+	return m_round.GetRoundNumber() == GetMaxNumberOfRoundsAllowed() 
+		&& m_players[m_players.size() - 1].GetName() == m_round.GetDrawingPlayer();
+}
+
+const bool Game::ShouldEndGame() const noexcept
+{
+	return GetAllPlayersGuessedWord() && IsLastRound();
+}
+
 const size_t Game::GetCurrentPlayerCount() const noexcept
 {
 	return m_players.size();
@@ -150,11 +161,6 @@ const std::string Game::SerializeGameChat() const noexcept
 	return serializedChat;
 }
 
-const std::string Game::SerializeRound() const noexcept
-{
-	return m_round.Serialize();
-}
-
 const std::string Game::GetGameCode() const noexcept
 {
 	return m_gameCode;
@@ -201,19 +207,14 @@ bool Game::EndGame() noexcept
 	return m_round.StopRound();
 }
 
-bool Game::NextRound() noexcept
+size_t Game::CalculateAverageGuessTime(int currentDrawingPlayerIndex) const noexcept
 {
-	const std::string currentDrawingPlayer{ m_round.GetDrawingPlayer() };
-
 	size_t averageTime{ 0 };
 	size_t timesSize{ m_round.GetTimes().size() };
 
-	const int currentDrawingPlayerIndex{ GetPlayerIndex(currentDrawingPlayer) };
-	int points{ -50 };
-
 	for (size_t index = 0; index < timesSize; index++) {
 		if (index != currentDrawingPlayerIndex) {
-			averageTime = averageTime + (60 - m_round.GetTimes().at(index));
+			averageTime += (static_cast<size_t>(60) - m_round.GetTimes().at(index));
 		}
 	}
 
@@ -221,74 +222,118 @@ bool Game::NextRound() noexcept
 		averageTime /= m_players.size() - 1;
 	}
 
+	return averageTime;
+}
+
+int Game::CalculateDrawerPoints(size_t averageTime, const std::string& currentDrawingPlayer) noexcept
+{
+	int points{ -50 };
+
 	if (averageTime == ((m_players.size() - 1) * 60)) {
 		std::ranges::for_each(m_players, [&](Player& player) {
 			if (player.GetName() != currentDrawingPlayer)
 				player.SetPoints(player.GetPoints() + points);
 			});
 		points = -100;
-	}
-	else {
+	} else {
 		points = static_cast<int>(((60 - averageTime) * 100) / 60);
 	}
 
+	return points;
+}
+
+void Game::UpdateDrawerScore(const std::string& drawerName, int points) noexcept
+{
 	auto drawerIt = std::find_if(
 		m_players.begin(),
 		m_players.end(),
 		[&](const Player& player) {
-			return player.GetName() == currentDrawingPlayer;
+			return player.GetName() == drawerName;
 		});
 
 	if (drawerIt != m_players.end()) {
 		drawerIt->AddPoints(points);
 	}
+}
 
-	if (m_round.GetRoundNumber() == GetMaxNumberOfRoundsAllowed()
-		&& m_players[m_players.size() - 1].GetName() == currentDrawingPlayer) {
+bool Game::ShouldEndGame(const std::string& currentDrawingPlayer) const noexcept
+{
+	return m_round.GetRoundNumber() == GetMaxNumberOfRoundsAllowed()
+		&& m_players[m_players.size() - 1].GetName() == currentDrawingPlayer;
+}
+
+bool Game::NextRound() noexcept
+{
+	const std::string currentDrawingPlayer{ m_round.GetDrawingPlayer() };
+	const int currentDrawingPlayerIndex{ GetPlayerIndex(currentDrawingPlayer) };
+
+	size_t averageTime{ CalculateAverageGuessTime(currentDrawingPlayerIndex) };
+	int points{ CalculateDrawerPoints(averageTime, currentDrawingPlayer) };
+	UpdateDrawerScore(currentDrawingPlayer, points);
+
+	if (ShouldEndGame(currentDrawingPlayer)) {
 		m_gameStatus = GameStatus::FINISHED;
 		m_round.SetImageData("");
 		m_round.ClearAllPlayersGuessed();
-
 		return true;
 	}
 
-	if (!m_round.StartRound(m_players.at((currentDrawingPlayerIndex + 1) % m_players.size()).GetName(), m_round.GetRoundNumber() + 1)) {
+	// Calculate next player index
+	const size_t nextPlayerIndex = (static_cast<size_t>(currentDrawingPlayerIndex) + 1) % m_players.size();
+	const std::string nextPlayer = m_players.at(nextPlayerIndex).GetName();
+	
+	// Only increment round number when we cycle back to the first player
+	const uint8_t nextRoundNumber = (nextPlayerIndex == 0) 
+		? m_round.GetRoundNumber() + 1 
+		: m_round.GetRoundNumber();
+
+	if (!m_round.StartRound(nextPlayer, nextRoundNumber)) {
 		return false;
 	}
 
 	return true;
 }
 
+bool Game::IsCorrectGuess(const std::string& message) const noexcept
+{
+	std::string messageLower{ message };
+	std::string currentWord{ m_round.GetCurrentWord() };
+	std::transform(messageLower.begin(), messageLower.end(), messageLower.begin(), ::tolower);
+	std::transform(currentWord.begin(), currentWord.end(), currentWord.begin(), ::tolower);
+
+	return messageLower == currentWord;
+}
+
+void Game::ProcessCorrectGuess(const std::string& username, int timeLeft, int score) noexcept
+{
+	auto playerIt = std::find_if(
+		m_players.begin(),
+		m_players.end(),
+		[&](const Player& player) {
+			return player.GetName() == username;
+		});
+
+	if (playerIt != m_players.end()) {
+		int index{ GetPlayerIndex(username) };
+		m_round.PlayerGuessedWord(username, index, timeLeft);
+		playerIt->AddPoints(score);
+	}
+}
+
 bool Game::AddChatLineMessage(const std::string& message, const std::string& username, bool& guessed) noexcept
 {
 	guessed = false;
-	std::string chatLine{ username };
-	std::string currentWord{ m_round.GetCurrentWord() };
-	std::transform(chatLine.begin(), chatLine.end(), chatLine.begin(), ::tolower);
-	std::transform(currentWord.begin(), currentWord.end(), currentWord.begin(), ::tolower);
 
-	const int timeLeft = m_round.GetTimeLeft();
-	int score{ m_round.CalculatePoints(timeLeft) };
+	if (IsCorrectGuess(message)) {
+		const int timeLeft = m_round.GetTimeLeft();
+		int score{ m_round.CalculatePoints(timeLeft) };
 
-	if (message == currentWord) {
-		auto playerIt = std::find_if(
-			m_players.begin(),
-			m_players.end(),
-			[&](const Player& player) {
-				return player.GetName() == username;
-			});
+		ProcessCorrectGuess(username, timeLeft, score);
+		guessed = true;
 
-		if (playerIt != m_players.end()) {
-			int index{ GetPlayerIndex(username) };
-			m_round.PlayerGuessedWord(username, index, timeLeft);
-			playerIt->AddPoints(score);
-			guessed = true;
-		}
-
-		m_chatLineMessages.emplace_back(std::move(username) + " guessed the word!");
-	}
-	else {
-		m_chatLineMessages.emplace_back(std::move(username) + ": " + std::move(message));
+		m_chatLineMessages.emplace_back(username + " guessed the word!");
+	} else {
+		m_chatLineMessages.emplace_back(username + ": " + message);
 	}
 
 	return true;
@@ -359,24 +404,3 @@ void Game::DeserializeGameChat(const std::string& serializedChatLines) noexcept
 	}
 }
 
-void Game::DeserializeRound(const std::string& serializedRound) noexcept
-{
-	m_round.Deserialize(serializedRound);
-}
-
-bool Game::operator==(const Game& other) const noexcept
-{
-	if (this == &other) {
-		return true;
-	}
-
-	if (m_id == other.m_id) {
-		return true;
-	}
-
-	if (m_gameCode == other.m_gameCode) {
-		return true;
-	}
-
-	return false;
-}

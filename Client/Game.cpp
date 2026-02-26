@@ -1,13 +1,34 @@
 #include "Game.h"
 #include "utils.h"
 #include "RoutingManager.h"
+#include "NetworkWorker.h"
 
 #include <QScrollBar>
 #include <QBuffer>
+#include <ranges>
+
+const std::unordered_map<QString, QColor> Game::COLOR_PALETTE = {
+	{"green", Qt::green},
+	{"red", Qt::red},
+	{"blue", Qt::blue},
+	{"orange", QColor(255, 165, 0)},
+	{"brown", QColor(165, 42, 42)},
+	{"purple", QColor(128, 0, 128)},
+	{"black", QColor(0, 0, 0)},
+	{"white", QColor(255, 255, 255)},
+	{"yellow", QColor(255, 255, 0)},
+	{"grey", QColor(128, 128, 128)},
+	{"turquoise", QColor(64, 224, 208)},
+	{"pink", QColor(255, 192, 203)}
+};
 
 Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
 	: QWidget(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(m_roomID)
 {
+	// Register custom types for signal/slot communication across threads
+	qRegisterMetaType<RoomUpdateData>("RoomUpdateData");
+	qRegisterMetaType<QImage>("QImage");
+	
 	m_drawingArea = std::make_unique<DrawingWidget>(this);
 	m_ui.setupUi(this);
 
@@ -18,21 +39,35 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 
 	m_guessedWord = false;
 	m_currentBrushSizeIndex = 0;
+	
+	// Initialize network worker thread
+	m_workerThread = new QThread(this);
+	m_networkWorker = new NetworkWorker(m_roomID, m_username);
+	m_networkWorker->moveToThread(m_workerThread);
+	
+	// Connect worker signals
+	connect(m_networkWorker, &NetworkWorker::RoomUpdateReceived, this, &Game::OnRoomUpdateReceived);
+	connect(m_networkWorker, &NetworkWorker::MessageSent, this, &Game::OnMessageSent);
+	connect(m_networkWorker, &NetworkWorker::PlayerScoreReceived, this, &Game::OnPlayerScoreReceived);
+	
+	// Start the worker thread
+	m_workerThread->start();
+	
 	StartTimer();
 
 	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
-	connect(m_ui.Verde, &QPushButton::clicked, this, &Game::SetPenColorGreen);
-	connect(m_ui.Rosu, &QPushButton::clicked, this, &Game::SetPenColorRed);
-	connect(m_ui.Albastru, &QPushButton::clicked, this, &Game::SetPenColorBlue);
-	connect(m_ui.Orange, &QPushButton::clicked, this, &Game::SetPenColorOrange);
-	connect(m_ui.Brown, &QPushButton::clicked, this, &Game::SetPenColorBrown);
-	connect(m_ui.Purple, &QPushButton::clicked, this, &Game::SetPenColorPurple);
-	connect(m_ui.White, &QPushButton::clicked, this, &Game::SetPenColorWhite);
-	connect(m_ui.Black, &QPushButton::clicked, this, &Game::SetPenColorBlack);
-	connect(m_ui.Grey, &QPushButton::clicked, this, &Game::SetPenColorGrey);
-	connect(m_ui.Yellow, &QPushButton::clicked, this, &Game::SetPenColorYellow);
-	connect(m_ui.Pink, &QPushButton::clicked, this, &Game::SetPenColorPink);
-	connect(m_ui.Turquoise, &QPushButton::clicked, this, &Game::SetPenColorTurquoise);
+	connect(m_ui.Verde, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("green")); });
+	connect(m_ui.Rosu, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("red")); });
+	connect(m_ui.Albastru, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("blue")); });
+	connect(m_ui.Orange, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("orange")); });
+	connect(m_ui.Brown, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("brown")); });
+	connect(m_ui.Purple, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("purple")); });
+	connect(m_ui.White, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("white")); });
+	connect(m_ui.Black, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("black")); });
+	connect(m_ui.Grey, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("grey")); });
+	connect(m_ui.Yellow, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("yellow")); });
+	connect(m_ui.Pink, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("pink")); });
+	connect(m_ui.Turquoise, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("turquoise")); });
 	connect(m_ui.Bucket, &QPushButton::clicked, this, &Game::OnFillButtonClicked);
 	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
@@ -44,7 +79,18 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 
 Game::~Game()
 {
-	m_updateTimer->stop();
+	StopTimer();
+	
+	// Clean up worker thread properly
+	if (m_workerThread && m_workerThread->isRunning()) {
+		m_workerThread->quit();
+		m_workerThread->wait();
+	}
+	
+	// Now safe to delete the worker since thread has stopped
+	delete m_networkWorker;
+	m_networkWorker = nullptr;
+	
 	auto clearImageRequest = RoutingManager::ClearDrawingImage(m_roomID);
 }
 
@@ -57,117 +103,17 @@ void Game::StopTimer()
 
 void Game::ClearDrawingArea()
 {
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
+	if (auto* drawingArea = GetDrawingWidget()) {
 		drawingArea->ClearDrawing();
+		m_lastSentDrawingHash = 0; // Reset cached drawing hash
 	}
 }
 
-void Game::SetPenColorGreen()
+void Game::SetPenColor(QColor color)
 {
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(Qt::green);
-		drawingArea->SetCurrentFillColor(Qt::green);
-	}
-}
-
-void Game::SetPenColorRed()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(Qt::red);
-		drawingArea->SetCurrentFillColor(Qt::red);
-	}
-}
-
-void Game::SetPenColorBlue()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(Qt::blue);
-		drawingArea->SetCurrentFillColor(Qt::blue);
-	}
-}
-
-void Game::SetPenColorOrange()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(255, 165, 0)); // RGB for orange
-		drawingArea->SetCurrentFillColor(QColor(255, 165, 0));
-	}
-}
-
-void Game::SetPenColorPurple()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(128, 0, 128)); // RGB for purple
-		drawingArea->SetCurrentFillColor(QColor(128, 0, 128));
-	}
-}
-
-void Game::SetPenColorBrown()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(165, 42, 42)); // RGB for brown
-		drawingArea->SetCurrentFillColor(QColor(165, 42, 42));
-	}
-}
-
-void Game::SetPenColorBlack()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(0, 0, 0)); // RGB for black
-		drawingArea->SetCurrentFillColor(QColor(0, 0, 0));
-	}
-}
-
-void Game::SetPenColorWhite()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(255, 255, 255)); // RGB for white
-		drawingArea->SetCurrentFillColor(QColor(255, 255, 255));
-	}
-}
-
-void Game::SetPenColorYellow()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(255, 255, 0)); // RGB for yellow
-		drawingArea->SetCurrentFillColor(QColor(255, 255, 0));
-	}
-}
-
-void Game::SetPenColorGrey()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(128, 128, 128)); // RGB for grey
-		drawingArea->SetCurrentFillColor(QColor(128, 128, 128));
-	}
-}
-
-void Game::SetPenColorTurquoise()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(64, 224, 208)); // RGB for turquoise
-		drawingArea->SetCurrentFillColor(QColor(64, 224, 208));
-	}
-}
-
-void Game::SetPenColorPink()
-{
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		drawingArea->SetPenColor(QColor(255, 192, 203)); // RGB for pink
-		drawingArea->SetCurrentFillColor(QColor(255, 192, 203));
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->SetPenColor(color);
+		drawingArea->SetCurrentFillColor(color);
 	}
 }
 
@@ -178,171 +124,73 @@ void Game::OnSendButtonClicked()
 		return;
 	}
 
-	cpr::Response request = RoutingManager::AddChat(m_roomID, m_username, text.toUtf8().constData());
-
-	if (request.status_code != 200) {
-		return;
-	}
+	// Send message asynchronously through worker
+	QMetaObject::invokeMethod(m_networkWorker, [this, text]() {
+		m_networkWorker->SendMessage(text);
+	}, Qt::QueuedConnection);
 
 	m_ui.chat->ensureCursorVisible();
 	m_ui.textEdit->clear();
-
-	if (request.text == "TRUE") {
-		m_guessedWord = true;
-	}
 }
 
 void Game::UpdateRoomInformation()
 {
-	CheckGameEnded();
-	UpdateDrawingPlayerAndWord();
-	GamePlayers();
-	CheckRoundNumber();
-	UpdateTimeLeft();
-	UpdateChat();
-	UpdateDrawingImage();
-	CheckAllPlayersGuessed();
+	// Simply trigger the worker to fetch data in the background
+	// The worker will emit signals when data is ready
+	QMetaObject::invokeMethod(m_networkWorker, &NetworkWorker::FetchRoomUpdate, Qt::QueuedConnection);
 }
 
 void Game::OnPlayerQuit()
 {
 	cpr::Response request = RoutingManager::CheckGameEnded(m_roomID);
 
-	if (request.status_code == 200) {
+	if (Utils::IsResponseSuccessful(request)) {
 		return;
 	}
 
-	// send request to server to remove the player from the room (game)
-	auto req = RoutingManager::LeaveRoom(m_roomID, m_username);
-
+	RoutingManager::LeaveRoom(m_roomID, m_username);
 	ClearDrawingArea();
 }
 
-void Game::ShowDrawingUI()
+void Game::SetUIElementsVisibility(std::span<QWidget*> widgets, bool visible) noexcept
 {
-	m_ui.Clear->show();
-	m_ui.Verde->show();
-	m_ui.Rosu->show();
-	m_ui.Albastru->show();
-	m_ui.Orange->show();
-	m_ui.Brown->show();
-	m_ui.Purple->show();
-	m_ui.White->show();
-	m_ui.Black->show();
-	m_ui.Grey->show();
-	m_ui.Yellow->show();
-	m_ui.Pink->show();
-	m_ui.Turquoise->show();
-	m_ui.SettingsButton->show();
-	m_ui.Bucket->show();
-	m_ui.BrushSize->show();
-	m_ui.Undo->show();
-}
-
-void Game::HideDrawingUI()
-{
-	m_ui.Clear->hide();
-	m_ui.Verde->hide();
-	m_ui.Rosu->hide();
-	m_ui.Albastru->hide();
-	m_ui.Orange->hide();
-	m_ui.Brown->hide();
-	m_ui.Purple->hide();
-	m_ui.White->hide();
-	m_ui.Black->hide();
-	m_ui.Grey->hide();
-	m_ui.Yellow->hide();
-	m_ui.Pink->hide();
-	m_ui.Turquoise->hide();
-	m_ui.SettingsButton->hide();
-	m_ui.Bucket->hide();
-	m_ui.BrushSize->hide();
-	m_ui.Undo->hide();
-}
-
-void Game::DisplayPlayer(const std::string& username, int index, const std::string& score)
-{
-	switch (index)
-	{
-	case 1:
-		m_ui.player1_3->show();
-		m_ui.player1_3->setText(QString::fromUtf8(username.data(), int(username.size())));
-		m_ui.player1_score->show();
-		m_ui.player1_score->setText(QString::fromUtf8(score.data(), int(score.size())));
-		break;
-	case 2:
-		m_ui.player2_3->show();
-		m_ui.player2_3->setText(QString::fromUtf8(username.data(), int(username.size())));
-		m_ui.player2_score->show();
-		m_ui.player2_score->setText(QString::fromUtf8(score.data(), int(score.size())));
-		break;
-	case 3:
-		m_ui.player3_3->show();
-		m_ui.player3_3->setText(QString::fromUtf8(username.data(), int(username.size())));
-		m_ui.player3_score->show();
-		m_ui.player3_score->setText(QString::fromUtf8(score.data(), int(score.size())));
-		break;
-	case 4:
-		m_ui.player4_3->show();
-		m_ui.player4_3->setText(QString::fromUtf8(username.data(), int(username.size())));
-		m_ui.player4_score->show();
-		m_ui.player4_score->setText(QString::fromUtf8(score.data(), int(score.size())));
-		break;
-	default:
-		break;
+	for (auto* widget : widgets) {
+		widget->setVisible(visible);
 	}
 }
 
-void Game::DisplayPlayerCount(int count)
+void Game::DisplayPlayer(const std::string& username, int index, const std::string& score) noexcept
 {
-	switch (count)
-	{
-	case 1:
-		m_ui.player1_3->show();
-		m_ui.player1_score->show();
-		m_ui.player2_3->hide();
-		m_ui.player2_score->hide();
-		m_ui.player3_3->hide();
-		m_ui.player3_score->hide();
-		m_ui.player4_3->hide();
-		m_ui.player4_score->hide();
-		break;
-	case 2:
-		m_ui.player1_3->show();
-		m_ui.player1_score->show();
-		m_ui.player2_3->show();
-		m_ui.player2_score->show();
-		m_ui.player3_3->hide();
-		m_ui.player3_score->hide();
-		m_ui.player4_3->hide();
-		m_ui.player4_score->hide();
-		break;
-	case 3:
-		m_ui.player1_3->show();
-		m_ui.player1_score->show();
-		m_ui.player2_3->show();
-		m_ui.player2_score->show();
-		m_ui.player3_3->show();
-		m_ui.player3_score->show();
-		m_ui.player4_3->hide();
-		m_ui.player4_score->hide();
-		break;
-	case 4:
-		m_ui.player1_3->show();
-		m_ui.player1_score->show();
-		m_ui.player2_3->show();
-		m_ui.player2_score->show();
-		m_ui.player3_3->show();
-		m_ui.player3_score->show();
-		m_ui.player4_3->show();
-		m_ui.player4_score->show();
-		break;
-	default:
-		break;
+	if (index < 1 || index > 4) {
+		return;
 	}
+	
+	const std::array<std::pair<QLabel*, QLabel*>, 4> playerWidgets = {
+		std::make_pair(m_ui.player1_3, m_ui.player1_score),
+		std::make_pair(m_ui.player2_3, m_ui.player2_score),
+		std::make_pair(m_ui.player3_3, m_ui.player3_score),
+		std::make_pair(m_ui.player4_3, m_ui.player4_score)
+	};
+	
+	auto& [nameLabel, scoreLabel] = playerWidgets[static_cast<size_t>(index - 1)];
+	Utils::ShowLabelWithText(nameLabel, username);
+	Utils::ShowLabelWithText(scoreLabel, score);
 }
 
-void Game::HidePlayers()
+void Game::DisplayPlayerCount(int count) noexcept
+{
+	std::array<QWidget*, 4> nameLabels = {
+		m_ui.player1_3, m_ui.player2_3, m_ui.player3_3, m_ui.player4_3
+	};
+	std::array<QWidget*, 4> scoreLabels = {
+		m_ui.player1_score, m_ui.player2_score, m_ui.player3_score, m_ui.player4_score
+	};
+	
+	Utils::SetWidgetVisibilityByCount(nameLabels, count);
+	Utils::SetWidgetVisibilityByCount(scoreLabels, count);
+}
+
+void Game::HidePlayers() noexcept
 {
 	m_ui.player1_3->hide();
 	m_ui.player2_3->hide();
@@ -354,275 +202,32 @@ void Game::HidePlayers()
 	m_ui.player4_score->hide();
 }
 
-void Game::StartTimer()
+void Game::StartTimer() noexcept
 {
-	m_updateTimer->start(200);
+	m_updateTimer->start(UPDATE_INTERVAL_MS);
 }
 
-void Game::CheckGameEnded()
-{
-	cpr::Response gameEndedRequest = RoutingManager::CheckGameEnded(m_roomID);
 
-	cpr::Response currentNumberOfPlayersRequest = RoutingManager::GetCurrentNumberOfPlayers(m_roomID);
-
-	if (currentNumberOfPlayersRequest.status_code == 200 && std::stoi(currentNumberOfPlayersRequest.text) == 1) {
-		EndGame();
-	}
-
-	if (gameEndedRequest.status_code == 200 ||
-		(currentNumberOfPlayersRequest.status_code == 200 && std::stoi(currentNumberOfPlayersRequest.text) == 1)) {
-		m_updateTimer->stop();
-		int time = 10;
-
-		QTimer* timer = new QTimer(this);
-
-		connect(timer, &QTimer::timeout, [=]() mutable {
-			m_ui.timer->display(time);
-			time--;
-
-			m_ui.textEdit->setReadOnly(true);
-			m_ui.drawingArea->setEnabled(false);
-			if (currentNumberOfPlayersRequest.status_code == 200 && std::stoi(currentNumberOfPlayersRequest.text) == 1) {
-				m_ui.drawerLabel->setText("You are the only player left in the room");
-			}
-			else {
-				m_ui.drawerLabel->setText("Game has ended");
-			}
-
-			m_ui.wordLabel->setText("Going back to the menu in 10 seconds");
-
-			if (time < 0) {
-				timer->stop();
-				timer->deleteLater();
-
-				emit NavigateToMenu(m_username);
-				ClearDrawingArea();
-				if (m_isOwner) {
-					EndGame();
-				}
-			}
-
-			});
-
-		timer->start(1000);
-
-		return;
-	}
-}
-
-void Game::GamePlayers()
-{
-	cpr::Response req = RoutingManager::GetRoomPlayers(m_roomID);
-
-	if (req.status_code != 200) {
-		return;
-	}
-
-	std::vector<std::string> players = split(req.text, ",");
-
-	if (players.empty()) {
-		return;
-	}
-
-	DisplayPlayerCount(players.size());
-
-	for (int i = 0; i < players.size(); i++) {
-		cpr::Response request = RoutingManager::GetPlayerScore(m_roomID, players[i]);
-
-		if (request.status_code != 200) {
-			return;
-		}
-
-		DisplayPlayer(players[i], i + 1, request.text);
-	}
-}
-
-void Game::CheckRoundNumber()
-{
-	cpr::Response roundNumberRequest = RoutingManager::GetRoundNumber(m_roomID);
-
-	if (roundNumberRequest.status_code != 200) {
-		return;
-	}
-
-	QString roundNumber = "Round: " + QString::fromUtf8(roundNumberRequest.text.data(), int(roundNumberRequest.text.size()));
-	m_ui.roundLabel->setText(roundNumber);
-}
-
-void Game::UpdateTimeLeft()
-{
-	cpr::Response timeLeftRequest = RoutingManager::GetTimeLeft(m_roomID);
-
-	if (timeLeftRequest.status_code != 200) {
-		return;
-	}
-
-	m_ui.timer->display(QString::fromUtf8(timeLeftRequest.text.data(), int(timeLeftRequest.text.size())));
-	if (std::stoi(timeLeftRequest.text) == 0) {
-		m_guessedWord = false;
-		ClearDrawingArea();
-
-		if (m_isOwner) {
-			OnTimeEnd();
-		}
-	}
-}
-
-void Game::UpdateChat()
-{
-	cpr::Response chatRequest = RoutingManager::GetChat(m_roomID);
-
-	if (chatRequest.status_code != 200) {
-		return;
-	}
-
-	std::string decodedString{ urlDecode(chatRequest.text) };
-
-	QString chat = QString::fromUtf8(decodedString.data(), int(decodedString.size()));
-
-	m_ui.chat->setPlainText(chat);
-	m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
-}
-
-void Game::UpdateDrawingPlayerAndWord()
-{
-	// get the drawing player name from the server
-	cpr::Response drawingPlayerRequest = RoutingManager::GetDrawingPlayer(m_roomID);
-
-	if (drawingPlayerRequest.status_code != 200) {
-		return;
-	}
-
-	m_ui.drawerLabel->setText(QString::fromUtf8(drawingPlayerRequest.text.data(), int(drawingPlayerRequest.text.size())) + " is currently drawing");
-
-	if (m_username == drawingPlayerRequest.text) {
-		m_isDrawing = true;
-	}
-	else {
-		m_isDrawing = false;
-	}
-
-	cpr::Response wordRequest = RoutingManager::GetCurrentWord(m_roomID);
-
-	if (wordRequest.status_code != 200) {
-		return;
-	}
-
-	if (m_isDrawing) {
-		m_ui.textEdit->setReadOnly(true); //disable player from sending messages to the chat
-		m_ui.drawingArea->setEnabled(true); //allow player to draw
-		ShowDrawingUI();
-		m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
-	}
-	else {
-		m_ui.textEdit->setReadOnly(false); //enable player to send messages to the chat
-		m_ui.drawingArea->setEnabled(false); //disable player from drawing
-		HideDrawingUI();
-		if (!m_guessedWord) {
-			std::string currentWordString = wordRequest.text;
-			QString currentWord = "";
-			for (uint i = 0; i < currentWordString.size(); i++) {
-				if (currentWordString[i] == ' ') {
-					currentWord += " ";
-				}
-				else {
-					currentWord += "_ ";
-				}
-			}
-			m_ui.wordLabel->setText(currentWord);
-		}
-		else {
-			m_ui.wordLabel->setText(QString::fromUtf8(wordRequest.text.data(), int(wordRequest.text.size())));
-			m_ui.textEdit->setReadOnly(true);
-		}
-	}
-}
-
-void Game::UpdateDrawingImage()
-{
-	if (m_isDrawing) {
-		int timeLeft = m_ui.timer->intValue();
-		if (timeLeft == 0) {
-			return;
-		}
-
-		QImage image{ 621, 491, QImage::Format_ARGB32 };
-		DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-		if (drawingArea) {
-			image = drawingArea->GetImage();
-		}
-
-		if (image.isNull()) {
-			return;
-		}
-
-		std::string imageString = "";
-
-		QByteArray byteArray;
-		QBuffer buffer(&byteArray);
-		buffer.open(QIODevice::WriteOnly);
-		image.save(&buffer, "PNG");
-
-		SendDrawing(byteArray);
-	}
-	else {
-		int timeLeft = m_ui.timer->intValue();
-		if (timeLeft == 0) {
-			ClearDrawingArea();
-			return;
-		}
-
-		std::string imageString;
-		ReturnDrawing(imageString);
-
-		if (imageString.empty()) {
-			return;
-		}
-
-		QByteArray byteArray = QByteArray::fromBase64(imageString.c_str());
-
-		QImage m_receivedImage{ 621, 491, QImage::Format_ARGB32 };
-
-		m_receivedImage.loadFromData(byteArray, "PNG");
-
-		DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-		if (drawingArea) {
-			drawingArea->SetImage(m_receivedImage);
-		}
-
-		update();
-	}
-}
 
 void Game::OnFillButtonClicked()
 {
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
+	if (auto* drawingArea = GetDrawingWidget()) {
 		drawingArea->ToggleFillMode();
 	}
 }
 
 void Game::OnUndoButtonClicked()
 {
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
+	if (auto* drawingArea = GetDrawingWidget()) {
 		drawingArea->Undo();
 	}
 }
 
 void Game::ChangeBrushSize()
 {
-	DrawingWidget* drawingArea = qobject_cast<DrawingWidget*>(m_ui.drawingArea);
-	if (drawingArea) {
-		std::vector<int> brushSizes = { 3, 6, 9 };
-		if (m_currentBrushSizeIndex == 2) {
-			m_currentBrushSizeIndex = 0;
-		}
-		else {
-			m_currentBrushSizeIndex++;
-		}
-		int newBrushSize = brushSizes[m_currentBrushSizeIndex];
-		drawingArea->SetPenWidth(newBrushSize);
+	if (auto* drawingArea = GetDrawingWidget()) {
+		m_currentBrushSizeIndex = (m_currentBrushSizeIndex + 1) % BRUSH_SIZES.size(); 
+		drawingArea->SetPenWidth(BRUSH_SIZES[m_currentBrushSizeIndex]);
 	}
 }
 
@@ -632,13 +237,7 @@ void Game::OnTimeEnd()
 		return;
 	}
 
-	auto request = RoutingManager::NextRound(m_roomID);
-
-	if (request.status_code == 200) {
-		ClearDrawingArea();
-		return;
-	}
-
+	QMetaObject::invokeMethod(m_networkWorker, &NetworkWorker::StartNextRound, Qt::QueuedConnection);
 	ClearDrawingArea();
 }
 
@@ -651,70 +250,266 @@ void Game::OnLeaveButtonClicked()
 		return;
 	}
 
-	// send request to server to remove the player from the room (game)
-	auto req = RoutingManager::LeaveRoom(m_roomID, m_username);
+	// Send request to server to remove the player from the room (game) - async
+	QMetaObject::invokeMethod(m_networkWorker, &NetworkWorker::LeaveRoom, Qt::QueuedConnection);
 
 	emit NavigateToMenu(m_username);
 	ClearDrawingArea();
 }
 
-void Game::SendDrawing(const QByteArray& drawingData)
-{
-	QByteArray base64Data = drawingData.toBase64();
 
-	auto request = RoutingManager::SendDrawingImage(m_roomID, std::string(base64Data.constData(), base64Data.size()));
-}
 
-void Game::ReturnDrawing(std::string& drawingData)
-{
-	auto request = RoutingManager::GetDrawingImage(m_roomID);
-
-	if (request.status_code == 200) {
-		drawingData = request.text;
-	}
-}
-
-void Game::EndGame()
+void Game::EndGame() const noexcept
 {
 	auto endGameRequest = RoutingManager::EndGame(m_roomID);
 }
 
-void Game::CheckAllPlayersGuessed()
+
+
+DrawingWidget* Game::GetDrawingWidget() const noexcept
 {
-	cpr::Response allGuessedRequest = RoutingManager::CheckAllPlayersGuessed(m_roomID);
+	return qobject_cast<DrawingWidget*>(m_ui.drawingArea);
+}
 
-	if (allGuessedRequest.status_code != 200) {
-		return;
+std::optional<QString> Game::GetResponseText(const cpr::Response& response) const noexcept
+{
+	if (Utils::IsResponseSuccessful(response)) {
+		return Utils::ToQString(response.text);
 	}
 
-	if (allGuessedRequest.text != "TRUE") {
-		return;
-	}
+	return std::nullopt;
+}
 
-	// All players have guessed the word, end the round early
-	m_updateTimer->stop();
-	int time = 10;
-
+void Game::StartCountdownTimer(int seconds, const QString& message, std::function<void()> onComplete) noexcept
+{
+	StopTimer();
+	int time = seconds;
+	
 	QTimer* timer = new QTimer(this);
-
 	connect(timer, &QTimer::timeout, [=]() mutable {
 		m_ui.timer->display(time);
 		time--;
-
+		
 		m_ui.textEdit->setReadOnly(true);
 		m_ui.drawingArea->setEnabled(false);
-
-		m_ui.wordLabel->setText("All players guessed. Moving to next round in 10 seconds.");
-
+		m_ui.wordLabel->setText(message);
+		
 		if (time <= 0) {
 			timer->stop();
 			timer->deleteLater();
+			if (onComplete) {
+				onComplete();
+			}
+		}
+	});
+	
+	timer->start(1000);
+}
+
+void Game::SetDrawingUIVisibility(bool visible) noexcept
+{
+	const std::array<QWidget*, 17> drawingTools = {
+		m_ui.Clear, m_ui.Verde, m_ui.Rosu, m_ui.Albastru,
+		m_ui.Orange, m_ui.Brown, m_ui.Purple, m_ui.White,
+		m_ui.Black, m_ui.Grey, m_ui.Yellow, m_ui.Pink,
+		m_ui.Turquoise, m_ui.SettingsButton, m_ui.Bucket,
+		m_ui.BrushSize, m_ui.Undo
+	};
+	
+	for (auto* widget : drawingTools) {
+		widget->setVisible(visible);
+	}
+}
+
+void Game::ConfigureUIForDrawer(const QString& word) noexcept
+{
+	m_ui.textEdit->setReadOnly(true);
+	m_ui.drawingArea->setEnabled(true);
+	SetDrawingUIVisibility(true);
+	m_ui.wordLabel->setText(word);
+}
+
+void Game::ConfigureUIForGuesser(const QString& word) noexcept
+{
+	m_ui.textEdit->setReadOnly(m_guessedWord);
+	m_ui.drawingArea->setEnabled(false);
+	SetDrawingUIVisibility(false);
+	m_ui.wordLabel->setText(m_guessedWord ? word : GetMaskedWord(word));
+}
+
+QString Game::GetMaskedWord(const QString& word) const noexcept
+{
+	QString masked;
+	masked.reserve(word.size() * 2);
+	
+	for (const QChar& ch : word) {
+		masked += (ch == ' ') ? " " : "_ ";
+	}
+	
+	return masked;
+}
+
+void Game::SendCurrentDrawing() const noexcept
+{
+	auto* drawingArea = GetDrawingWidget();
+	if (!drawingArea) {
+		return;
+	}
+	
+	// Make a copy of the image to pass to worker thread
+	QImage image = drawingArea->GetImage().copy();
+	if (image.isNull()) {
+		return;
+	}
+	
+	// Encode to PNG and calculate hash
+	QByteArray byteArray;
+	QBuffer buffer(&byteArray);
+	buffer.open(QIODevice::WriteOnly);
+	image.save(&buffer, "PNG");
+	
+	// Calculate hash of the byte array
+	const size_t currentHash = qHash(byteArray);
+	
+	// Only send if the image has changed
+	if (m_lastSentDrawingHash != 0 && currentHash == m_lastSentDrawingHash) {
+		return;
+	}
+	
+	// Update last sent hash
+	m_lastSentDrawingHash = currentHash;
+	
+	// Send image to worker - encoding already done
+	QMetaObject::invokeMethod(m_networkWorker, [this, image]() {
+		m_networkWorker->SendDrawingData(image);
+	}, Qt::QueuedConnection);
+}
+
+void Game::OnRoomUpdateReceived(const RoomUpdateData& data)
+{
+	// Check game ended
+	const bool onlyPlayerLeft = data.currentPlayerCount == 1;
+	const bool gameEnded = data.gameEnded || onlyPlayerLeft;
+
+	if (onlyPlayerLeft) {
+		EndGame();
+	}
+
+	if (gameEnded) {
+		m_ui.drawerLabel->setText(onlyPlayerLeft ? "You are the only player left in the room" : "Game has ended");
+		
+		StartCountdownTimer(COUNTDOWN_SECONDS, "Going back to the menu in 10 seconds", [this]() {
+			emit NavigateToMenu(m_username);
+			ClearDrawingArea();
+			if (m_isOwner) {
+				EndGame();
+			}
+		});
+		return;
+	}
+	
+	// Update drawing player and word
+	if (!data.drawingPlayer.empty()) {
+		m_ui.drawerLabel->setText(Utils::ToQString(data.drawingPlayer) + " is currently drawing");
+		m_isDrawing = (m_username == data.drawingPlayer);
+	}
+	
+	if (!data.currentWord.empty()) {
+		const QString word = Utils::ToQString(data.currentWord);
+		m_isDrawing ? ConfigureUIForDrawer(word) : ConfigureUIForGuesser(word);
+	}
+	
+	// Update round number
+	if (!data.roundNumber.empty()) {
+		QString roundNumber = "Round: " + Utils::ToQString(data.roundNumber);
+		m_ui.roundLabel->setText(roundNumber);
+	}
+	
+	// Update time left
+	if (!data.timeLeft.empty()) {
+		m_ui.timer->display(Utils::ToQString(data.timeLeft));
+		if (std::stoi(data.timeLeft) == 0) {
+			m_guessedWord = false;
+			ClearDrawingArea();
+			if (m_isOwner) {
+				OnTimeEnd();
+			}
+		}
+	}
+	
+	// Update chat
+	if (!data.chat.empty()) {
+		std::string decodedString{ urlDecode(data.chat) };
+		QString chat = QString::fromUtf8(decodedString.data(), static_cast<int>(decodedString.size()));
+		m_ui.chat->setPlainText(chat);
+		m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
+	}
+	
+	// Update drawing image
+	const int timeLeft = m_ui.timer->intValue();
+	if (timeLeft != 0) {
+		if (m_isDrawing) {
+			SendCurrentDrawing();
+		} else if (!data.drawingImage.empty()) {
+			const QByteArray byteArray = QByteArray::fromBase64(data.drawingImage.c_str());
+			QImage receivedImage{621, 491, QImage::Format_ARGB32};
+			receivedImage.loadFromData(byteArray, "PNG");
+			
+			if (auto* drawingArea = GetDrawingWidget()) {
+				drawingArea->SetImage(receivedImage);
+			}
+			update();
+		}
+	} else if (!m_isDrawing) {
+		ClearDrawingArea();
+	}
+	
+	// Update players and scores
+	if (!data.players.empty()) {
+		std::vector<std::string> players = split(data.players, ",");
+		if (!players.empty()) {
+			DisplayPlayerCount(players.size());
+			
+			for (int i = 0; i < players.size(); i++) {
+				// Get score from the update data
+				auto it = data.playerScores.find(players[i]);
+				if (it != data.playerScores.end()) {
+					DisplayPlayer(players[i], i + 1, it->second);
+				} else {
+					// Fallback: display with "0" if score not available
+					DisplayPlayer(players[i], i + 1, "0");
+				}
+			}
+		}
+	}
+	
+	// Check if all players guessed
+	if (data.allPlayersGuessed) {
+		StartCountdownTimer(COUNTDOWN_SECONDS, "All players guessed. Moving to next round in 10 seconds.", [this]() {
 			OnTimeEnd();
 			ClearDrawingArea();
 			m_guessedWord = false;
-			m_updateTimer->start(200);
-		}
+			m_updateTimer->start(UPDATE_INTERVAL_MS);
 		});
+	}
+}
 
-	timer->start(1000);
+void Game::OnMessageSent(bool success, bool correctGuess)
+{
+	if (!success) {
+		return;
+	}
+	
+	if (correctGuess) {
+		m_guessedWord = true;
+	}
+}
+
+void Game::OnPlayerScoreReceived(const std::string& playerName, const std::string& score)
+{
+	// Cache the score
+	m_playerScores[playerName] = score;
+	
+	// Find and update the player display
+	// This will be updated in the next OnRoomUpdateReceived call
 }

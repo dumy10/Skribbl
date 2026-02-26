@@ -168,13 +168,13 @@ void MainWindow::closeEvent(QCloseEvent* event)
 {
 	if (m_lobby && m_stackedWidget->currentWidget() == m_lobby) {
 		emit m_lobby->PlayerLeft();
-		QCoreApplication::processEvents();
 	}
 
 	if (m_game && m_stackedWidget->currentWidget() == m_game) {
 		emit m_game->PlayerQuit();
-		QCoreApplication::processEvents();
 	}
+
+	QCoreApplication::processEvents();
 
 	QMainWindow::closeEvent(event);
 }

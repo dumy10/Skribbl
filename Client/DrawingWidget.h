@@ -33,19 +33,19 @@ protected:
 	void paintEvent(QPaintEvent* event) override;
 
 private:
-	bool m_isDrawing; // Indica daca se deseneaza
-	bool m_isErasing; // Indica daca se sterge
-	QImage m_image; // Imaginea pe care se deseneaza
-	QPoint m_lastPoint; // Ultimul punct pentru desen
-	QPen m_pen; // Stiloul folosit pentru desenare si stergere
-	bool m_fillMode{ false };//indica daca se umple
+	bool m_isDrawing;
+	bool m_isErasing;
+	QImage m_image;
+	QPoint m_lastPoint;
+	QPen m_pen;
+	bool m_fillMode{ false };
 	QColor m_currentFillColor;
 	QVector<QImage> m_undoStack;
 
 private:
-	void DrawLineTo(const QPoint& endPoint); // Traseaza o linie pana la punctul dat
-	void SetEraser(); // Pregateste stiloul pentru stergere
-	void FloodFill(const QPoint& startpoint, const QColor& fillColor, const QColor& oldColor);//Functia de umplere
+	void DrawLineTo(const QPoint& endPoint);
+	void SetEraser();
+	void FloodFill(const QPoint& startpoint, const QColor& fillColor, const QColor& oldColor);
 	void saveCurrentState();
 };
 
