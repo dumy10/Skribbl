@@ -14,7 +14,39 @@ public:
 	~Routing();
 
 	void Run();
+
 private:
+	// Route Handlers
+	crow::response HandleRoot();
+	crow::response HandleRandomWord();
+	crow::response HandleCheckUsername(const crow::request& req);
+	crow::response HandleAddUser(const crow::request& req);
+	crow::response HandleLoginUser(const crow::request& req);
+	crow::response HandleGetRoomID();
+	crow::response HandleCreateRoom(const crow::request& req);
+	crow::response HandleCheckRoomID(const crow::request& req);
+	crow::response HandleJoinRoom(const crow::request& req);
+	crow::response HandleGetRoomPlayers(const crow::request& req);
+	crow::response HandleGetNumberOfPlayers(const crow::request& req);
+	crow::response HandleGetCurrentNumberOfPlayers(const crow::request& req);
+	crow::response HandleLeaveRoom(const crow::request& req);
+	crow::response HandleGameStarted(const crow::request& req);
+	crow::response HandleStartGame(const crow::request& req);
+	crow::response HandleGetPlayerScore(const crow::request& req);
+	crow::response HandleAddChat(const crow::request& req);
+	crow::response HandleGetChat(const crow::request& req);
+	crow::response HandleGetDrawingPlayer(const crow::request& req);
+	crow::response HandleGetRoundNumber(const crow::request& req);
+	crow::response HandleGetCurrentWord(const crow::request& req);
+	crow::response HandleGetTimeLeft(const crow::request& req);
+	crow::response HandleNextRound(const crow::request& req);
+	crow::response HandleGameEnded(const crow::request& req);
+	crow::response HandleEndGame(const crow::request& req);
+	crow::response HandleDrawingImage(const crow::request& req);
+	crow::response HandleClearImage(const crow::request& req);
+	crow::response HandleAllPlayersGuessed(const crow::request& req);
+
+	// Helper Methods
 	[[nodiscard]] std::shared_ptr<Game> GetGameByRoomID(const std::string& roomID) noexcept;
 	[[nodiscard]] std::shared_ptr<Player> GetPlayerByUsername(const std::string& username) noexcept;
 	void CleanupFinishedGames();
