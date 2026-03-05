@@ -45,7 +45,6 @@ public slots:
 	void LeaveRoom();
 	void StartNextRound();
 	void EndGameSession();
-	void FetchPlayerScore(const std::string& playerName);
 
 signals:
 	// Signals for room update results
@@ -53,7 +52,6 @@ signals:
 	
 	// Signals for individual requests
 	void MessageSent(bool success, bool correctGuess);
-	void PlayerScoreReceived(const std::string& playerName, const std::string& score);
 	void RoomLeft(bool success);
 	void NextRoundStarted(bool success);
 	void GameEnded(bool success);

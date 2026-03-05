@@ -23,7 +23,7 @@ void RegisterForm::AddUserToDatabase(const std::string& username, const std::str
 {
 	cpr::Response response = RoutingManager::AddUser(username, password, email);
 
-	if (response.status_code != 201) {
+	if (Utils::IsResponseSuccessful(response, 201)) {
 		throw std::exception("Could not add user to database");
 	}
 }

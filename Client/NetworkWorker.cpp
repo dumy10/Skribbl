@@ -33,37 +33,37 @@ void NetworkWorker::FetchRoomUpdate()
 	
 	// Get current word
 	cpr::Response wordRequest = RoutingManager::GetCurrentWord(m_roomID);
-	if (wordRequest.status_code == 200) {
+	if (Utils::IsResponseSuccessful(wordRequest)) {
 		data.currentWord = wordRequest.text;
 	}
 	
 	// Get round number
 	cpr::Response roundRequest = RoutingManager::GetRoundNumber(m_roomID);
-	if (roundRequest.status_code == 200) {
+	if (Utils::IsResponseSuccessful(roundRequest)) {
 		data.roundNumber = roundRequest.text;
 	}
 	
 	// Get time left
 	cpr::Response timeRequest = RoutingManager::GetTimeLeft(m_roomID);
-	if (timeRequest.status_code == 200) {
+	if (Utils::IsResponseSuccessful(timeRequest)) {
 		data.timeLeft = timeRequest.text;
 	}
 	
 	// Get chat
 	cpr::Response chatRequest = RoutingManager::GetChat(m_roomID);
-	if (chatRequest.status_code == 200) {
+	if (Utils::IsResponseSuccessful(chatRequest)) {
 		data.chat = chatRequest.text;
 	}
 	
 	// Get drawing image
 	cpr::Response imageRequest = RoutingManager::GetDrawingImage(m_roomID);
-	if (imageRequest.status_code == 200) {
+	if (Utils::IsResponseSuccessful(imageRequest)) {
 		data.drawingImage = imageRequest.text;
 	}
 	
 	// Get room players
 	cpr::Response playersRequest = RoutingManager::GetRoomPlayers(m_roomID);
-	if (playersRequest.status_code == 200) {
+	if (Utils::IsResponseSuccessful(playersRequest)) {
 		data.players = playersRequest.text;
 		
 		// Fetch scores for all players
@@ -129,13 +129,4 @@ void NetworkWorker::EndGameSession()
 {
 	cpr::Response request = RoutingManager::EndGame(m_roomID);
 	emit GameEnded(Utils::IsResponseSuccessful(request));
-}
-
-void NetworkWorker::FetchPlayerScore(const std::string& playerName)
-{
-	cpr::Response request = RoutingManager::GetPlayerScore(m_roomID, playerName);
-	
-	if (Utils::IsResponseSuccessful(request)) {
-		emit PlayerScoreReceived(playerName, request.text);
-	}
 }

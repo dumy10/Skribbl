@@ -7,6 +7,11 @@ Timer::Timer(int startTime) : m_timeLeft{ startTime }, m_startTime{ startTime }
 	// Empty
 }
 
+Timer::~Timer()
+{
+	StopTicking();
+}
+
 Timer::Timer(Timer&& other) noexcept
 	: m_startTime{ other.m_startTime }
 {

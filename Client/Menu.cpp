@@ -42,7 +42,7 @@ void Menu::OnJoinGameButtonClicked()
 		// send request to server to check if the room exists
 		cpr::Response response = RoutingManager::CheckRoomID(roomID);
 
-		if (response.status_code != 200) {
+		if (!Utils::IsResponseSuccessful(response)) {
 			throw std::exception(response.text.c_str());
 		}
 
@@ -52,7 +52,7 @@ void Menu::OnJoinGameButtonClicked()
 		// put player in the room (game)
 		auto req = RoutingManager::JoinRoom(roomID, m_username);
 
-		if (req.status_code != 200) {
+		if (!Utils::IsResponseSuccessful(req)) {
 			throw std::exception(req.text.c_str());
 		}
 

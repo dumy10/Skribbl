@@ -403,4 +403,3 @@ void Game::DeserializeGameChat(const std::string& serializedChatLines) noexcept
 		m_chatLineMessages.emplace_back(chatLine);
 	}
 }
-

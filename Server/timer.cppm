@@ -10,6 +10,7 @@ namespace skribbl
 	public:
 		Timer() = default;
 		Timer(int startTime);
+		~Timer();
 
 		[[nodiscard]] const int GetTimeLeft() const noexcept;
 

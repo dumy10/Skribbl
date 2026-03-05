@@ -22,7 +22,7 @@ void LoginForm::ValidateUserLogin(const std::string& username, const std::string
 
 	cpr::Response loginRequest = RoutingManager::LoginUser(username, password);
 
-	if (loginRequest.status_code != 204) {
+	if (!Utils::IsResponseSuccessful(loginRequest, 204)) {
 		throw std::exception("Username or password are invalid.");
 	}
 }

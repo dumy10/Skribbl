@@ -36,16 +36,26 @@ private slots:
 	void OnFillButtonClicked();
 	void OnSendButtonClicked();
 	void OnUndoButtonClicked();
+	void OnRedoButtonClicked();
 	void UpdateRoomInformation();
 	void OnPlayerQuit();
-	void ChangeBrushSize();
+	void ChangeBrushSize(int size);
 	void OnTimeEnd();
 	void OnLeaveButtonClicked();
+	
+	// Drawing tool mode slots
+	void OnLineToolClicked();
+	void OnRectangleToolClicked();
+	void OnCircleToolClicked();
+	void OnPenToolClicked();
+	void OnEraserToolClicked();
+	void OnColorPickerClicked();
+	void OnToggleAntiAliasingClicked();
+	void OnColorPicked(const QColor& color);
 	
 	// Network worker response slots
 	void OnRoomUpdateReceived(const RoomUpdateData& data);
 	void OnMessageSent(bool success, bool correctGuess);
-	void OnPlayerScoreReceived(const std::string& playerName, const std::string& score);
 
 private:
 	// Display helpers
@@ -73,6 +83,7 @@ private:
 	
 	// Drawing helpers
 	void SendCurrentDrawing() const noexcept;
+	void UpdateToolButtonStates();
 
 private:
 	Ui::GameClass m_ui;
@@ -82,10 +93,8 @@ private:
 	bool m_isOwner;
 	bool m_isDrawing;
 	bool m_guessedWord;
-	int m_currentBrushSizeIndex;
 
 private:
-	std::unique_ptr<DrawingWidget> m_drawingArea;
 	std::unique_ptr<QTimer> m_updateTimer;
 	
 	// Network worker and thread
@@ -99,7 +108,6 @@ private:
 	mutable size_t m_lastSentDrawingHash{0};
 	
 	// Constants
-	static constexpr std::array<int, 3> BRUSH_SIZES{3, 6, 9};
 	static constexpr int UPDATE_INTERVAL_MS = 200;
 	static constexpr int COUNTDOWN_SECONDS = 10;
 	

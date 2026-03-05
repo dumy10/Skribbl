@@ -25,7 +25,15 @@
   <property name="windowTitle">
    <string>Game</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
+  <widget class="QWidget" name="centralWidget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1080</width>
+     <height>720</height>
+    </rect>
+   </property>
    <widget class="QLabel" name="background">
     <property name="geometry">
      <rect>
@@ -65,7 +73,7 @@ border-image: url(:/background/logo.png);
      <string/>
     </property>
    </widget>
-   <widget class="DrawingWidget" name="drawingArea">
+   <widget class="DrawingWidget" name="drawingArea" native="true">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -76,9 +84,6 @@ border-image: url(:/background/logo.png);
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string notr="true"/>
     </property>
    </widget>
    <widget class="QLabel" name="topFrame">
@@ -140,7 +145,7 @@ letter-spacing: 1px;
 }</string>
     </property>
     <property name="inputMethodHints">
-     <set>Qt::ImhNoEditMenu|Qt::ImhNoTextHandles</set>
+     <set>Qt::InputMethodHint::ImhNoEditMenu|Qt::InputMethodHint::ImhNoTextHandles</set>
     </property>
     <property name="readOnly">
      <bool>true</bool>
@@ -228,9 +233,9 @@ background: transparent;
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>630</y>
-      <width>84</width>
-      <height>41</height>
+      <y>625</y>
+      <width>50</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -239,7 +244,8 @@ background: transparent;
     border-radius: 6px;
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                       stop:0 #f6f7fa, stop:1 #dadbde);
-    min-width: 80px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 QPushButton:pressed 
@@ -265,10 +271,10 @@ QPushButton:default
    <widget class="QPushButton" name="Albastru">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>630</y>
-      <width>84</width>
-      <height>41</height>
+      <x>230</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -277,7 +283,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: rgb(0, 0, 255);
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -303,10 +308,10 @@ QPushButton:default
    <widget class="QPushButton" name="Verde">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>670</y>
-      <width>84</width>
-      <height>41</height>
+      <x>280</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -315,7 +320,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: rgb(0, 255, 0);
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -341,10 +345,10 @@ QPushButton:default
    <widget class="QPushButton" name="Rosu">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>630</y>
-      <width>84</width>
-      <height>41</height>
+      <x>330</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -353,7 +357,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: rgb(255, 0, 0);
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -379,10 +382,10 @@ QPushButton:default
    <widget class="QPushButton" name="Orange">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>670</y>
-      <width>84</width>
-      <height>41</height>
+      <x>380</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -391,7 +394,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: #FFA500;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -417,10 +419,10 @@ QPushButton:default
    <widget class="QPushButton" name="Purple">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>670</y>
-      <width>84</width>
-      <height>41</height>
+      <x>430</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -429,7 +431,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: #800080;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -455,10 +456,10 @@ QPushButton:default
    <widget class="QPushButton" name="Brown">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>630</y>
-      <width>84</width>
-      <height>41</height>
+      <x>480</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -467,7 +468,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: #A52A2A;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -493,10 +493,10 @@ QPushButton:default
    <widget class="QPushButton" name="Pink">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>630</y>
-      <width>84</width>
-      <height>41</height>
+      <x>530</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -505,7 +505,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: #FFC0CB;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -531,10 +530,10 @@ QPushButton:default
    <widget class="QPushButton" name="Yellow">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>630</y>
-      <width>84</width>
-      <height>41</height>
+      <x>580</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -543,7 +542,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: #FFFF00;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -569,10 +567,10 @@ QPushButton:default
    <widget class="QPushButton" name="Black">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>630</y>
-      <width>84</width>
-      <height>41</height>
+      <x>630</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -581,7 +579,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
  	background-color: #000000;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -607,10 +604,10 @@ QPushButton:default
    <widget class="QPushButton" name="Turquoise">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>670</y>
-      <width>84</width>
-      <height>41</height>
+      <x>680</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -619,7 +616,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
 	background-color: #30D5C8;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -645,10 +641,10 @@ QPushButton:default
    <widget class="QPushButton" name="Grey">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>670</y>
-      <width>84</width>
-      <height>41</height>
+      <x>730</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -657,7 +653,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: #808080;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -683,10 +678,10 @@ QPushButton:default
    <widget class="QPushButton" name="White">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>670</y>
-      <width>84</width>
-      <height>41</height>
+      <x>780</x>
+      <y>665</y>
+      <width>50</width>
+      <height>45</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -695,7 +690,6 @@ QPushButton:default
     border: 2px solid #8f8f91;
     border-radius: 6px;
     background-color: #FFFFFF;
-    min-width: 80px;
 }
 
 QPushButton:pressed 
@@ -733,10 +727,10 @@ QPushButton:default
     border-radius: 15px; /* Colțuri rotunjite */}</string>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
     <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
+     <enum>QFrame::Shadow::Raised</enum>
     </property>
     <widget class="QLabel" name="player1_3">
      <property name="geometry">
@@ -759,7 +753,7 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player2_3">
@@ -783,7 +777,7 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player3_3">
@@ -807,7 +801,7 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player4_3">
@@ -831,7 +825,7 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;font-family:'Times New Roman'; font-size:15pt; font-weight:700;  color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player1_score">
@@ -855,7 +849,7 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player2_score">
@@ -879,7 +873,7 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player3_score">
@@ -903,7 +897,7 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="player4_score">
@@ -927,7 +921,7 @@ QPushButton:default
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </widget>
@@ -935,7 +929,7 @@ QPushButton:default
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>630</y>
+      <y>625</y>
       <width>84</width>
       <height>31</height>
      </rect>
@@ -969,12 +963,57 @@ QPushButton:default
      <string>Undo</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="BrushSize">
+   <widget class="QSlider" name="BrushSize">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>630</y>
-      <width>91</width>
+      <x>640</x>
+      <y>625</y>
+      <width>75</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QSlider::groove:horizontal {
+    border: 1px solid #8f8f91;
+    height: 8px;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                stop:0 #f6f7fa, stop:1 #dadbde);
+    border-radius: 4px;
+}
+
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                stop:0 #5090d0, stop:1 #2060a0);
+    border: 1px solid #2060a0;
+    width: 16px;
+    margin: -4px 0;
+    border-radius: 8px;
+}
+
+QSlider::handle:horizontal:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                stop:0 #6aa0e0, stop:1 #3070b0);
+}</string>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <number>20</number>
+    </property>
+    <property name="value">
+     <number>6</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Orientation::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Redo">
+    <property name="geometry">
+     <rect>
+      <x>115</x>
+      <y>625</y>
+      <width>84</width>
       <height>31</height>
      </rect>
     </property>
@@ -1004,7 +1043,281 @@ QPushButton:default
 }</string>
     </property>
     <property name="text">
-     <string>BrushSize</string>
+     <string>Redo</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="PenTool">
+    <property name="geometry">
+     <rect>
+      <x>285</x>
+      <y>625</y>
+      <width>50</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #f6f7fa, stop:1 #dadbde);
+    font-size: 10px;
+    font-weight: bold;
+}
+
+QPushButton:checked {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #a0d0ff, stop:1 #5090d0);
+    border-color: #2060a0;
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}</string>
+    </property>
+    <property name="text">
+     <string>Pen</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="EraserTool">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>625</y>
+      <width>55</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #f6f7fa, stop:1 #dadbde);
+    font-size: 9px;
+    font-weight: bold;
+}
+
+QPushButton:checked {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #a0d0ff, stop:1 #5090d0);
+    border-color: #2060a0;
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}</string>
+    </property>
+    <property name="text">
+     <string>Erase</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="LineTool">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>625</y>
+      <width>45</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #f6f7fa, stop:1 #dadbde);
+    font-size: 11px;
+    font-weight: bold;
+}
+
+QPushButton:checked {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #a0d0ff, stop:1 #5090d0);
+    border-color: #2060a0;
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}</string>
+    </property>
+    <property name="text">
+     <string>-</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="RectangleTool">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>625</y>
+      <width>45</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #f6f7fa, stop:1 #dadbde);
+    font-size: 14px;
+}
+
+QPushButton:checked {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #a0d0ff, stop:1 #5090d0);
+    border-color: #2060a0;
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}</string>
+    </property>
+    <property name="text">
+     <string>□</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="CircleTool">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>625</y>
+      <width>20</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #f6f7fa, stop:1 #dadbde);
+    font-size: 10px;
+}
+
+QPushButton:checked {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #a0d0ff, stop:1 #5090d0);
+    border-color: #2060a0;
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}</string>
+    </property>
+    <property name="text">
+     <string>O</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ColorPicker">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>625</y>
+      <width>55</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #f6f7fa, stop:1 #dadbde);
+    font-size: 10px;
+    font-weight: bold;
+}
+
+QPushButton:checked {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #a0d0ff, stop:1 #5090d0);
+    border-color: #2060a0;
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #dadbde, stop:1 #f6f7fa);
+}</string>
+    </property>
+    <property name="text">
+     <string>Pick</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="AntiAliasing">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>625</y>
+      <width>130</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QCheckBox {
+    color: black;
+    font-size: 10px;
+    font-weight: bold;
+    spacing: 3px;
+}
+
+QCheckBox::indicator {
+    width: 15px;
+    height: 15px;
+    border: 2px solid #8f8f91;
+    border-radius: 3px;
+    background-color: white;
+}
+
+QCheckBox::indicator:checked {
+    background-color: #5090d0;
+    border-color: #2060a0;
+}</string>
+    </property>
+    <property name="text">
+     <string>AntiAlias</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="CurrentColorPreview">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>630</y>
+      <width>30</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background-color: black;
+    border: 2px solid black;
+    border-radius: 5px;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
    <widget class="QLCDNumber" name="timer">
@@ -1032,10 +1345,10 @@ QPushButton:default
    <widget class="QPushButton" name="Bucket">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>670</y>
-      <width>84</width>
-      <height>41</height>
+      <x>525</x>
+      <y>625</y>
+      <width>50</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -1044,7 +1357,8 @@ QPushButton:default
     border-radius: 6px;
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                       stop:0 #f6f7fa, stop:1 #dadbde);
-    min-width: 80px;
+    font-size: 10px;
+    font-weight: bold;
 }
 
 QPushButton:pressed 
@@ -1064,7 +1378,7 @@ QPushButton:default
 }</string>
     </property>
     <property name="text">
-     <string>Bucket</string>
+     <string>Fill</string>
     </property>
    </widget>
    <widget class="QLabel" name="wordLabel">
@@ -1088,17 +1402,17 @@ letter-spacing: 1px;
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
     <property name="textInteractionFlags">
-     <set>Qt::NoTextInteraction</set>
+     <set>Qt::TextInteractionFlag::NoTextInteraction</set>
     </property>
    </widget>
    <widget class="QPushButton" name="LeaveGame">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>670</y>
+      <y>665</y>
       <width>84</width>
       <height>31</height>
      </rect>
@@ -1135,9 +1449,9 @@ QPushButton:default
    <widget class="QLabel" name="drawerLabel">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>330</x>
       <y>30</y>
-      <width>361</width>
+      <width>461</width>
       <height>41</height>
      </rect>
     </property>
@@ -1154,10 +1468,10 @@ letter-spacing: 1px;
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
     <property name="textInteractionFlags">
-     <set>Qt::NoTextInteraction</set>
+     <set>Qt::TextInteractionFlag::NoTextInteraction</set>
     </property>
    </widget>
   </widget>
@@ -1166,7 +1480,7 @@ letter-spacing: 1px;
  <customwidgets>
   <customwidget>
    <class>DrawingWidget</class>
-   <extends>QLabel</extends>
+   <extends>QWidget</extends>
    <header>DrawingWidget.h</header>
   </customwidget>
  </customwidgets>

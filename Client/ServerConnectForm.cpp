@@ -39,5 +39,5 @@ bool ServerConnectForm::IsServerRunning(const std::string& url) const noexcept
 {
 	cpr::Response response = RoutingManager::CheckServerRunning(url);
 
-	return response.status_code == 200;
+	return Utils::IsResponseSuccessful(response);
 }

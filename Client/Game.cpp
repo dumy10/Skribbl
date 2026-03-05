@@ -5,6 +5,7 @@
 
 #include <QScrollBar>
 #include <QBuffer>
+#include <QCheckBox>
 #include <ranges>
 
 const std::unordered_map<QString, QColor> Game::COLOR_PALETTE = {
@@ -14,10 +15,10 @@ const std::unordered_map<QString, QColor> Game::COLOR_PALETTE = {
 	{"orange", QColor(255, 165, 0)},
 	{"brown", QColor(165, 42, 42)},
 	{"purple", QColor(128, 0, 128)},
-	{"black", QColor(0, 0, 0)},
-	{"white", QColor(255, 255, 255)},
-	{"yellow", QColor(255, 255, 0)},
-	{"grey", QColor(128, 128, 128)},
+	{"black", Qt::black},
+	{"white", Qt::white},
+	{"yellow", Qt::yellow},
+	{"grey", Qt::gray},
 	{"turquoise", QColor(64, 224, 208)},
 	{"pink", QColor(255, 192, 203)}
 };
@@ -28,8 +29,8 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	// Register custom types for signal/slot communication across threads
 	qRegisterMetaType<RoomUpdateData>("RoomUpdateData");
 	qRegisterMetaType<QImage>("QImage");
+	qRegisterMetaType<QColor>("QColor");
 	
-	m_drawingArea = std::make_unique<DrawingWidget>(this);
 	m_ui.setupUi(this);
 
 	HidePlayers();
@@ -38,7 +39,6 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	m_updateTimer = std::make_unique<QTimer>(this);
 
 	m_guessedWord = false;
-	m_currentBrushSizeIndex = 0;
 	
 	// Initialize network worker thread
 	m_workerThread = new QThread(this);
@@ -48,7 +48,6 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	// Connect worker signals
 	connect(m_networkWorker, &NetworkWorker::RoomUpdateReceived, this, &Game::OnRoomUpdateReceived);
 	connect(m_networkWorker, &NetworkWorker::MessageSent, this, &Game::OnMessageSent);
-	connect(m_networkWorker, &NetworkWorker::PlayerScoreReceived, this, &Game::OnPlayerScoreReceived);
 	
 	// Start the worker thread
 	m_workerThread->start();
@@ -69,12 +68,35 @@ Game::Game(const std::string& username, int playerIndex, bool isOwner, const std
 	connect(m_ui.Pink, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("pink")); });
 	connect(m_ui.Turquoise, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("turquoise")); });
 	connect(m_ui.Bucket, &QPushButton::clicked, this, &Game::OnFillButtonClicked);
-	connect(m_ui.BrushSize, &QPushButton::clicked, this, &Game::ChangeBrushSize);
+	connect(m_ui.BrushSize, &QSlider::valueChanged, this, &Game::ChangeBrushSize);
 	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
+	
+	connect(m_ui.Redo, &QPushButton::clicked, this, &Game::OnRedoButtonClicked);
+	connect(m_ui.LineTool, &QPushButton::clicked, this, &Game::OnLineToolClicked);
+	connect(m_ui.RectangleTool, &QPushButton::clicked, this, &Game::OnRectangleToolClicked);
+	connect(m_ui.CircleTool, &QPushButton::clicked, this, &Game::OnCircleToolClicked);
+	connect(m_ui.PenTool, &QPushButton::clicked, this, &Game::OnPenToolClicked);
+	connect(m_ui.EraserTool, &QPushButton::clicked, this, &Game::OnEraserToolClicked);
+	connect(m_ui.ColorPicker, &QPushButton::clicked, this, &Game::OnColorPickerClicked);
+	connect(m_ui.AntiAliasing, &QCheckBox::toggled, this, &Game::OnToggleAntiAliasingClicked);
+	
+	// Connect to the drawing area from the UI (m_ui.drawingArea), not m_drawingArea
+	if (auto* drawingWidget = GetDrawingWidget()) {
+		connect(drawingWidget, &DrawingWidget::colorPicked, this, &Game::OnColorPicked);
+	}
+	
 	connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::OnSendButtonClicked);
 	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnLeaveButtonClicked);
 	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
 	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
+	
+	// Set default button states to match DrawingWidget defaults
+	if (m_ui.PenTool) {
+		m_ui.PenTool->setChecked(true);
+	}
+	if (m_ui.AntiAliasing) {
+		m_ui.AntiAliasing->setChecked(true);
+	}
 }
 
 Game::~Game()
@@ -114,6 +136,22 @@ void Game::SetPenColor(QColor color)
 	if (auto* drawingArea = GetDrawingWidget()) {
 		drawingArea->SetPenColor(color);
 		drawingArea->SetCurrentFillColor(color);
+		
+		// Switch to pen mode when selecting a color (unless already using a drawing tool)
+		auto currentMode = drawingArea->GetDrawMode();
+		if (currentMode == DrawingWidget::DrawMode::Eraser || 
+		    currentMode == DrawingWidget::DrawMode::Fill || 
+		    currentMode == DrawingWidget::DrawMode::ColorPicker) {
+			drawingArea->SetDrawMode(DrawingWidget::DrawMode::Pen);
+			UpdateToolButtonStates();
+		}
+	}
+	
+	// Update color preview widget if it exists
+	if (auto* colorPreview = findChild<QLabel*>("CurrentColorPreview")) {
+		colorPreview->setStyleSheet(
+			QString("background-color: %1; border: 2px solid black;").arg(color.name())
+		);
 	}
 }
 
@@ -207,12 +245,11 @@ void Game::StartTimer() noexcept
 	m_updateTimer->start(UPDATE_INTERVAL_MS);
 }
 
-
-
 void Game::OnFillButtonClicked()
 {
 	if (auto* drawingArea = GetDrawingWidget()) {
 		drawingArea->ToggleFillMode();
+		UpdateToolButtonStates();
 	}
 }
 
@@ -223,11 +260,133 @@ void Game::OnUndoButtonClicked()
 	}
 }
 
-void Game::ChangeBrushSize()
+void Game::OnRedoButtonClicked()
 {
 	if (auto* drawingArea = GetDrawingWidget()) {
-		m_currentBrushSizeIndex = (m_currentBrushSizeIndex + 1) % BRUSH_SIZES.size(); 
-		drawingArea->SetPenWidth(BRUSH_SIZES[m_currentBrushSizeIndex]);
+		drawingArea->Redo();
+	}
+}
+
+void Game::OnLineToolClicked()
+{
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Line);
+		UpdateToolButtonStates();
+	}
+}
+
+void Game::OnRectangleToolClicked()
+{
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Rectangle);
+		UpdateToolButtonStates();
+	}
+}
+
+void Game::OnCircleToolClicked()
+{
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Circle);
+		UpdateToolButtonStates();
+	}
+}
+
+void Game::OnPenToolClicked()
+{
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Pen);
+		UpdateToolButtonStates();
+	}
+}
+
+void Game::OnEraserToolClicked()
+{
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Eraser);
+		UpdateToolButtonStates();
+	}
+}
+
+void Game::OnColorPickerClicked()
+{
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->SetDrawMode(DrawingWidget::DrawMode::ColorPicker);
+		UpdateToolButtonStates();
+	}
+}
+
+void Game::OnToggleAntiAliasingClicked()
+{
+	if (auto* drawingArea = GetDrawingWidget()) {
+		// Check if AntiAliasing checkbox exists in UI
+		if (auto* antiAliasingCheckbox = findChild<QCheckBox*>("AntiAliasing")) {
+			bool enabled = antiAliasingCheckbox->isChecked();
+			drawingArea->SetAntiAliasing(enabled);
+		}
+	}
+}
+
+void Game::OnColorPicked(const QColor& color)
+{
+	// When color is picked, automatically switch back to pen mode
+	// and update the selected color (SetPenColor handles mode switch and button updates)
+	SetPenColor(color);
+}
+
+void Game::UpdateToolButtonStates()
+{
+	auto* drawingArea = GetDrawingWidget();
+	if (!drawingArea) {
+		return;
+	}
+	
+	auto currentMode = drawingArea->GetDrawMode();
+	
+	// Helper lambda to safely set button checked state
+	auto setButtonChecked = [this](const QString& buttonName, bool checked) {
+		if (auto* button = findChild<QPushButton*>(buttonName)) {
+			button->setChecked(checked);
+		}
+	};
+	
+	// Reset all tool buttons
+	setButtonChecked("PenTool", false);
+	setButtonChecked("EraserTool", false);
+	setButtonChecked("LineTool", false);
+	setButtonChecked("RectangleTool", false);
+	setButtonChecked("CircleTool", false);
+	setButtonChecked("ColorPicker", false);
+	
+	// Highlight active tool
+	switch (currentMode) {
+		case DrawingWidget::DrawMode::Pen:
+			setButtonChecked("PenTool", true);
+			break;
+		case DrawingWidget::DrawMode::Eraser:
+			setButtonChecked("EraserTool", true);
+			break;
+		case DrawingWidget::DrawMode::Line:
+			setButtonChecked("LineTool", true);
+			break;
+		case DrawingWidget::DrawMode::Rectangle:
+			setButtonChecked("RectangleTool", true);
+			break;
+		case DrawingWidget::DrawMode::Circle:
+			setButtonChecked("CircleTool", true);
+			break;
+		case DrawingWidget::DrawMode::ColorPicker:
+			setButtonChecked("ColorPicker", true);
+			break;
+		case DrawingWidget::DrawMode::Fill:
+			setButtonChecked("Bucket", true);
+			break;
+	}
+}
+
+void Game::ChangeBrushSize(int size)
+{
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->SetPenWidth(size);
 	}
 }
 
@@ -257,14 +416,10 @@ void Game::OnLeaveButtonClicked()
 	ClearDrawingArea();
 }
 
-
-
 void Game::EndGame() const noexcept
 {
 	auto endGameRequest = RoutingManager::EndGame(m_roomID);
 }
-
-
 
 DrawingWidget* Game::GetDrawingWidget() const noexcept
 {
@@ -319,6 +474,23 @@ void Game::SetDrawingUIVisibility(bool visible) noexcept
 	for (auto* widget : drawingTools) {
 		widget->setVisible(visible);
 	}
+	
+	// Also control visibility of new tool buttons (when they're added to UI)
+	auto setToolVisibility = [this, visible](const QString& toolName) {
+		if (auto* tool = findChild<QWidget*>(toolName)) {
+			tool->setVisible(visible);
+		}
+	};
+	
+	setToolVisibility("Redo");
+	setToolVisibility("LineTool");
+	setToolVisibility("RectangleTool");
+	setToolVisibility("CircleTool");
+	setToolVisibility("PenTool");
+	setToolVisibility("EraserTool");
+	setToolVisibility("ColorPicker");
+	setToolVisibility("AntiAliasing");
+	setToolVisibility("CurrentColorPreview");
 }
 
 void Game::ConfigureUIForDrawer(const QString& word) noexcept
@@ -503,13 +675,4 @@ void Game::OnMessageSent(bool success, bool correctGuess)
 	if (correctGuess) {
 		m_guessedWord = true;
 	}
-}
-
-void Game::OnPlayerScoreReceived(const std::string& playerName, const std::string& score)
-{
-	// Cache the score
-	m_playerScores[playerName] = score;
-	
-	// Find and update the player display
-	// This will be updated in the next OnRoomUpdateReceived call
 }
