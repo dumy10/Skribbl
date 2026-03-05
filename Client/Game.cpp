@@ -113,7 +113,7 @@ void Game::OnSendButtonClicked()
 	}
 
 	// Send message asynchronously through worker
-	QMetaObject::invokeMethod(m_networkWorker, [this, text]() { m_networkWorker->SendMessage(text);	}, Qt::QueuedConnection);
+	QMetaObject::invokeMethod(m_networkWorker, [this, text]() { m_networkWorker->SendNetworkMessage(text);	}, Qt::QueuedConnection);
 
 	m_ui.chat->ensureCursorVisible();
 	m_chatManager->ClearInput();

@@ -88,7 +88,7 @@ void NetworkWorker::FetchRoomUpdate()
 	emit RoomUpdateReceived(data);
 }
 
-void NetworkWorker::SendMessage(const QString& message)
+void NetworkWorker::SendNetworkMessage(const QString& message)
 {
 	std::string messageStr = message.toUtf8().constData();
 	cpr::Response request = RoutingManager::AddChat(m_roomID, m_username, messageStr);

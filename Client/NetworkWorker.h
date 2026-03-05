@@ -28,7 +28,8 @@ struct RoomUpdateData {
 Q_DECLARE_METATYPE(RoomUpdateData)
 Q_DECLARE_METATYPE(QImage)
 
-class NetworkWorker : public QObject {
+class NetworkWorker : public QObject 
+{
 	Q_OBJECT
 
 public:
@@ -40,7 +41,7 @@ public slots:
 	void FetchRoomUpdate();
 	
 	// Individual request slots for user actions
-	void SendMessage(const QString& message);
+	void SendNetworkMessage(const QString& message);
 	void SendDrawingData(const QImage& image) const noexcept;
 	void LeaveRoom();
 	void StartNextRound();
