@@ -105,13 +105,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ChatManager.cpp" />
+    <ClCompile Include="ConnectionSetup.cpp" />
+    <ClCompile Include="DrawingToolsUIManager.cpp" />
     <ClCompile Include="DrawingWidget.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameStateManager.cpp" />
+    <ClCompile Include="GameTimerManager.cpp" />
+    <ClCompile Include="GameUIConfigurator.cpp" />
     <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NetworkWorker.cpp" />
+    <ClCompile Include="PlayerDisplayManager.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
+    <ClCompile Include="RoomUpdateHandler.cpp" />
     <ClCompile Include="RoutingManager.cpp" />
     <ClCompile Include="ServerConnectForm.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -134,9 +142,17 @@
     <QtMoc Include="Menu.h" />
     <QtMoc Include="Game.h" />
     <QtMoc Include="DrawingWidget.h" />
+    <QtMoc Include="GameTimerManager.h" />
     <QtMoc Include="Lobby.h" />
     <QtMoc Include="NetworkWorker.h" />
     <QtMoc Include="ServerConnectForm.h" />
+    <ClInclude Include="ChatManager.h" />
+    <ClInclude Include="ConnectionSetup.h" />
+    <ClInclude Include="DrawingToolsUIManager.h" />
+    <ClInclude Include="GameStateManager.h" />
+    <ClInclude Include="GameUIConfigurator.h" />
+    <ClInclude Include="PlayerDisplayManager.h" />
+    <QtMoc Include="RoomUpdateHandler.h" />
     <ClInclude Include="RoutingManager.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

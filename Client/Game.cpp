@@ -2,423 +2,170 @@
 #include "utils.h"
 #include "RoutingManager.h"
 #include "NetworkWorker.h"
+#include "ConnectionSetup.h"
 
 #include <QScrollBar>
 #include <QBuffer>
 #include <QCheckBox>
 #include <ranges>
 
-const std::unordered_map<QString, QColor> Game::COLOR_PALETTE = {
-	{"green", Qt::green},
-	{"red", Qt::red},
-	{"blue", Qt::blue},
-	{"orange", QColor(255, 165, 0)},
-	{"brown", QColor(165, 42, 42)},
-	{"purple", QColor(128, 0, 128)},
-	{"black", Qt::black},
-	{"white", Qt::white},
-	{"yellow", Qt::yellow},
-	{"grey", Qt::gray},
-	{"turquoise", QColor(64, 224, 208)},
-	{"pink", QColor(255, 192, 203)}
-};
-
 Game::Game(const std::string& username, int playerIndex, bool isOwner, const std::string& m_roomID, QWidget* parent)
-	: QWidget(parent), m_username(username), m_isOwner(isOwner), m_playerIndex(playerIndex), m_roomID(m_roomID)
+	: QWidget(parent)
 {
 	// Register custom types for signal/slot communication across threads
 	qRegisterMetaType<RoomUpdateData>("RoomUpdateData");
 	qRegisterMetaType<QImage>("QImage");
 	qRegisterMetaType<QColor>("QColor");
-	
+
 	m_ui.setupUi(this);
 
-	HidePlayers();
-	DisplayPlayer(m_username, m_playerIndex, "0");
+	// Initialize managers
+	m_stateManager = std::make_unique<GameStateManager>(username, playerIndex, isOwner, m_roomID);
+	InitializeManagers();
 
-	m_updateTimer = std::make_unique<QTimer>(this);
-
-	m_guessedWord = false;
-	
 	// Initialize network worker thread
 	m_workerThread = new QThread(this);
-	m_networkWorker = new NetworkWorker(m_roomID, m_username);
+	m_networkWorker = new NetworkWorker(m_stateManager->GetRoomID(), m_stateManager->GetUsername());
 	m_networkWorker->moveToThread(m_workerThread);
-	
-	// Connect worker signals
-	connect(m_networkWorker, &NetworkWorker::RoomUpdateReceived, this, &Game::OnRoomUpdateReceived);
-	connect(m_networkWorker, &NetworkWorker::MessageSent, this, &Game::OnMessageSent);
-	
-	// Start the worker thread
-	m_workerThread->start();
-	
-	StartTimer();
 
-	connect(m_ui.Clear, &QPushButton::clicked, this, &Game::ClearDrawingArea);
-	connect(m_ui.Verde, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("green")); });
-	connect(m_ui.Rosu, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("red")); });
-	connect(m_ui.Albastru, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("blue")); });
-	connect(m_ui.Orange, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("orange")); });
-	connect(m_ui.Brown, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("brown")); });
-	connect(m_ui.Purple, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("purple")); });
-	connect(m_ui.White, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("white")); });
-	connect(m_ui.Black, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("black")); });
-	connect(m_ui.Grey, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("grey")); });
-	connect(m_ui.Yellow, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("yellow")); });
-	connect(m_ui.Pink, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("pink")); });
-	connect(m_ui.Turquoise, &QPushButton::clicked, this, [this]() { SetPenColor(COLOR_PALETTE.at("turquoise")); });
-	connect(m_ui.Bucket, &QPushButton::clicked, this, &Game::OnFillButtonClicked);
-	connect(m_ui.BrushSize, &QSlider::valueChanged, this, &Game::ChangeBrushSize);
-	connect(m_ui.Undo, &QPushButton::clicked, this, &Game::OnUndoButtonClicked);
-	
-	connect(m_ui.Redo, &QPushButton::clicked, this, &Game::OnRedoButtonClicked);
-	connect(m_ui.LineTool, &QPushButton::clicked, this, &Game::OnLineToolClicked);
-	connect(m_ui.RectangleTool, &QPushButton::clicked, this, &Game::OnRectangleToolClicked);
-	connect(m_ui.CircleTool, &QPushButton::clicked, this, &Game::OnCircleToolClicked);
-	connect(m_ui.PenTool, &QPushButton::clicked, this, &Game::OnPenToolClicked);
-	connect(m_ui.EraserTool, &QPushButton::clicked, this, &Game::OnEraserToolClicked);
-	connect(m_ui.ColorPicker, &QPushButton::clicked, this, &Game::OnColorPickerClicked);
-	connect(m_ui.AntiAliasing, &QCheckBox::toggled, this, &Game::OnToggleAntiAliasingClicked);
-	
-	// Connect to the drawing area from the UI (m_ui.drawingArea), not m_drawingArea
-	if (auto* drawingWidget = GetDrawingWidget()) {
-		connect(drawingWidget, &DrawingWidget::colorPicked, this, &Game::OnColorPicked);
-	}
-	
-	connect(m_ui.SendMesageButton, &QPushButton::clicked, this, &Game::OnSendButtonClicked);
-	connect(m_ui.LeaveGame, &QPushButton::clicked, this, &Game::OnLeaveButtonClicked);
-	connect(this, SIGNAL(PlayerQuit()), this, SLOT(OnPlayerQuit()));
-	connect(m_updateTimer.get(), SIGNAL(timeout()), this, SLOT(UpdateRoomInformation()));
-	
-	// Set default button states to match DrawingWidget defaults
-	if (m_ui.PenTool) {
-		m_ui.PenTool->setChecked(true);
-	}
-	if (m_ui.AntiAliasing) {
-		m_ui.AntiAliasing->setChecked(true);
-	}
+	// Setup all connections
+	SetupConnections();
+
+	// Start the worker thread and timer
+	m_workerThread->start();
+	m_timerManager->StartUpdateTimer(UPDATE_INTERVAL_MS);
+
+	// Initialize UI
+	m_playerDisplayManager->HidePlayers();
+	m_playerDisplayManager->DisplayPlayer(m_stateManager->GetUsername(), m_stateManager->GetPlayerIndex(), "0");
 }
 
 Game::~Game()
 {
 	StopTimer();
-	
+
 	// Clean up worker thread properly
 	if (m_workerThread && m_workerThread->isRunning()) {
 		m_workerThread->quit();
 		m_workerThread->wait();
 	}
-	
+
 	// Now safe to delete the worker since thread has stopped
 	delete m_networkWorker;
 	m_networkWorker = nullptr;
-	
-	auto clearImageRequest = RoutingManager::ClearDrawingImage(m_roomID);
+
+	auto clearImageRequest = RoutingManager::ClearDrawingImage(m_stateManager->GetRoomID());
 }
 
 void Game::StopTimer()
 {
-	if (m_updateTimer && m_updateTimer->isActive()) {
-		m_updateTimer->stop();
+	if (m_timerManager) {
+		m_timerManager->StopUpdateTimer();
 	}
 }
 
-void Game::ClearDrawingArea()
+void Game::InitializeManagers()
 {
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->ClearDrawing();
-		m_lastSentDrawingHash = 0; // Reset cached drawing hash
-	}
+	// Store UI element references
+	m_wordLabel = m_ui.wordLabel;
+	m_drawerLabel = m_ui.drawerLabel;
+	m_roundLabel = m_ui.roundLabel;
+	m_drawingArea = m_ui.drawingArea;
+
+	std::array<QLabel*, 4> nameLabels = { m_ui.player1_3, m_ui.player2_3, m_ui.player3_3, m_ui.player4_3 };
+	std::array<QLabel*, 4> scoreLabels = { m_ui.player1_score, m_ui.player2_score, m_ui.player3_score, m_ui.player4_score };
+	m_playerDisplayManager = std::make_unique<PlayerDisplayManager>(nameLabels, scoreLabels);
+
+	m_chatManager = std::make_unique<ChatManager>(m_ui.chat, m_ui.textEdit);
+
+	auto* drawingWidget = GetDrawingWidget();
+	m_drawingToolsManager = std::make_unique<DrawingToolsUIManager>(drawingWidget, this);
+
+	m_timerManager = std::make_unique<GameTimerManager>(m_ui.timer, this);
+
+	// Initialize room update handler
+	m_roomUpdateHandler = std::make_unique<RoomUpdateHandler>(m_stateManager.get(), m_playerDisplayManager.get(), 
+		m_chatManager.get(), m_timerManager.get(), m_drawingToolsManager.get(),
+		m_wordLabel, m_drawerLabel, m_roundLabel, m_drawingArea, this);
+
+	// Set up callbacks for actions that need Game class context
+	m_roomUpdateHandler->SetNavigateToMenuCallback([this](const std::string& username) { emit NavigateToMenu(username); });
+	m_roomUpdateHandler->SetOnTimeEndCallback([this]() { OnTimeEnd(); });
+	m_roomUpdateHandler->SetEndGameCallback([this]() { EndGame(); });
+	m_roomUpdateHandler->SetSendDrawingCallback([this]() { SendCurrentDrawing(); });
+	m_roomUpdateHandler->SetClearDrawingCallback([this]() { ClearDrawing(); });
+	m_roomUpdateHandler->SetGetDrawingWidgetCallback([this]() {	return GetDrawingWidget();	});
+	m_roomUpdateHandler->SetUpdateWidgetCallback([this]() {	update(); });
 }
 
-void Game::SetPenColor(QColor color)
+void Game::SetupConnections()
 {
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->SetPenColor(color);
-		drawingArea->SetCurrentFillColor(color);
-		
-		// Switch to pen mode when selecting a color (unless already using a drawing tool)
-		auto currentMode = drawingArea->GetDrawMode();
-		if (currentMode == DrawingWidget::DrawMode::Eraser || 
-		    currentMode == DrawingWidget::DrawMode::Fill || 
-		    currentMode == DrawingWidget::DrawMode::ColorPicker) {
-			drawingArea->SetDrawMode(DrawingWidget::DrawMode::Pen);
-			UpdateToolButtonStates();
-		}
-	}
-	
-	// Update color preview widget if it exists
-	if (auto* colorPreview = findChild<QLabel*>("CurrentColorPreview")) {
-		colorPreview->setStyleSheet(
-			QString("background-color: %1; border: 2px solid black;").arg(color.name())
-		);
-	}
+	// Initialize connection setup helper (after network worker is created)
+	m_connectionSetup = std::make_unique<ConnectionSetup>(m_ui, this, m_networkWorker, m_timerManager.get(), m_drawingToolsManager.get());
+	m_connectionSetup->SetupAllConnections();
 }
 
 void Game::OnSendButtonClicked()
 {
-	QString text = m_ui.textEdit->toPlainText();
+	QString text = m_chatManager->GetInputText();
 	if (text.isEmpty() || text.size() < 3) {
 		return;
 	}
 
 	// Send message asynchronously through worker
-	QMetaObject::invokeMethod(m_networkWorker, [this, text]() {
-		m_networkWorker->SendMessage(text);
-	}, Qt::QueuedConnection);
+	QMetaObject::invokeMethod(m_networkWorker, [this, text]() { m_networkWorker->SendMessage(text);	}, Qt::QueuedConnection);
 
 	m_ui.chat->ensureCursorVisible();
-	m_ui.textEdit->clear();
+	m_chatManager->ClearInput();
 }
 
-void Game::UpdateRoomInformation()
+void Game::OnUpdateTimerTick()
 {
 	// Simply trigger the worker to fetch data in the background
-	// The worker will emit signals when data is ready
 	QMetaObject::invokeMethod(m_networkWorker, &NetworkWorker::FetchRoomUpdate, Qt::QueuedConnection);
 }
 
 void Game::OnPlayerQuit()
 {
-	cpr::Response request = RoutingManager::CheckGameEnded(m_roomID);
+	cpr::Response request = RoutingManager::CheckGameEnded(m_stateManager->GetRoomID());
 
 	if (Utils::IsResponseSuccessful(request)) {
 		return;
 	}
 
-	RoutingManager::LeaveRoom(m_roomID, m_username);
-	ClearDrawingArea();
-}
-
-void Game::SetUIElementsVisibility(std::span<QWidget*> widgets, bool visible) noexcept
-{
-	for (auto* widget : widgets) {
-		widget->setVisible(visible);
-	}
-}
-
-void Game::DisplayPlayer(const std::string& username, int index, const std::string& score) noexcept
-{
-	if (index < 1 || index > 4) {
-		return;
-	}
-	
-	const std::array<std::pair<QLabel*, QLabel*>, 4> playerWidgets = {
-		std::make_pair(m_ui.player1_3, m_ui.player1_score),
-		std::make_pair(m_ui.player2_3, m_ui.player2_score),
-		std::make_pair(m_ui.player3_3, m_ui.player3_score),
-		std::make_pair(m_ui.player4_3, m_ui.player4_score)
-	};
-	
-	auto& [nameLabel, scoreLabel] = playerWidgets[static_cast<size_t>(index - 1)];
-	Utils::ShowLabelWithText(nameLabel, username);
-	Utils::ShowLabelWithText(scoreLabel, score);
-}
-
-void Game::DisplayPlayerCount(int count) noexcept
-{
-	std::array<QWidget*, 4> nameLabels = {
-		m_ui.player1_3, m_ui.player2_3, m_ui.player3_3, m_ui.player4_3
-	};
-	std::array<QWidget*, 4> scoreLabels = {
-		m_ui.player1_score, m_ui.player2_score, m_ui.player3_score, m_ui.player4_score
-	};
-	
-	Utils::SetWidgetVisibilityByCount(nameLabels, count);
-	Utils::SetWidgetVisibilityByCount(scoreLabels, count);
-}
-
-void Game::HidePlayers() noexcept
-{
-	m_ui.player1_3->hide();
-	m_ui.player2_3->hide();
-	m_ui.player3_3->hide();
-	m_ui.player4_3->hide();
-	m_ui.player1_score->hide();
-	m_ui.player2_score->hide();
-	m_ui.player3_score->hide();
-	m_ui.player4_score->hide();
-}
-
-void Game::StartTimer() noexcept
-{
-	m_updateTimer->start(UPDATE_INTERVAL_MS);
-}
-
-void Game::OnFillButtonClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->ToggleFillMode();
-		UpdateToolButtonStates();
-	}
-}
-
-void Game::OnUndoButtonClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->Undo();
-	}
-}
-
-void Game::OnRedoButtonClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->Redo();
-	}
-}
-
-void Game::OnLineToolClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Line);
-		UpdateToolButtonStates();
-	}
-}
-
-void Game::OnRectangleToolClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Rectangle);
-		UpdateToolButtonStates();
-	}
-}
-
-void Game::OnCircleToolClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Circle);
-		UpdateToolButtonStates();
-	}
-}
-
-void Game::OnPenToolClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Pen);
-		UpdateToolButtonStates();
-	}
-}
-
-void Game::OnEraserToolClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->SetDrawMode(DrawingWidget::DrawMode::Eraser);
-		UpdateToolButtonStates();
-	}
-}
-
-void Game::OnColorPickerClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->SetDrawMode(DrawingWidget::DrawMode::ColorPicker);
-		UpdateToolButtonStates();
-	}
-}
-
-void Game::OnToggleAntiAliasingClicked()
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		// Check if AntiAliasing checkbox exists in UI
-		if (auto* antiAliasingCheckbox = findChild<QCheckBox*>("AntiAliasing")) {
-			bool enabled = antiAliasingCheckbox->isChecked();
-			drawingArea->SetAntiAliasing(enabled);
-		}
-	}
-}
-
-void Game::OnColorPicked(const QColor& color)
-{
-	// When color is picked, automatically switch back to pen mode
-	// and update the selected color (SetPenColor handles mode switch and button updates)
-	SetPenColor(color);
-}
-
-void Game::UpdateToolButtonStates()
-{
-	auto* drawingArea = GetDrawingWidget();
-	if (!drawingArea) {
-		return;
-	}
-	
-	auto currentMode = drawingArea->GetDrawMode();
-	
-	// Helper lambda to safely set button checked state
-	auto setButtonChecked = [this](const QString& buttonName, bool checked) {
-		if (auto* button = findChild<QPushButton*>(buttonName)) {
-			button->setChecked(checked);
-		}
-	};
-	
-	// Reset all tool buttons
-	setButtonChecked("PenTool", false);
-	setButtonChecked("EraserTool", false);
-	setButtonChecked("LineTool", false);
-	setButtonChecked("RectangleTool", false);
-	setButtonChecked("CircleTool", false);
-	setButtonChecked("ColorPicker", false);
-	
-	// Highlight active tool
-	switch (currentMode) {
-		case DrawingWidget::DrawMode::Pen:
-			setButtonChecked("PenTool", true);
-			break;
-		case DrawingWidget::DrawMode::Eraser:
-			setButtonChecked("EraserTool", true);
-			break;
-		case DrawingWidget::DrawMode::Line:
-			setButtonChecked("LineTool", true);
-			break;
-		case DrawingWidget::DrawMode::Rectangle:
-			setButtonChecked("RectangleTool", true);
-			break;
-		case DrawingWidget::DrawMode::Circle:
-			setButtonChecked("CircleTool", true);
-			break;
-		case DrawingWidget::DrawMode::ColorPicker:
-			setButtonChecked("ColorPicker", true);
-			break;
-		case DrawingWidget::DrawMode::Fill:
-			setButtonChecked("Bucket", true);
-			break;
-	}
-}
-
-void Game::ChangeBrushSize(int size)
-{
-	if (auto* drawingArea = GetDrawingWidget()) {
-		drawingArea->SetPenWidth(size);
-	}
-}
-
-void Game::OnTimeEnd()
-{
-	if (!m_isOwner) {
-		return;
-	}
-
-	QMetaObject::invokeMethod(m_networkWorker, &NetworkWorker::StartNextRound, Qt::QueuedConnection);
-	ClearDrawingArea();
+	RoutingManager::LeaveRoom(m_stateManager->GetRoomID(), m_stateManager->GetUsername());
+	ClearDrawing();
 }
 
 void Game::OnLeaveButtonClicked()
 {
-	cpr::Response request = RoutingManager::CheckGameEnded(m_roomID);
+	cpr::Response request = RoutingManager::CheckGameEnded(m_stateManager->GetRoomID());
 
 	if (request.status_code == 200) {
-		emit NavigateToMenu(m_username);
+		emit NavigateToMenu(m_stateManager->GetUsername());
 		return;
 	}
 
 	// Send request to server to remove the player from the room (game) - async
 	QMetaObject::invokeMethod(m_networkWorker, &NetworkWorker::LeaveRoom, Qt::QueuedConnection);
 
-	emit NavigateToMenu(m_username);
-	ClearDrawingArea();
+	emit NavigateToMenu(m_stateManager->GetUsername());
+	ClearDrawing();
+}
+
+void Game::OnTimeEnd()
+{
+	if (!m_stateManager->IsOwner()) {
+		return;
+	}
+
+	QMetaObject::invokeMethod(m_networkWorker, &NetworkWorker::StartNextRound, Qt::QueuedConnection);
+	ClearDrawing();
 }
 
 void Game::EndGame() const noexcept
 {
-	auto endGameRequest = RoutingManager::EndGame(m_roomID);
+	auto endGameRequest = RoutingManager::EndGame(m_stateManager->GetRoomID());
 }
 
 DrawingWidget* Game::GetDrawingWidget() const noexcept
@@ -426,99 +173,16 @@ DrawingWidget* Game::GetDrawingWidget() const noexcept
 	return qobject_cast<DrawingWidget*>(m_ui.drawingArea);
 }
 
-std::optional<QString> Game::GetResponseText(const cpr::Response& response) const noexcept
+void Game::ClearDrawing() noexcept
 {
-	if (Utils::IsResponseSuccessful(response)) {
-		return Utils::ToQString(response.text);
+	m_drawingToolsManager->ClearDrawing();
+	m_drawingToolsManager->ClearUndoHistory();
+	m_lastSentDrawingHash = 0;  // Reset cached drawing hash
+	
+	// Ensure the widget is updated to show the cleared state
+	if (auto* drawingArea = GetDrawingWidget()) {
+		drawingArea->update();
 	}
-
-	return std::nullopt;
-}
-
-void Game::StartCountdownTimer(int seconds, const QString& message, std::function<void()> onComplete) noexcept
-{
-	StopTimer();
-	int time = seconds;
-	
-	QTimer* timer = new QTimer(this);
-	connect(timer, &QTimer::timeout, [=]() mutable {
-		m_ui.timer->display(time);
-		time--;
-		
-		m_ui.textEdit->setReadOnly(true);
-		m_ui.drawingArea->setEnabled(false);
-		m_ui.wordLabel->setText(message);
-		
-		if (time <= 0) {
-			timer->stop();
-			timer->deleteLater();
-			if (onComplete) {
-				onComplete();
-			}
-		}
-	});
-	
-	timer->start(1000);
-}
-
-void Game::SetDrawingUIVisibility(bool visible) noexcept
-{
-	const std::array<QWidget*, 17> drawingTools = {
-		m_ui.Clear, m_ui.Verde, m_ui.Rosu, m_ui.Albastru,
-		m_ui.Orange, m_ui.Brown, m_ui.Purple, m_ui.White,
-		m_ui.Black, m_ui.Grey, m_ui.Yellow, m_ui.Pink,
-		m_ui.Turquoise, m_ui.SettingsButton, m_ui.Bucket,
-		m_ui.BrushSize, m_ui.Undo
-	};
-	
-	for (auto* widget : drawingTools) {
-		widget->setVisible(visible);
-	}
-	
-	// Also control visibility of new tool buttons (when they're added to UI)
-	auto setToolVisibility = [this, visible](const QString& toolName) {
-		if (auto* tool = findChild<QWidget*>(toolName)) {
-			tool->setVisible(visible);
-		}
-	};
-	
-	setToolVisibility("Redo");
-	setToolVisibility("LineTool");
-	setToolVisibility("RectangleTool");
-	setToolVisibility("CircleTool");
-	setToolVisibility("PenTool");
-	setToolVisibility("EraserTool");
-	setToolVisibility("ColorPicker");
-	setToolVisibility("AntiAliasing");
-	setToolVisibility("CurrentColorPreview");
-}
-
-void Game::ConfigureUIForDrawer(const QString& word) noexcept
-{
-	m_ui.textEdit->setReadOnly(true);
-	m_ui.drawingArea->setEnabled(true);
-	SetDrawingUIVisibility(true);
-	m_ui.wordLabel->setText(word);
-}
-
-void Game::ConfigureUIForGuesser(const QString& word) noexcept
-{
-	m_ui.textEdit->setReadOnly(m_guessedWord);
-	m_ui.drawingArea->setEnabled(false);
-	SetDrawingUIVisibility(false);
-	m_ui.wordLabel->setText(m_guessedWord ? word : GetMaskedWord(word));
-}
-
-QString Game::GetMaskedWord(const QString& word) const noexcept
-{
-	QString masked;
-	masked.reserve(word.size() * 2);
-	
-	for (const QChar& ch : word) {
-		masked += (ch == ' ') ? " " : "_ ";
-	}
-	
-	return masked;
 }
 
 void Game::SendCurrentDrawing() const noexcept
@@ -527,143 +191,37 @@ void Game::SendCurrentDrawing() const noexcept
 	if (!drawingArea) {
 		return;
 	}
-	
+
 	// Make a copy of the image to pass to worker thread
 	QImage image = drawingArea->GetImage().copy();
 	if (image.isNull()) {
 		return;
 	}
-	
+
 	// Encode to PNG and calculate hash
 	QByteArray byteArray;
 	QBuffer buffer(&byteArray);
 	buffer.open(QIODevice::WriteOnly);
 	image.save(&buffer, "PNG");
-	
+
 	// Calculate hash of the byte array
 	const size_t currentHash = qHash(byteArray);
-	
+
 	// Only send if the image has changed
 	if (m_lastSentDrawingHash != 0 && currentHash == m_lastSentDrawingHash) {
 		return;
 	}
-	
+
 	// Update last sent hash
 	m_lastSentDrawingHash = currentHash;
-	
+
 	// Send image to worker - encoding already done
-	QMetaObject::invokeMethod(m_networkWorker, [this, image]() {
-		m_networkWorker->SendDrawingData(image);
-	}, Qt::QueuedConnection);
+	QMetaObject::invokeMethod(m_networkWorker, [this, image]() { m_networkWorker->SendDrawingData(image); }, Qt::QueuedConnection);
 }
 
 void Game::OnRoomUpdateReceived(const RoomUpdateData& data)
 {
-	// Check game ended
-	const bool onlyPlayerLeft = data.currentPlayerCount == 1;
-	const bool gameEnded = data.gameEnded || onlyPlayerLeft;
-
-	if (onlyPlayerLeft) {
-		EndGame();
-	}
-
-	if (gameEnded) {
-		m_ui.drawerLabel->setText(onlyPlayerLeft ? "You are the only player left in the room" : "Game has ended");
-		
-		StartCountdownTimer(COUNTDOWN_SECONDS, "Going back to the menu in 10 seconds", [this]() {
-			emit NavigateToMenu(m_username);
-			ClearDrawingArea();
-			if (m_isOwner) {
-				EndGame();
-			}
-		});
-		return;
-	}
-	
-	// Update drawing player and word
-	if (!data.drawingPlayer.empty()) {
-		m_ui.drawerLabel->setText(Utils::ToQString(data.drawingPlayer) + " is currently drawing");
-		m_isDrawing = (m_username == data.drawingPlayer);
-	}
-	
-	if (!data.currentWord.empty()) {
-		const QString word = Utils::ToQString(data.currentWord);
-		m_isDrawing ? ConfigureUIForDrawer(word) : ConfigureUIForGuesser(word);
-	}
-	
-	// Update round number
-	if (!data.roundNumber.empty()) {
-		QString roundNumber = "Round: " + Utils::ToQString(data.roundNumber);
-		m_ui.roundLabel->setText(roundNumber);
-	}
-	
-	// Update time left
-	if (!data.timeLeft.empty()) {
-		m_ui.timer->display(Utils::ToQString(data.timeLeft));
-		if (std::stoi(data.timeLeft) == 0) {
-			m_guessedWord = false;
-			ClearDrawingArea();
-			if (m_isOwner) {
-				OnTimeEnd();
-			}
-		}
-	}
-	
-	// Update chat
-	if (!data.chat.empty()) {
-		std::string decodedString{ urlDecode(data.chat) };
-		QString chat = QString::fromUtf8(decodedString.data(), static_cast<int>(decodedString.size()));
-		m_ui.chat->setPlainText(chat);
-		m_ui.chat->verticalScrollBar()->setValue(m_ui.chat->verticalScrollBar()->maximum());
-	}
-	
-	// Update drawing image
-	const int timeLeft = m_ui.timer->intValue();
-	if (timeLeft != 0) {
-		if (m_isDrawing) {
-			SendCurrentDrawing();
-		} else if (!data.drawingImage.empty()) {
-			const QByteArray byteArray = QByteArray::fromBase64(data.drawingImage.c_str());
-			QImage receivedImage{621, 491, QImage::Format_ARGB32};
-			receivedImage.loadFromData(byteArray, "PNG");
-			
-			if (auto* drawingArea = GetDrawingWidget()) {
-				drawingArea->SetImage(receivedImage);
-			}
-			update();
-		}
-	} else if (!m_isDrawing) {
-		ClearDrawingArea();
-	}
-	
-	// Update players and scores
-	if (!data.players.empty()) {
-		std::vector<std::string> players = split(data.players, ",");
-		if (!players.empty()) {
-			DisplayPlayerCount(players.size());
-			
-			for (int i = 0; i < players.size(); i++) {
-				// Get score from the update data
-				auto it = data.playerScores.find(players[i]);
-				if (it != data.playerScores.end()) {
-					DisplayPlayer(players[i], i + 1, it->second);
-				} else {
-					// Fallback: display with "0" if score not available
-					DisplayPlayer(players[i], i + 1, "0");
-				}
-			}
-		}
-	}
-	
-	// Check if all players guessed
-	if (data.allPlayersGuessed) {
-		StartCountdownTimer(COUNTDOWN_SECONDS, "All players guessed. Moving to next round in 10 seconds.", [this]() {
-			OnTimeEnd();
-			ClearDrawingArea();
-			m_guessedWord = false;
-			m_updateTimer->start(UPDATE_INTERVAL_MS);
-		});
-	}
+	m_roomUpdateHandler->HandleRoomUpdate(data);
 }
 
 void Game::OnMessageSent(bool success, bool correctGuess)
@@ -671,8 +229,8 @@ void Game::OnMessageSent(bool success, bool correctGuess)
 	if (!success) {
 		return;
 	}
-	
+
 	if (correctGuess) {
-		m_guessedWord = true;
+		m_stateManager->SetGuessedWord(true);
 	}
 }

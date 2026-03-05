@@ -268,7 +268,7 @@ QPushButton:default
      <string>Clear</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="Albastru">
+   <widget class="QPushButton" name="BlueButton">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -305,7 +305,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Verde">
+   <widget class="QPushButton" name="GreenButton">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -342,7 +342,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Rosu">
+   <widget class="QPushButton" name="RedButton">
     <property name="geometry">
      <rect>
       <x>330</x>
@@ -379,7 +379,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Orange">
+   <widget class="QPushButton" name="OrangeButton">
     <property name="geometry">
      <rect>
       <x>380</x>
@@ -416,7 +416,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Purple">
+   <widget class="QPushButton" name="PurpleButton">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -453,7 +453,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Brown">
+   <widget class="QPushButton" name="BrownButton">
     <property name="geometry">
      <rect>
       <x>480</x>
@@ -490,7 +490,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Pink">
+   <widget class="QPushButton" name="PinkButton">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -527,7 +527,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Yellow">
+   <widget class="QPushButton" name="YellowButton">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -564,7 +564,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Black">
+   <widget class="QPushButton" name="BlackButton">
     <property name="geometry">
      <rect>
       <x>630</x>
@@ -601,7 +601,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Turquoise">
+   <widget class="QPushButton" name="TurquoiseButton">
     <property name="geometry">
      <rect>
       <x>680</x>
@@ -638,7 +638,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="Grey">
+   <widget class="QPushButton" name="GreyButton">
     <property name="geometry">
      <rect>
       <x>730</x>
@@ -675,7 +675,7 @@ QPushButton:default
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="White">
+   <widget class="QPushButton" name="WhiteButton">
     <property name="geometry">
      <rect>
       <x>780</x>

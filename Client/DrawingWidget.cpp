@@ -174,6 +174,12 @@ void DrawingWidget::ClearDrawing()
     update();
 }
 
+void DrawingWidget::ClearUndoHistory()
+{
+    m_undoStack.clear();
+    m_redoStack.clear();
+}
+
 void DrawingWidget::SetPenColor(const QColor& newColor)
 {
     m_pen.setColor(newColor);
@@ -331,6 +337,11 @@ void DrawingWidget::SetAntiAliasing(bool enabled)
 DrawingWidget::DrawMode DrawingWidget::GetDrawMode() const noexcept
 {
     return m_currentMode;
+}
+
+bool DrawingWidget::GetAntiAliasing() const noexcept
+{
+    return m_antiAliasing;
 }
 
 QColor DrawingWidget::GetColorAtPoint(const QPoint& point) const

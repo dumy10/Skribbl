@@ -7,9 +7,6 @@
     <ClCompile Include="utils.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
-    <ClCompile Include="RoutingManager.cpp">
-      <Filter>Class Files</Filter>
-    </ClCompile>
     <ClCompile Include="DrawingWidget.cpp">
       <Filter>Class Files\UI</Filter>
     </ClCompile>
@@ -37,6 +34,33 @@
     <ClCompile Include="NetworkWorker.cpp">
       <Filter>Class Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChatManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawingToolsUIManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimerManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerDisplayManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="RoutingManager.cpp">
+      <Filter>Class Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomUpdateHandler.cpp">
+      <Filter>Class Files\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionSetup.cpp">
+      <Filter>Class Files\Configs</Filter>
+    </ClCompile>
+    <ClCompile Include="GameUIConfigurator.cpp">
+      <Filter>Class Files\Configs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Class Files">
@@ -59,6 +83,24 @@
     </Filter>
     <Filter Include="Class Files\UI">
       <UniqueIdentifier>{e38994e0-b95d-40c3-8db6-6addbd2b85f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{2835284b-d35b-4401-8777-0cbb8f722f99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Handlers">
+      <UniqueIdentifier>{b9e084de-7dae-459e-bdf3-315da5ae1cc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Configs">
+      <UniqueIdentifier>{1851856f-1a79-4955-bfe7-94f90f72fbc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Handlers">
+      <UniqueIdentifier>{9131e2d2-47e6-4fc7-94c9-0a6e0c8644a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Managers">
+      <UniqueIdentifier>{d20f06d3-ae78-418f-95fa-e45559b12672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Configs">
+      <UniqueIdentifier>{2d26e298-7c26-4ee6-b039-4554c261da83}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +130,12 @@
     </QtMoc>
     <QtMoc Include="NetworkWorker.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="GameTimerManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </QtMoc>
+    <QtMoc Include="RoomUpdateHandler.h">
+      <Filter>Header Files\Handlers</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -119,8 +167,26 @@
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerDisplayManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
     <ClInclude Include="RoutingManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingToolsUIManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameUIConfigurator.h">
+      <Filter>Header Files\Configs</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionSetup.h">
+      <Filter>Header Files\Configs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

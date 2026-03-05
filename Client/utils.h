@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <span>
 
@@ -31,20 +32,20 @@ class Utils
 {
 public:
 	static void WaitForSeconds(int seconds) noexcept;
-	static void CheckPasswordPattern(const std::string& password);
-	static void CheckEmailPattern(const std::string& email);
-	static void CheckIpPattern(const std::string& ip);
-	static void CheckUsernameForRegistration(const std::string& username);
-	static void CheckUsernameForLogin(const std::string& username);
+	static void CheckPasswordPattern(std::string_view password);
+	static void CheckEmailPattern(std::string_view email);
+	static void CheckIpPattern(std::string_view ip);
+	static void CheckUsernameForRegistration(std::string_view username);
+	static void CheckUsernameForLogin(std::string_view username);
 	
 	// String conversion helpers
-	static QString ToQString(const std::string& str) noexcept;
+	static QString ToQString(std::string_view str) noexcept;
 	
 	// Response validation helpers
 	static [[nodiscard]] bool IsResponseSuccessful(const cpr::Response& response, int expectedCode = 200) noexcept;
 	
 	// UI helpers
 	static void SetWidgetVisibilityByCount(std::span<QWidget*> widgets, int visibleCount) noexcept;
-	static void ShowLabelWithText(QLabel* label, const std::string& text) noexcept;
-	static void SetLineEditText(QLineEdit* lineEdit, const std::string& text) noexcept;
+	static void ShowLabelWithText(QLabel* label, std::string_view text) noexcept;
+	static void SetLineEditText(QLineEdit* lineEdit, std::string_view text) noexcept;
 };

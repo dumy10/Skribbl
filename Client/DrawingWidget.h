@@ -31,6 +31,7 @@ signals:
 
 public:
 	void ClearDrawing();
+	void ClearUndoHistory();
 	void ToggleFillMode();
 	QImage GetImage() const noexcept;
 	void SetImage(const QImage& image);
@@ -42,6 +43,7 @@ public:
 	void SetDrawMode(DrawMode mode);
 	void SetAntiAliasing(bool enabled);
 	DrawMode GetDrawMode() const noexcept;
+	bool GetAntiAliasing() const noexcept;
 	QColor GetColorAtPoint(const QPoint& point) const;
 
 protected:

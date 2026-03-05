@@ -100,7 +100,7 @@ void Utils::WaitForSeconds(int seconds) noexcept
 	}
 }
 
-void Utils::CheckPasswordPattern(const std::string& password)
+void Utils::CheckPasswordPattern(std::string_view password)
 {
 	if (password.empty()) {
 		throw std::exception("Password cannot be empty");
@@ -111,12 +111,12 @@ void Utils::CheckPasswordPattern(const std::string& password)
 	}
 
 	const std::regex passwordPattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");
-	if (!std::regex_match(password, passwordPattern)) {
+	if (!std::regex_match(password.begin(), password.end(), passwordPattern)) {
 		throw std::exception("The Password needs to contain at least 1 upper case,\n one lower case and a number");
 	}
 }
 
-void Utils::CheckEmailPattern(const std::string& email)
+void Utils::CheckEmailPattern(std::string_view email)
 {
 	if (email.empty()) {
 		throw std::exception("Email cannot be empty");
@@ -124,26 +124,26 @@ void Utils::CheckEmailPattern(const std::string& email)
 
 	const std::regex emailPattern("^([a-zA-Z0-9_\\.\\-+]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$");
 
-	if (!std::regex_match(email, emailPattern)) {
+	if (!std::regex_match(email.begin(), email.end(), emailPattern)) {
 		throw std::exception("Email should be like: example@mail.com");
 	}
 }
 
-void Utils::CheckIpPattern(const std::string& ip)
+void Utils::CheckIpPattern(std::string_view ip)
 {
 	std::regex ipv4("((0?[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}(0?[0-9]|[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-5])");
-	if (!std::regex_match(ip, ipv4)) {
+	if (!std::regex_match(ip.begin(), ip.end(), ipv4)) {
 		throw std::exception("Invalid IP address");
 	}
 }
 
-void Utils::CheckUsernameForRegistration(const std::string& username)
+void Utils::CheckUsernameForRegistration(std::string_view username)
 {
 	if (username.empty()) {
 		throw std::exception("Username cannot be empty");
 	}
 
-	cpr::Response response = RoutingManager::CheckUsername(username);
+	cpr::Response response = RoutingManager::CheckUsername(std::string(username));
 
 	if (response.status_code != 200 && response.status_code != 404) {
 		throw std::exception("Server error");
@@ -154,20 +154,20 @@ void Utils::CheckUsernameForRegistration(const std::string& username)
 	}
 }
 
-void Utils::CheckUsernameForLogin(const std::string& username)
+void Utils::CheckUsernameForLogin(std::string_view username)
 {
 	if (username.empty()) {
 		throw std::exception("Username cannot be empty");
 	}
 
-	cpr::Response response = RoutingManager::CheckUsername(username);
+	cpr::Response response = RoutingManager::CheckUsername(std::string(username));
 
 	if (response.status_code != 200) {
 		throw std::exception("Username or password are invalid.");
 	}
 }
 
-QString Utils::ToQString(const std::string& str) noexcept
+QString Utils::ToQString(std::string_view str) noexcept
 {
 	return QString::fromUtf8(str.data(), static_cast<int>(str.size()));
 }
@@ -184,7 +184,7 @@ void Utils::SetWidgetVisibilityByCount(std::span<QWidget*> widgets, int visibleC
 	}
 }
 
-void Utils::ShowLabelWithText(QLabel* label, const std::string& text) noexcept
+void Utils::ShowLabelWithText(QLabel* label, std::string_view text) noexcept
 {
 	if (label) {
 		label->show();
@@ -192,7 +192,7 @@ void Utils::ShowLabelWithText(QLabel* label, const std::string& text) noexcept
 	}
 }
 
-void Utils::SetLineEditText(QLineEdit* lineEdit, const std::string& text) noexcept
+void Utils::SetLineEditText(QLineEdit* lineEdit, std::string_view text) noexcept
 {
 	if (lineEdit) {
 		lineEdit->setText(ToQString(text));
