@@ -30,6 +30,7 @@ void RouteManager::RegisterRoutes()
 	CROW_ROUTE(m_app, "/checkUsername").methods(crow::HTTPMethod::Get)([this](const crow::request& req) { return m_playerManager.HandleCheckUsername(req); });
 	CROW_ROUTE(m_app, "/addUser").methods(crow::HTTPMethod::Post)([this](const crow::request& req) { return m_playerManager.HandleAddUser(req); });
 	CROW_ROUTE(m_app, "/loginUser").methods(crow::HTTPMethod::Post)([this](const crow::request& req) { return m_playerManager.HandleLoginUser(req); });
+	CROW_ROUTE(m_app, "/logoutUser").methods(crow::HTTPMethod::Post)([this](const crow::request& req) { return m_playerManager.HandleLogoutUser(req); });
 
 	// Room management routes
 	CROW_ROUTE(m_app, "/roomID").methods(crow::HTTPMethod::Get)([this]() { return m_gameManager.HandleGetRoomID(); });

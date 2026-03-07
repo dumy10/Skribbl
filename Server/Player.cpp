@@ -2,10 +2,11 @@ module player;
 
 using namespace skribbl;
 
-Player::Player(int id, const std::string& name, const std::string& password, const std::string& email) :
+Player::Player(int id, const std::string& name, const std::string& password, const std::string& salt, const std::string& email) :
 	m_id{ id },
 	m_name{ name },
 	m_password{ password },
+	m_salt{ salt },
 	m_email{ email },
 	m_points{ 0 }
 {
@@ -32,6 +33,11 @@ const std::string Player::GetPassword() const noexcept
 	return m_password;
 }
 
+const std::string Player::GetSalt() const noexcept
+{
+	return m_salt;
+}
+
 const std::string Player::GetEmail() const noexcept
 {
 	return m_email;
@@ -40,7 +46,7 @@ const std::string Player::GetEmail() const noexcept
 const std::string skribbl::Player::Serialize() const noexcept
 {
 	return std::to_string(m_id) + "," + m_name + "," + m_password + ","
-		+ m_email + "," + std::to_string(m_points);
+		+ m_salt + "," + m_email + "," + std::to_string(m_points);
 }
 
 const Player skribbl::Player::Deserialize(const std::string& serializedPlayer) const
@@ -52,7 +58,7 @@ const Player skribbl::Player::Deserialize(const std::string& serializedPlayer) c
 		tokens.push_back(token);
 	}
 
-	if (tokens.size() != 5) {
+	if (tokens.size() != 6) {
 		throw std::runtime_error("Invalid serialized player format");
 	}
 
@@ -60,8 +66,9 @@ const Player skribbl::Player::Deserialize(const std::string& serializedPlayer) c
 	deserializedPlayer.SetId(std::stoi(tokens[0]));
 	deserializedPlayer.SetName(tokens[1]);
 	deserializedPlayer.SetPassword(tokens[2]);
-	deserializedPlayer.SetEmail(tokens[3]);
-	deserializedPlayer.SetPoints(std::stoi(tokens[4]));
+	deserializedPlayer.SetSalt(tokens[3]);
+	deserializedPlayer.SetEmail(tokens[4]);
+	deserializedPlayer.SetPoints(std::stoi(tokens[5]));
 
 	return deserializedPlayer;
 }
@@ -79,6 +86,11 @@ void Player::SetName(const std::string& name)
 void Player::SetPassword(const std::string& password)
 {
 	m_password = password;
+}
+
+void Player::SetSalt(const std::string& salt)
+{
+	m_salt = salt;
 }
 
 void Player::SetEmail(const std::string& email)

@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "RoutingManager.h"
 
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent),
@@ -6,7 +7,8 @@ MainWindow::MainWindow(QWidget* parent)
 	m_registerForm(nullptr),
 	m_menu(nullptr),
 	m_lobby(nullptr),
-	m_game(nullptr)
+	m_game(nullptr),
+	m_currentUsername("")
 {
 	m_stackedWidget = new QStackedWidget(this);
 	setCentralWidget(m_stackedWidget);
@@ -76,6 +78,9 @@ void MainWindow::ShowRegisterForm()
 
 void MainWindow::ShowMenu(const std::string& username)
 {
+	// Store the current username
+	m_currentUsername = username;
+
 	// Stop lobby timer if it exists
 	if (m_lobby) {
 		m_lobby->StopTimer();
@@ -161,6 +166,12 @@ void MainWindow::ShowGame(const std::string& username, int playerIndex, bool isO
 
 void MainWindow::ReturnToServerConnect()
 {
+	// Logout the current user before returning to server connect
+	if (!m_currentUsername.empty()) {
+		RoutingManager::LogoutUser(m_currentUsername);
+		m_currentUsername.clear();
+	}
+
 	m_stackedWidget->setCurrentWidget(m_serverConnectForm);
 }
 
@@ -172,6 +183,11 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 	if (m_game && m_stackedWidget->currentWidget() == m_game) {
 		emit m_game->PlayerQuit();
+	}
+
+	// Logout the current user before closing
+	if (!m_currentUsername.empty()) {
+		RoutingManager::LogoutUser(m_currentUsername);
 	}
 
 	QCoreApplication::processEvents();

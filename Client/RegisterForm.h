@@ -18,7 +18,7 @@ private:
 	Ui::RegisterFormClass m_ui;
 
 private:
-	void AddUserToDatabase(const std::string& username, const std::string& password, const std::string& email) const;
+	void AddUserToDatabase(const std::string& username, const std::string& password, const std::string& salt, const std::string& email) const;
 
 private slots:
 	void OnRegisterButtonClicked() noexcept;

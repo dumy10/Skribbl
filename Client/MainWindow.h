@@ -37,4 +37,6 @@ private:
 	Menu* m_menu;
 	Lobby* m_lobby;
 	Game* m_game;
+
+	std::string m_currentUsername;
 };

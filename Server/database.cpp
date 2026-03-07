@@ -1,4 +1,5 @@
 #include "database.h"
+#include "../PasswordHashing/Hashing.h"
 
 bool Database::Initialize()
 {
@@ -29,12 +30,13 @@ std::string Database::GetRandomWord()
 	return word.GetWord();
 }
 
-std::optional<std::shared_ptr<Player>>Database::AddUser(const std::string& username, const std::string& password, const std::string& email)
+
+std::optional<std::shared_ptr<Player>>Database::AddUser(const std::string& username, const std::string& password, const std::string& salt, const std::string& email)
 {
 	try
 	{
 		std::string correctEmail{ email };
-		m_db.insert(Player{ -1, username, password, email });
+		m_db.insert(Player{ -1, username, password, salt, email });
 
 		return GetPlayer(username);
 	}
@@ -102,7 +104,10 @@ bool Database::CheckPassword(const std::string& username, const std::string& pas
 			return false;
 		}
 
-		return existingPlayers.front().GetPassword() == password;
+		const Player& player = existingPlayers.front();
+		
+		// Use salt-based verification with char buffer API
+		return Hasher::VerifyPassword(password.c_str(), player.GetSalt().c_str(), player.GetPassword().c_str());
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Exception occurred while checking if password is correct: " << e.what() << "\n";

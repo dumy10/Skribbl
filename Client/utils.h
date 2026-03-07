@@ -32,11 +32,11 @@ class Utils
 {
 public:
 	static void WaitForSeconds(int seconds) noexcept;
-	static void CheckPasswordPattern(std::string_view password);
-	static void CheckEmailPattern(std::string_view email);
-	static void CheckIpPattern(std::string_view ip);
-	static void CheckUsernameForRegistration(std::string_view username);
-	static void CheckUsernameForLogin(std::string_view username);
+	static void CheckPasswordPattern(const std::string& password);
+	static void CheckEmailPattern(const std::string& email);
+	static void CheckIpPattern(const std::string& ip);
+	static void CheckUsernameForRegistration(const std::string& username);
+	static void CheckUsernameForLogin(const std::string& username);
 	
 	// String conversion helpers
 	static QString ToQString(std::string_view str) noexcept;

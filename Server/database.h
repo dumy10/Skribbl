@@ -25,7 +25,7 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("name", &Player::SetName, &Player::GetName),
 			sql::make_column("email", &Player::SetEmail, &Player::GetEmail),
 			sql::make_column("password", &Player::SetPassword, &Player::GetPassword),
-			sql::make_column("score", &Player::SetPoints, &Player::GetPoints)
+			sql::make_column("salt", &Player::SetSalt, &Player::GetSalt)
 		),
 		sql::make_table(
 			"Words",
@@ -54,7 +54,7 @@ public:
 
 	[[nodiscard]] std::string GetRandomWord(); // Gets a random word from the database
 
-	[[nodiscard]] std::optional<std::shared_ptr<Player>> AddUser(const std::string& username, const std::string& password, const std::string& email); // Adds a player to the database
+	[[nodiscard]] std::optional<std::shared_ptr<Player>> AddUser(const std::string& username, const std::string& password, const std::string& salt, const std::string& email); // Adds a player to the database with salt
 	[[nodiscard]] std::optional<std::shared_ptr<Game>> AddGame(const Player& player, const std::string& gameCode, size_t maxPlayers); // Adds a game to the database
 	[[nodiscard]] bool CheckUsername(const std::string& username); //Checks if a username exists in the database
 	[[nodiscard]] bool CheckRoomID(const std::string& roomID); // Checks if a game with the roomID exists in the database

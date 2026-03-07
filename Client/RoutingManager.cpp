@@ -2,33 +2,41 @@
 #include "utils.h"
 
 // Server health
-cpr::Response RoutingManager::CheckServerRunning(std::string_view url)
+cpr::Response RoutingManager::CheckServerRunning(const std::string& url)
 {
-	return cpr::Get(cpr::Url{ std::string(url) + "/" });
+	return cpr::Get(cpr::Url{ url + "/" });
 }
 
 // User/Authentication endpoints
-cpr::Response RoutingManager::CheckUsername(std::string_view username)
+cpr::Response RoutingManager::CheckUsername(const std::string& username)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/checkUsername" },
-		cpr::Payload{ {"username", std::string(username)} }
+		cpr::Payload{ {"username", username} }
 	);
 }
 
-cpr::Response RoutingManager::AddUser(std::string_view username, std::string_view password, std::string_view email)
+cpr::Response RoutingManager::AddUser(const std::string& username, const std::string& password, const std::string& salt, const std::string& email)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/addUser" },
-		cpr::Payload{ {"username", std::string(username)}, {"password", std::string(password)}, {"email", std::string(email)} }
+		cpr::Payload{ {"username", username}, {"password", password}, {"salt", salt}, {"email", email} }
 	);
 }
 
-cpr::Response RoutingManager::LoginUser(std::string_view username, std::string_view password)
+cpr::Response RoutingManager::LoginUser(const std::string& username, const std::string& password)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/loginUser" },
-		cpr::Payload{ {"username", std::string(username)}, {"password", std::string(password)} }
+		cpr::Payload{ {"username", username}, {"password", password} }
+	);
+}
+
+cpr::Response RoutingManager::LogoutUser(const std::string& username)
+{
+	return cpr::Post(
+		cpr::Url{ Server::GetUrl() + "/logoutUser" },
+		cpr::Payload{ {"username", username} }
 	);
 }
 
@@ -38,196 +46,196 @@ cpr::Response RoutingManager::GetNewRoomID()
 	return cpr::Get(cpr::Url{ Server::GetUrl() + "/roomID" });
 }
 
-cpr::Response RoutingManager::CreateRoom(std::string_view roomID, std::string_view username, std::string_view maxPlayers, std::string_view currentPlayers)
+cpr::Response RoutingManager::CreateRoom(const std::string& roomID, const std::string& username, const std::string& maxPlayers, const std::string& currentPlayers)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/createRoom" },
 		cpr::Payload{
-			{"roomID", std::string(roomID)},
-			{"username", std::string(username)},
-			{"maxPlayers", std::string(maxPlayers)},
-			{"currentPlayers", std::string(currentPlayers)}
+			{"roomID", roomID},
+			{"username", username},
+			{"maxPlayers", maxPlayers},
+			{"currentPlayers", currentPlayers}
 		}
 	);
 }
 
-cpr::Response RoutingManager::CheckRoomID(std::string_view roomID)
+cpr::Response RoutingManager::CheckRoomID(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/checkRoomID" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::JoinRoom(std::string_view roomID, std::string_view username)
+cpr::Response RoutingManager::JoinRoom(const std::string& roomID, const std::string& username)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/joinRoom" },
-		cpr::Payload{ {"roomID", std::string(roomID)}, {"username", std::string(username)} }
+		cpr::Payload{ {"roomID", roomID}, {"username", username} }
 	);
 }
 
-cpr::Response RoutingManager::LeaveRoom(std::string_view roomID, std::string_view username)
+cpr::Response RoutingManager::LeaveRoom(const std::string& roomID, const std::string& username)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/leaveRoom" },
-		cpr::Payload{ {"roomID", std::string(roomID)}, {"username", std::string(username)} }
+		cpr::Payload{ {"roomID", roomID}, {"username", username} }
 	);
 }
 
-cpr::Response RoutingManager::GetRoomPlayers(std::string_view roomID)
+cpr::Response RoutingManager::GetRoomPlayers(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/roomPlayers" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::GetNumberOfPlayers(std::string_view roomID)
+cpr::Response RoutingManager::GetNumberOfPlayers(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/numberOfPlayers" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::GetCurrentNumberOfPlayers(std::string_view roomID)
+cpr::Response RoutingManager::GetCurrentNumberOfPlayers(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/currentNumberOfPlayers" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
 // Game management
-cpr::Response RoutingManager::StartGame(std::string_view roomID)
+cpr::Response RoutingManager::StartGame(const std::string& roomID)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/startGame" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::CheckGameStarted(std::string_view roomID)
+cpr::Response RoutingManager::CheckGameStarted(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/gameStarted" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::CheckGameEnded(std::string_view roomID)
+cpr::Response RoutingManager::CheckGameEnded(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/gameEnded" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::EndGame(std::string_view roomID)
+cpr::Response RoutingManager::EndGame(const std::string& roomID)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/endGame" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::NextRound(std::string_view roomID)
+cpr::Response RoutingManager::NextRound(const std::string& roomID)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/nextRound" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
 // Game state
-cpr::Response RoutingManager::GetDrawingPlayer(std::string_view roomID)
+cpr::Response RoutingManager::GetDrawingPlayer(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/drawingPlayer" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::GetCurrentWord(std::string_view roomID)
+cpr::Response RoutingManager::GetCurrentWord(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/currentWord" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::GetRoundNumber(std::string_view roomID)
+cpr::Response RoutingManager::GetRoundNumber(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/roundNumber" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::GetTimeLeft(std::string_view roomID)
+cpr::Response RoutingManager::GetTimeLeft(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/timeLeft" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::GetPlayerScore(std::string_view roomID, std::string_view username)
+cpr::Response RoutingManager::GetPlayerScore(const std::string& roomID, const std::string& username)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/playerScore" },
-		cpr::Payload{ {"roomID", std::string(roomID)}, {"username", std::string(username)} }
+		cpr::Payload{ {"roomID", roomID}, {"username", username} }
 	);
 }
 
-cpr::Response RoutingManager::CheckAllPlayersGuessed(std::string_view roomID)
+cpr::Response RoutingManager::CheckAllPlayersGuessed(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/allPlayersGuessed" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
 // Chat
-cpr::Response RoutingManager::AddChat(std::string_view roomID, std::string_view username, std::string_view text)
+cpr::Response RoutingManager::AddChat(const std::string& roomID, const std::string& username, const std::string& text)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/addChat" },
-		cpr::Payload{ {"roomID", std::string(roomID)}, {"username", std::string(username)}, {"text", std::string(text)} }
+		cpr::Payload{ {"roomID", roomID}, {"username", username}, {"text", text} }
 	);
 }
 
-cpr::Response RoutingManager::GetChat(std::string_view roomID)
+cpr::Response RoutingManager::GetChat(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/getChat" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
 // Drawing
-cpr::Response RoutingManager::SendDrawingImage(std::string_view roomID, std::string_view imageData)
+cpr::Response RoutingManager::SendDrawingImage(const std::string& roomID, const std::string& imageData)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/drawingImage" },
-		cpr::Parameters{ {"roomID", std::string(roomID)} },
-		cpr::Body{ std::string(imageData) }
+		cpr::Parameters{ {"roomID", roomID} },
+		cpr::Body{ imageData }
 	);
 }
 
-cpr::Response RoutingManager::GetDrawingImage(std::string_view roomID)
+cpr::Response RoutingManager::GetDrawingImage(const std::string& roomID)
 {
 	return cpr::Get(
 		cpr::Url{ Server::GetUrl() + "/drawingImage" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }
 
-cpr::Response RoutingManager::ClearDrawingImage(std::string_view roomID)
+cpr::Response RoutingManager::ClearDrawingImage(const std::string& roomID)
 {
 	return cpr::Post(
 		cpr::Url{ Server::GetUrl() + "/clearImage" },
-		cpr::Payload{ {"roomID", std::string(roomID)} }
+		cpr::Payload{ {"roomID", roomID} }
 	);
 }

@@ -9,13 +9,14 @@ namespace skribbl
 	{
 	public:
 		Player() = default;
-		Player(int id, const std::string& name, const std::string& password, const std::string& email);
+		Player(int id, const std::string& name, const std::string& password, const std::string& salt, const std::string& email);
 
 		[[nodiscard]] const int GetId() const noexcept;
 		[[nodiscard]] const int GetPoints() const noexcept;
 
 		[[nodiscard]] const std::string GetName() const noexcept;
 		[[nodiscard]] const std::string GetPassword() const noexcept;
+		[[nodiscard]] const std::string GetSalt() const noexcept;
 		[[nodiscard]] const std::string GetEmail() const noexcept;
 		[[nodiscard]] const std::string Serialize() const noexcept;
 
@@ -24,6 +25,7 @@ namespace skribbl
 		void SetId(int id);
 		void SetName(const std::string& name);
 		void SetPassword(const std::string& password);
+		void SetSalt(const std::string& salt);
 		void SetEmail(const std::string& email);
 
 		void SetPoints(int points);
@@ -39,5 +41,6 @@ namespace skribbl
 		std::string m_name;
 		std::string m_email;
 		std::string m_password;
+		std::string m_salt;
 	};
 }

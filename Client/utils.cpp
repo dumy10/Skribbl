@@ -100,7 +100,7 @@ void Utils::WaitForSeconds(int seconds) noexcept
 	}
 }
 
-void Utils::CheckPasswordPattern(std::string_view password)
+void Utils::CheckPasswordPattern(const std::string& password)
 {
 	if (password.empty()) {
 		throw std::exception("Password cannot be empty");
@@ -111,12 +111,12 @@ void Utils::CheckPasswordPattern(std::string_view password)
 	}
 
 	const std::regex passwordPattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$");
-	if (!std::regex_match(password.begin(), password.end(), passwordPattern)) {
+	if (!std::regex_match(password, passwordPattern)) {
 		throw std::exception("The Password needs to contain at least 1 upper case,\n one lower case and a number");
 	}
 }
 
-void Utils::CheckEmailPattern(std::string_view email)
+void Utils::CheckEmailPattern(const std::string& email)
 {
 	if (email.empty()) {
 		throw std::exception("Email cannot be empty");
@@ -124,26 +124,26 @@ void Utils::CheckEmailPattern(std::string_view email)
 
 	const std::regex emailPattern("^([a-zA-Z0-9_\\.\\-+]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$");
 
-	if (!std::regex_match(email.begin(), email.end(), emailPattern)) {
+	if (!std::regex_match(email, emailPattern)) {
 		throw std::exception("Email should be like: example@mail.com");
 	}
 }
 
-void Utils::CheckIpPattern(std::string_view ip)
+void Utils::CheckIpPattern(const std::string& ip)
 {
 	std::regex ipv4("((0?[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}(0?[0-9]|[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-5])");
-	if (!std::regex_match(ip.begin(), ip.end(), ipv4)) {
+	if (!std::regex_match(ip, ipv4)) {
 		throw std::exception("Invalid IP address");
 	}
 }
 
-void Utils::CheckUsernameForRegistration(std::string_view username)
+void Utils::CheckUsernameForRegistration(const std::string& username)
 {
 	if (username.empty()) {
 		throw std::exception("Username cannot be empty");
 	}
 
-	cpr::Response response = RoutingManager::CheckUsername(std::string(username));
+	cpr::Response response = RoutingManager::CheckUsername(username);
 
 	if (response.status_code != 200 && response.status_code != 404) {
 		throw std::exception("Server error");
@@ -154,13 +154,13 @@ void Utils::CheckUsernameForRegistration(std::string_view username)
 	}
 }
 
-void Utils::CheckUsernameForLogin(std::string_view username)
+void Utils::CheckUsernameForLogin(const std::string& username)
 {
 	if (username.empty()) {
 		throw std::exception("Username cannot be empty");
 	}
 
-	cpr::Response response = RoutingManager::CheckUsername(std::string(username));
+	cpr::Response response = RoutingManager::CheckUsername(username);
 
 	if (response.status_code != 200) {
 		throw std::exception("Username or password are invalid.");

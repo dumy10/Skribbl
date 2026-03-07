@@ -33,6 +33,24 @@ void PlayerManager::AddPlayer(const std::string& username, std::shared_ptr<Playe
 	m_players.insert_or_assign(username, std::move(player));
 }
 
+bool PlayerManager::IsPlayerOnline(const std::string& username) const noexcept
+{
+	std::shared_lock lock{ m_onlinePlayersMutex };
+	return m_onlinePlayers.find(username) != m_onlinePlayers.end();
+}
+
+void PlayerManager::MarkPlayerOnline(const std::string& username)
+{
+	std::unique_lock lock{ m_onlinePlayersMutex };
+	m_onlinePlayers.insert(username);
+}
+
+void PlayerManager::MarkPlayerOffline(const std::string& username)
+{
+	std::unique_lock lock{ m_onlinePlayersMutex };
+	m_onlinePlayers.erase(username);
+}
+
 crow::response PlayerManager::HandleCheckUsername(const crow::request& req)
 {
 	auto params = parseUrlArgs(req.body);
@@ -54,13 +72,14 @@ crow::response PlayerManager::HandleAddUser(const crow::request& req)
 	auto params = parseUrlArgs(req.body);
 	std::string username = params.at("username");
 	std::string password = params.at("password");
+	std::string salt = params.at("salt");
 	std::string email = params.at("email");
-
-	if (username.empty() || password.empty() || email.empty()) {
+	
+	if (username.empty() || password.empty() || salt.empty() || email.empty()) {
 		return crow::response{ 404 };
 	}
-
-	auto player = m_storage.AddUser(std::move(username), std::move(password), std::move(email));
+	
+	auto player = m_storage.AddUser(std::move(username), std::move(password), std::move(salt), std::move(email));
 
 	if (!player.has_value()) {
 		return crow::response{ 400 };
@@ -77,21 +96,41 @@ crow::response PlayerManager::HandleLoginUser(const crow::request& req)
 	std::string username = params.at("username");
 	std::string password = params.at("password");
 
-	std::string hashedPass = password;
-	Hasher::HashPassword(hashedPass.c_str());
-	std::string hashedPassStr{ hashedPass };
-
 	if (username.empty() || password.empty()) {
 		return crow::response{ 404 };
 	}
 
-	if (!m_storage.CheckUsername(std::move(username))) {
+	if (!m_storage.CheckUsername(username)) {
 		return crow::response{ 404 };
 	}
 
-	if (!m_storage.CheckPassword(std::move(username), std::move(hashedPassStr))) {
+	// CheckPassword now handles both legacy (direct comparison) and new (salt-based) methods
+	if (!m_storage.CheckPassword(username, password)) {
 		return crow::response{ 404 };
 	}
+
+	// Check if player is already logged in
+	if (IsPlayerOnline(username)) {
+		return crow::response{ 409, "ALREADY_LOGGED_IN" }; // 409 Conflict
+	}
+
+	// Mark player as online
+	MarkPlayerOnline(username);
+
+	return crow::response{ 204 };
+}
+
+crow::response PlayerManager::HandleLogoutUser(const crow::request& req)
+{
+	auto params = parseUrlArgs(req.body);
+	std::string username = params.at("username");
+
+	if (username.empty()) {
+		return crow::response{ 404 };
+	}
+
+	// Mark player as offline
+	MarkPlayerOffline(username);
 
 	return crow::response{ 204 };
 }

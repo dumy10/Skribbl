@@ -19,14 +19,15 @@ RegisterForm::RegisterForm(QWidget* parent)
 
 }
 
-void RegisterForm::AddUserToDatabase(const std::string& username, const std::string& password, const std::string& email) const 
+void RegisterForm::AddUserToDatabase(const std::string& username, const std::string& password, const std::string& salt, const std::string& email) const 
 {
-	cpr::Response response = RoutingManager::AddUser(username, password, email);
+	cpr::Response response = RoutingManager::AddUser(username, password, salt, email);
 
-	if (Utils::IsResponseSuccessful(response, 201)) {
-		throw std::exception("Could not add user to database");
+	if (!Utils::IsResponseSuccessful(response, 201)) {
+		throw std::exception("Could not create account. Please try again later.");
 	}
 }
+
 void RegisterForm::OnBackButtonClicked() noexcept
 {
 	emit NavigateToLogin();
@@ -38,15 +39,20 @@ void RegisterForm::OnRegisterButtonClicked() noexcept
 	QString password = m_ui.passwordField->text();
 	QString email = m_ui.emailField->text();
 	try {
-		std::string hashedPass = password.toUtf8().data();
-		Hasher::HashPassword(hashedPass.c_str());
-		std::string hashedPassStr{ hashedPass };
-
 		Utils::CheckUsernameForRegistration(username.toUtf8().constData());
 		Utils::CheckEmailPattern(email.toUtf8().constData());
 		Utils::CheckPasswordPattern(password.toUtf8().constData());
 
-		AddUserToDatabase(username.toUtf8().constData(), hashedPassStr, email.toUtf8().constData());
+		char saltBuffer[65]; // 32 bytes * 2 (hex) + 1 (null terminator)
+		Hasher::GenerateSalt(saltBuffer, sizeof(saltBuffer), 32);
+		std::string salt(saltBuffer);
+
+		// Hash password with salt using char buffer
+		char hashedPasswordBuffer[65]; // 64 hex chars + 1 (null terminator)
+		Hasher::HashPasswordWithSalt(password.toUtf8().data(), saltBuffer, hashedPasswordBuffer, sizeof(hashedPasswordBuffer));
+		std::string hashedPassword(hashedPasswordBuffer);
+
+		AddUserToDatabase(username.toUtf8().constData(), hashedPassword, salt, email.toUtf8().constData());
 	} catch (std::exception& e) {
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(e.what());
