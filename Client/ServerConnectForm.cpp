@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "RoutingManager.h"
 
+#include <QThread>
 #include <regex>
 
 ServerConnectForm::ServerConnectForm(QWidget *parent)
@@ -24,14 +25,44 @@ void ServerConnectForm::OnConnectButtonClicked()
 		Utils::CheckIpPattern(ip);
 		Server::SetIp(ip);
 
-		if (!IsServerRunning(Server::GetUrl())) {
-			throw std::exception("Server is not running");
-		}
+		m_ui.connectButton->setEnabled(false);
+		m_ui.errorLabel->hide();
 
-		emit NavigateToLogin();
-	} catch (const std::exception& e) {
+		CheckServerConnectionAsync(Server::GetUrl());
+	}
+	catch (const std::exception& e) {
+		m_ui.connectButton->setEnabled(true);
 		m_ui.errorLabel->show();
 		m_ui.errorLabel->setText(e.what());
+	}
+}
+
+void ServerConnectForm::CheckServerConnectionAsync(const std::string& url)
+{
+	QThread* thread = QThread::create([this, url]() {
+		bool isRunning = false;
+		try {
+			isRunning = IsServerRunning(url);
+		} catch (...) {
+			isRunning = false;
+		}
+
+		QMetaObject::invokeMethod(this, "HandleServerConnectionResult", Qt::QueuedConnection, QtPrivate::Invoke::argument<bool>("bool", isRunning)); 
+		});
+
+	connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+	thread->start();
+}
+
+void ServerConnectForm::HandleServerConnectionResult(bool isRunning)
+{
+	m_ui.connectButton->setEnabled(true);
+
+	if (isRunning) {
+		emit NavigateToLogin();
+	} else {
+		m_ui.errorLabel->show();
+		m_ui.errorLabel->setText("Server is not running");
 	}
 }
 

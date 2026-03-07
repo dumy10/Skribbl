@@ -7,17 +7,20 @@ class ServerConnectForm : public QWidget
 {
 	Q_OBJECT
 
-signals:
-	void NavigateToLogin();
-
 public:
 	ServerConnectForm(QWidget* parent = nullptr);
 
-private:
-	[[nodiscard]] bool IsServerRunning(const std::string& url) const noexcept;
-private:
-	Ui::ServerConnectFormClass m_ui;
+signals:
+	void NavigateToLogin();
 
 private slots:
 	void OnConnectButtonClicked();
+	void HandleServerConnectionResult(bool isRunning);
+
+private:
+	void CheckServerConnectionAsync(const std::string& url);
+	[[nodiscard]] bool IsServerRunning(const std::string& url) const noexcept;
+
+private:
+	Ui::ServerConnectFormClass m_ui;
 };
