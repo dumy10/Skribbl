@@ -22,7 +22,7 @@ void LoginForm::ValidateUserLogin(const std::string& username, const std::string
 
 	cpr::Response loginRequest = RoutingManager::LoginUser(username, password);
 
-	if (loginRequest.status_code == 409) {
+	if (Utils::IsResponseSuccessful(loginRequest, 409)) {
 		throw std::exception("This account is already logged in from another instance.");
 	}
 

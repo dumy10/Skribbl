@@ -151,6 +151,7 @@
     <ClInclude Include="DrawingToolsUIManager.h" />
     <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="GameUIConfigurator.h" />
+    <ClInclude Include="IGameObserver.h" />
     <ClInclude Include="PlayerDisplayManager.h" />
     <QtMoc Include="RoomUpdateHandler.h" />
     <ClInclude Include="RoutingManager.h" />

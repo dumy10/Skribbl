@@ -55,6 +55,12 @@ Game::~Game()
 	m_networkWorker = nullptr;
 
 	auto clearImageRequest = RoutingManager::ClearDrawingImage(m_stateManager->GetRoomID());
+
+	// Clear the observers to prevent any callbacks to this instance after it's destroyed
+	{
+		QMutexLocker locker(&m_observersMutex);
+		m_observers.clear();
+	}
 }
 
 void Game::StopTimer()
@@ -141,7 +147,7 @@ void Game::OnLeaveButtonClicked()
 {
 	cpr::Response request = RoutingManager::CheckGameEnded(m_stateManager->GetRoomID());
 
-	if (request.status_code == 200) {
+	if (Utils::IsResponseSuccessful(request)) {
 		emit NavigateToMenu(m_stateManager->GetUsername());
 		return;
 	}
@@ -232,5 +238,33 @@ void Game::OnMessageSent(bool success, bool correctGuess)
 
 	if (correctGuess) {
 		m_stateManager->SetGuessedWord(true);
+	}
+}
+
+// Observer Management Implementation
+void Game::AddObserver(IGameObserver* observer)
+{
+	if (!observer) {
+		return;
+	}
+
+	// Check if observer is already registered
+	QMutexLocker locker(&m_observersMutex);
+	auto it = std::find(m_observers.begin(), m_observers.end(), observer);
+	if (it == m_observers.end()) {
+		m_observers.push_back(observer);
+	}
+}
+
+void Game::RemoveObserver(IGameObserver* observer)
+{
+	if (!observer) {
+		return;
+	}
+
+	QMutexLocker locker(&m_observersMutex);
+	auto it = std::find(m_observers.begin(), m_observers.end(), observer);
+	if (it != m_observers.end()) {
+		m_observers.erase(it);
 	}
 }

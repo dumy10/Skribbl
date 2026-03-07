@@ -171,6 +171,22 @@ const std::string Game::GetDrawingPlayer() const noexcept
 	return m_round.GetDrawingPlayer();
 }
 
+const std::string skribbl::Game::GetWinningPlayerName() const noexcept
+{
+	if (m_players.empty()) {
+		return "";
+	}
+
+	const auto& winningPlayer = std::max_element(
+		m_players.begin(),
+		m_players.end(),
+		[](const Player& a, const Player& b) {
+			return a.GetPoints() < b.GetPoints();
+		});
+
+	return winningPlayer->GetName();
+}
+
 const GameStatus Game::GetGameStatus() const noexcept
 {
 	return m_gameStatus;

@@ -387,7 +387,8 @@ crow::response GameManager::HandleGameEnded(const crow::request& req)
 	}
 
 	if (game->GetGameStatus() == GameStatus::FINISHED) {
-		return crow::response{ 200 };
+		const auto& winningPlayer = game->GetWinningPlayerName();
+		return crow::response{ 200, winningPlayer, std::to_string(game->GetPlayerScore(winningPlayer)) };
 	}
 
 	return crow::response{ 400 };
@@ -410,7 +411,9 @@ crow::response GameManager::HandleEndGame(const crow::request& req)
 
 	m_storage.Update(*game);
 
-	return crow::response{ 200 };
+	const auto& winningPlayer = game->GetWinningPlayerName();
+
+	return crow::response{ 200, winningPlayer, std::to_string(game->GetPlayerScore(winningPlayer)) };
 }
 
 crow::response GameManager::HandleDrawingImage(const crow::request& req)

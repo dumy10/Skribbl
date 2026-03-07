@@ -46,6 +46,7 @@ namespace skribbl
 		[[nodiscard]] const std::string SerializeGameChat() const noexcept;
 		[[nodiscard]] const std::string GetGameCode() const noexcept;
 		[[nodiscard]] const std::string GetDrawingPlayer() const noexcept;
+		[[nodiscard]] const std::string GetWinningPlayerName() const noexcept;
 
 		[[nodiscard]] const GameStatus GetGameStatus() const noexcept;
 		inline [[nodiscard]] const std::chrono::steady_clock::time_point GetLastActivityTime() const noexcept { return m_lastActivityTime; }

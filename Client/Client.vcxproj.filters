@@ -93,6 +93,9 @@
     <Filter Include="Header Files\Configs">
       <UniqueIdentifier>{1851856f-1a79-4955-bfe7-94f90f72fbc3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Observer">
+      <UniqueIdentifier>{a3f4e5d6-b7c8-4d9e-a0f1-b2c3d4e5f6a7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Class Files\Handlers">
       <UniqueIdentifier>{9131e2d2-47e6-4fc7-94c9-0a6e0c8644a5}</UniqueIdentifier>
     </Filter>
@@ -101,6 +104,9 @@
     </Filter>
     <Filter Include="Class Files\Configs">
       <UniqueIdentifier>{2d26e298-7c26-4ee6-b039-4554c261da83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Observer">
+      <UniqueIdentifier>{7fff1284-a681-4531-b8f7-9342b27ee5c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="ConnectionSetup.h">
       <Filter>Header Files\Configs</Filter>
+    </ClInclude>
+    <ClInclude Include="IGameObserver.h">
+      <Filter>Header Files\Observer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

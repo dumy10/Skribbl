@@ -145,7 +145,7 @@ void Utils::CheckUsernameForRegistration(const std::string& username)
 
 	cpr::Response response = RoutingManager::CheckUsername(username);
 
-	if (response.status_code != 200 && response.status_code != 404) {
+	if (!Utils::IsResponseSuccessful(response) && !Utils::IsResponseSuccessful(response, 404)) {
 		throw std::exception("Server error");
 	}
 
@@ -162,7 +162,7 @@ void Utils::CheckUsernameForLogin(const std::string& username)
 
 	cpr::Response response = RoutingManager::CheckUsername(username);
 
-	if (response.status_code != 200) {
+	if (!Utils::IsResponseSuccessful(response)) {
 		throw std::exception("Username or password are invalid.");
 	}
 }

@@ -10,10 +10,13 @@
 #include "DrawingToolsUIManager.h"
 #include "GameTimerManager.h"
 #include "RoomUpdateHandler.h"
+#include "IGameObserver.h"
 
 #include <QWidget>
 #include <QTimer>
 #include <QThread>
+#include <QMutex>
+#include <QMutexLocker>
 
 #include <cpr/cpr.h>
 
@@ -43,6 +46,14 @@ public:
 	
 	// Public interface for external control
 	void StopTimer();
+
+	// Observer Management
+	void AddObserver(IGameObserver* observer);
+	void RemoveObserver(IGameObserver* observer);
+
+	// Notification template for observer pattern
+	template <typename F, typename... Args>
+	void Notify(F func, Args&&... args);
 
 private slots:
 	// UI event handlers
@@ -96,8 +107,30 @@ private:
 	QLabel* m_roundLabel{nullptr};
 	QWidget* m_drawingArea{nullptr};
 	
+	// Observer pattern
+	std::vector<IGameObserver*> m_observers;
+	mutable QMutex m_observersMutex;
+	EGameState m_currentGameState{EGameState::Unknown};
+	
 	// Constants
 	static constexpr int UPDATE_INTERVAL_MS = 200;
 };
+
+template <typename F, typename... Args>
+void Game::Notify(F func, Args&&... args)
+{
+	std::vector<IGameObserver*> observersCopy;
+	{
+		QMutexLocker locker(&m_observersMutex);
+		observersCopy = m_observers;
+	}
+
+	// Execute callbacks without holding the lock
+	for (auto observer : observersCopy) {
+		if (observer) {
+			(observer->*func)(std::forward<Args>(args)...);
+		}
+	}
+}
 
 #endif // GAME_H
