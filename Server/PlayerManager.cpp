@@ -104,7 +104,6 @@ crow::response PlayerManager::HandleLoginUser(const crow::request& req)
 		return crow::response{ 404 };
 	}
 
-	// CheckPassword now handles both legacy (direct comparison) and new (salt-based) methods
 	if (!m_storage.CheckPassword(username, password)) {
 		return crow::response{ 404 };
 	}
@@ -114,7 +113,6 @@ crow::response PlayerManager::HandleLoginUser(const crow::request& req)
 		return crow::response{ 409, "ALREADY_LOGGED_IN" }; // 409 Conflict
 	}
 
-	// Mark player as online
 	MarkPlayerOnline(username);
 
 	return crow::response{ 204 };
@@ -129,7 +127,6 @@ crow::response PlayerManager::HandleLogoutUser(const crow::request& req)
 		return crow::response{ 404 };
 	}
 
-	// Mark player as offline
 	MarkPlayerOffline(username);
 
 	return crow::response{ 204 };

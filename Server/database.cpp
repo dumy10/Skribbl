@@ -106,7 +106,6 @@ bool Database::CheckPassword(const std::string& username, const std::string& pas
 
 		const Player& player = existingPlayers.front();
 		
-		// Use salt-based verification with char buffer API
 		return Hasher::VerifyPassword(password.c_str(), player.GetSalt().c_str(), player.GetPassword().c_str());
 	}
 	catch (const std::exception& e) {
