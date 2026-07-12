@@ -153,6 +153,7 @@ std::vector<std::shared_ptr<Player>> Database::GetAllPlayers()
 	try
 	{
 		auto allPlayers = m_db.get_all<Player>();
+		players.reserve(allPlayers.size());
 		for (auto& player : allPlayers) {
 			players.push_back(std::make_shared<Player>(std::move(player)));
 		}

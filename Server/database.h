@@ -62,7 +62,7 @@ public:
 
 	[[nodiscard]] std::optional<std::shared_ptr<Game>> GetGame(const std::string& roomID); // Gets a game from the database based on the roomID
 	[[nodiscard]] std::optional<std::shared_ptr<Player>> GetPlayer(const std::string& username); // Gets a player from the database based on the username
-	[[nodiscard]] std::vector<std::shared_ptr<Player>> GetAllPlayers(); // Gets all players from the database
+	[[nodiscard]] std::vector<std::shared_ptr<Player>> GetAllPlayers(); // Gets all players from the database (returned by value)
 
 	[[nodiscard]] std::string GetRandomID(); //Gets a random ID for game
 
